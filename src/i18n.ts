@@ -82,7 +82,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     pauseLabel: 'Pause',
     resumeLabel: 'Resume',
     restartLabel: 'Restart',
-    stopLabel: 'Стоп',
+    stopLabel: 'Stop',
     returnHomeLabel: 'Return to home screen',
     phaseDelayTitle: 'Get Ready',
     phaseDelayKicker: 'Initial delay',
