@@ -1,12 +1,12 @@
 const CACHE_NAME = 'pulse-hiit-v1';
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon.svg',
-  '/apple-touch-icon.png',
-  '/pwa-192.png',
-  '/pwa-512.png',
+  '/hiit-timer/',
+  '/hiit-timer/index.html',
+  '/hiit-timer/manifest.webmanifest',
+  '/hiit-timer/icon.svg',
+  '/hiit-timer/apple-touch-icon.png',
+  '/hiit-timer/pwa-192.png',
+  '/hiit-timer/pwa-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,7 +32,7 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html')),
+      fetch(request).catch(() => caches.match('/hiit-timer/index.html')),
     );
     return;
   }
