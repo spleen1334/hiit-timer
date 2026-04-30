@@ -32,6 +32,11 @@ type StepperProps = {
   onChange: (next: number) => void;
 };
 
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+};
+
 const SETTINGS_KEY = 'pulse-hiit-settings';
 const LOCALE_KEY = 'pulse-hiit-locale';
 const HISTORY_KEY = 'pulse-hiit-history';
@@ -98,6 +103,16 @@ const sanitizeHistory = (entries: unknown): HistoryEntry[] => {
     .slice(0, MAX_HISTORY);
 };
 const isLocale = (value: string): value is Locale => LOCALE_OPTIONS.some((option) => option.id === value);
+const isStandaloneMode = () =>
+  window.matchMedia('(display-mode: standalone)').matches ||
+  (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+const isIosInstallable = () => {
+  const userAgent = window.navigator.userAgent;
+  const isAppleMobile = /iphone|ipad|ipod/i.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isSafari = /safari/i.test(userAgent) && !/crios|fxios|edgios|android/i.test(userAgent);
+
+  return isAppleMobile && isSafari;
+};
 const formatClockDuration = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -145,6 +160,10 @@ function App() {
   const [statsOpen, setStatsOpen] = useState(() => readStoredBoolean(STATS_PANEL_KEY, false));
   const [isLocaleDialogOpen, setIsLocaleDialogOpen] = useState(false);
   const [isClearHistoryDialogOpen, setIsClearHistoryDialogOpen] = useState(false);
+  const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
+  const [installPromptEvent, setInstallPromptEvent] = useState<InstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState(() => isStandaloneMode());
+  const [isIosInstallPromptAvailable, setIsIosInstallPromptAvailable] = useState(() => !isStandaloneMode() && isIosInstallable());
   const [mode, setMode] = useState<SessionMode>('setup');
   const [phase, setPhase] = useState<Phase>('delay');
   const [round, setRound] = useState(1);
@@ -199,7 +218,44 @@ function App() {
     }
 
     setIsLocaleDialogOpen(false);
+    setIsInstallDialogOpen(false);
   }, [settingsOpen]);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPromptEvent(event as InstallPromptEvent);
+    };
+
+    const handleAppInstalled = () => {
+      setInstallPromptEvent(null);
+      setIsInstallDialogOpen(false);
+      setIsInstalled(true);
+      setIsIosInstallPromptAvailable(false);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    const syncInstallState = () => {
+      const standalone = isStandaloneMode();
+      setIsInstalled(standalone);
+      setIsIosInstallPromptAvailable(!standalone && isIosInstallable());
+    };
+
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+
+    syncInstallState();
+    mediaQuery.addEventListener?.('change', syncInstallState);
+    document.addEventListener('visibilitychange', syncInstallState);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+      mediaQuery.removeEventListener?.('change', syncInstallState);
+      document.removeEventListener('visibilitychange', syncInstallState);
+    };
+  }, []);
 
   useEffect(() => {
     const themeColor = (() => {
@@ -377,6 +433,25 @@ function App() {
 
   const updateSetting = <K extends keyof TimerSettings>(key: K, next: TimerSettings[K]) => {
     setSettings((current) => sanitizeSettings({ ...current, [key]: next }));
+  };
+
+  const canInstall = !isInstalled;
+
+  const handleInstall = async () => {
+    if (installPromptEvent) {
+      await installPromptEvent.prompt();
+      const { outcome } = await installPromptEvent.userChoice;
+
+      if (outcome === 'accepted') {
+        setIsInstalled(true);
+      } else {
+        setInstallPromptEvent(null);
+      }
+
+      return;
+    }
+
+    setIsInstallDialogOpen(true);
   };
 
   const ensureAudioContext = async () => {
@@ -690,6 +765,12 @@ function App() {
                             </span>
                           </button>
 
+                          {canInstall ? (
+                            <button type="button" className="install-button" onClick={() => void handleInstall()}>
+                              {messages.installAppLabel}
+                            </button>
+                          ) : null}
+
                           <button
                             type="button"
                             className="clear-history-button"
@@ -901,6 +982,14 @@ function App() {
           confirmLabel={messages.confirmLabel}
           onCancel={() => setIsClearHistoryDialogOpen(false)}
           onConfirm={clearHistory}
+        />
+      ) : null}
+      {isInstallDialogOpen ? (
+        <InfoDialog
+          title={messages.installAppTitle}
+          body={messages.installAppBody}
+          closeLabel={messages.cancelLabel}
+          onClose={() => setIsInstallDialogOpen(false)}
         />
       ) : null}
       {isLocaleDialogOpen ? (
@@ -1176,6 +1265,34 @@ function LocaleDialog({
         <div className="dialog-actions">
           <button type="button" className="dialog-button dialog-button-secondary" onClick={onClose}>
             {cancelLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoDialog({
+  title,
+  body,
+  closeLabel,
+  onClose,
+}: {
+  title: string;
+  body: string;
+  closeLabel: string;
+  onClose: () => void;
+}) {
+  return (
+    <div className="dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="info-dialog-title">
+      <div className="dialog-card">
+        <p id="info-dialog-title" className="dialog-title">
+          {title}
+        </p>
+        <p className="dialog-body">{body}</p>
+        <div className="dialog-actions">
+          <button type="button" className="dialog-button dialog-button-secondary" onClick={onClose}>
+            {closeLabel}
           </button>
         </div>
       </div>

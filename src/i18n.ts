@@ -14,6 +14,9 @@ export type Messages = {
   languageLabel: string;
   settingsLabel: string;
   statsLabel: string;
+  installAppLabel: string;
+  installAppTitle: string;
+  installAppBody: string;
   clearHistoryLabel: string;
   clearHistoryConfirm: string;
   clearHistoryTitle: string;
@@ -71,6 +74,10 @@ export const MESSAGES: Record<Locale, Messages> = {
     languageLabel: 'Language',
     settingsLabel: 'Settings',
     statsLabel: 'Session & history',
+    installAppLabel: 'Install app',
+    installAppTitle: 'Install Pulse HIIT Timer',
+    installAppBody:
+      'If the install prompt does not appear, use your browser menu and choose Install app or Add to Home Screen. On iPhone Safari, use Share and then Add to Home Screen.',
     clearHistoryLabel: 'Clear history',
     clearHistoryConfirm: 'Clear all successful workout history?',
     clearHistoryTitle: 'Clear saved history?',
@@ -119,6 +126,10 @@ export const MESSAGES: Record<Locale, Messages> = {
     languageLabel: 'Језик',
     settingsLabel: 'Подешавања',
     statsLabel: 'Сесија и историја',
+    installAppLabel: 'Инсталирај апликацију',
+    installAppTitle: 'Инсталирај Pulse HIIT Timer',
+    installAppBody:
+      'Ако се прозор за инсталацију не појави, отвори мени прегледача и изабери Install app или Add to Home Screen. На iPhone Safari-ју користи Share па Add to Home Screen.',
     clearHistoryLabel: 'Обриши историју',
     clearHistoryConfirm: 'Обрисати целу историју успешних тренинга?',
     clearHistoryTitle: 'Обрисати сачувану историју?',

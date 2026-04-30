@@ -1,12 +1,13 @@
-const CACHE_NAME = 'pulse-hiit-v1';
+const BASE_PATH = self.location.pathname.replace(/sw\.js$/, '');
+const CACHE_NAME = `pulse-hiit-v2:${BASE_PATH}`;
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon.svg',
-  '/apple-touch-icon.png',
-  '/pwa-192.png',
-  '/pwa-512.png',
+  BASE_PATH,
+  `${BASE_PATH}index.html`,
+  `${BASE_PATH}manifest.webmanifest`,
+  `${BASE_PATH}icon.svg`,
+  `${BASE_PATH}apple-touch-icon.png`,
+  `${BASE_PATH}pwa-192.png`,
+  `${BASE_PATH}pwa-512.png`,
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,7 +33,7 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html')),
+      fetch(request).catch(() => caches.match(`${BASE_PATH}index.html`)),
     );
     return;
   }
