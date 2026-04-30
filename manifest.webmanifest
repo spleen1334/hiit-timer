@@ -2,6 +2,7 @@
   "name": "Pulse HIIT Timer",
   "short_name": "Pulse Timer",
   "description": "An installable interval timer for HIIT and circuit training.",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
