@@ -45,3 +45,10 @@ This app is mobile-only. Treat every task, layout choice, and UI decision as if 
 - Use a phone-like viewport as the baseline mental model, for example around `390x844`.
 - Check that buttons, sliders, dialogs, and settings panels are full-width when expected and easy to tap.
 - Confirm that no change accidentally reintroduces a desktop layout.
+
+## Product Behavior Guardrails
+
+- The app has two user modes: `Timer` and `Plan`.
+- While a timer session is running (not in setup), mode tabs are hidden; do not regress this behavior unless explicitly requested.
+- Plan mode includes five collapsible sections in this order: `Warmup`, `Workout`, `Cardio`, `Cooldown`, `Notes`.
+- Plan interactions must remain touch-friendly: summary-first cards with explicit edit toggles, no hover-only critical flows.

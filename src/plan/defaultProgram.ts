@@ -11,7 +11,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '4',
       reps: '5',
       weight: 'Bodyweight',
-      rest: '90 sec',
+      rest: '90',
       bodyPart: 'back',
     },
     {
@@ -21,7 +21,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '4',
       reps: '8',
       weight: '80-90 kg',
-      rest: '120 sec',
+      rest: '120',
       bodyPart: 'legs',
     },
     {
@@ -31,7 +31,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '4',
       reps: '10',
       weight: '45-55 kg',
-      rest: '90 sec',
+      rest: '90',
       bodyPart: 'back',
     },
     {
@@ -41,7 +41,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '10',
       weight: 'Moderate',
-      rest: '75 sec',
+      rest: '75',
       bodyPart: 'chest',
     },
     {
@@ -51,7 +51,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '15',
       weight: '2-3 kg',
-      rest: '60 sec',
+      rest: '60',
       bodyPart: 'shoulders',
     },
     {
@@ -61,7 +61,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3-4',
       reps: '10',
       weight: '40 kg',
-      rest: '75 sec',
+      rest: '75',
       bodyPart: 'legs',
     },
     {
@@ -71,7 +71,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '12',
       weight: '45 kg',
-      rest: '75 sec',
+      rest: '75',
       bodyPart: 'legs',
     },
     {
@@ -81,7 +81,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '10-12',
       weight: '5-6 kg',
-      rest: '60 sec',
+      rest: '60',
       bodyPart: 'biceps',
     },
     {
@@ -91,7 +91,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '10-12',
       weight: '10-15 kg',
-      rest: '60 sec',
+      rest: '60',
       bodyPart: 'triceps',
     },
     {
@@ -101,7 +101,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       sets: '3',
       reps: '45 sec',
       weight: 'Bodyweight',
-      rest: '45 sec',
+      rest: '45',
       bodyPart: 'core',
     },
   ],

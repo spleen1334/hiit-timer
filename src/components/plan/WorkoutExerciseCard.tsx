@@ -54,10 +54,17 @@ export function WorkoutExerciseCard({
   onDragEndCard,
   onRemoveWorkout,
 }: WorkoutExerciseCardProps) {
+  const normalizeRestInput = (raw: string) => {
+    const match = raw.match(/\d+/);
+    return match ? match[0] : '';
+  };
+
   const patch =
     (field: keyof WorkoutExercise) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      onExerciseChange(exercise.id, { [field]: event.target.value });
+      const raw = event.target.value;
+      const value = field === 'rest' ? normalizeRestInput(raw) : raw;
+      onExerciseChange(exercise.id, { [field]: value });
     };
 
   return (
@@ -77,7 +84,7 @@ export function WorkoutExerciseCard({
         <div className="workout-summary-copy">
           <h3>{exercise.title}</h3>
           <p>
-            {messages.setsLabel} <strong>{exercise.sets}</strong> x {messages.repsLabel} <strong>{exercise.reps}</strong> x {messages.weightLabel} <strong>{formatWeightSummary(exercise.weight)}</strong> x {messages.pauseLabelPlan} <strong>{exercise.rest}</strong>
+            {messages.setsLabel} <strong>{exercise.sets}</strong> x {messages.repsLabel} <strong>{exercise.reps}</strong> x {messages.weightLabel} <strong>{formatWeightSummary(exercise.weight)}</strong> x {messages.pauseLabelPlan} <strong>{exercise.rest}s</strong>
           </p>
         </div>
         <button
@@ -107,7 +114,7 @@ export function WorkoutExerciseCard({
             <MetricEditor icon={<SetsIcon />} label={messages.setsLabel} value={exercise.sets} onChange={patch('sets')} />
             <MetricEditor icon={<RepsIcon />} label={messages.repsLabel} value={exercise.reps} onChange={patch('reps')} />
             <MetricEditor icon={<WeightIcon />} label={messages.weightLabel} value={exercise.weight} onChange={patch('weight')} />
-            <MetricEditor icon={<RestIcon />} label={messages.pauseLabelPlan} value={exercise.rest} onChange={patch('rest')} />
+            <MetricEditor icon={<RestIcon />} label={messages.pauseLabelPlan} value={exercise.rest} onChange={patch('rest')} numeric />
           </div>
 
           <label className="editor-label body-part-select">
@@ -135,17 +142,25 @@ function MetricEditor({
   label,
   value,
   onChange,
+  numeric = false,
 }: {
   icon: ReactNode;
   label: string;
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  numeric?: boolean;
 }) {
   return (
     <label className="metric-item metric-editor">
       <span className="metric-icon">{icon}</span>
       <span className="metric-label">{label}</span>
-      <input type="text" value={value} onChange={onChange} />
+      <input
+        type={numeric ? 'number' : 'text'}
+        inputMode={numeric ? 'numeric' : undefined}
+        min={numeric ? 0 : undefined}
+        value={value}
+        onChange={onChange}
+      />
     </label>
   );
 }

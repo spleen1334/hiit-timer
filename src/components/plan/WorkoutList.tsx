@@ -319,7 +319,15 @@ export function WorkoutList({ messages, exercises, onExercisesChange }: WorkoutL
               onExerciseChange={onExerciseChange}
               onToggleEdit={toggleEdit}
               onDropOn={(targetId) => {
-                combineAsSuperset(targetId);
+                const payload = dragRef.current;
+                if (
+                  payload?.draggedSupersetId &&
+                  payload.draggedSupersetId === entry.exercise.supersetId
+                ) {
+                  reorderWithinSuperset(payload.draggedSupersetId, payload.draggedId, targetId);
+                } else {
+                  combineAsSuperset(targetId);
+                }
                 endDrag();
               }}
               onDragStartCard={beginDrag}
@@ -369,7 +377,15 @@ export function WorkoutList({ messages, exercises, onExercisesChange }: WorkoutL
                       onExerciseChange={onExerciseChange}
                       onToggleEdit={toggleEdit}
                       onDropOn={(targetId) => {
-                        combineAsSuperset(targetId);
+                        const payload = dragRef.current;
+                        if (
+                          payload?.draggedSupersetId &&
+                          payload.draggedSupersetId === entry.supersetId
+                        ) {
+                          reorderWithinSuperset(entry.supersetId, payload.draggedId, targetId);
+                        } else {
+                          combineAsSuperset(targetId);
+                        }
                         endDrag();
                       }}
                       onDragStartCard={beginDrag}
