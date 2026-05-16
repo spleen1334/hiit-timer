@@ -59,6 +59,8 @@ export const LOCALE_OPTIONS: Array<{ id: Locale; label: string; intl: string }> 
   { id: 'sr', label: 'Српски', intl: 'sr-Cyrl-RS' },
 ];
 
+export const isLocale = (value: string): value is Locale => LOCALE_OPTIONS.some((option) => option.id === value);
+
 export const MESSAGES: Record<Locale, Messages> = {
   en: {
     appName: 'Pulse HIIT Timer',

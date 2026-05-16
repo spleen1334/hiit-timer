@@ -1,0 +1,209 @@
+.orientation-lock {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(96, 165, 250, 0.18), transparent 26%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.98));
+}
+
+.orientation-lock-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  padding: 1.6rem 1.8rem;
+  border-radius: 1.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.74);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.orientation-lock-card p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.orientation-lock-icon {
+  width: 3.6rem;
+  height: 3.6rem;
+  color: #f8fafc;
+}
+
+@media (max-width: 720px) {
+  .panel-toggle-row,
+  .summary-card,
+  .run-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .run-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toolbar-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .utility-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .utility-grid > * {
+    width: 100%;
+    max-width: none;
+  }
+
+  .panel-section,
+  .collapsible-panel,
+  .collapsible-inner,
+  .toolbar-card-split,
+  .toolbar-stack,
+  .toolbar-actions {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .toolbar-card-split,
+  .toolbar-stack,
+  .toolbar-actions {
+    justify-items: stretch;
+    text-align: center;
+  }
+
+  .session-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-shell {
+    padding: max(0.65rem, env(safe-area-inset-top)) 0.65rem max(0.8rem, env(safe-area-inset-bottom));
+  }
+
+  .panel {
+    gap: 0.7rem;
+  }
+
+  .headline {
+    padding: 0.5rem;
+  }
+
+  .app-mark-core {
+    width: 3.8rem;
+    height: 3.8rem;
+  }
+
+  .app-mark-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .app-mark-chip {
+    height: 1.7rem;
+  }
+
+  .setup-panel {
+    justify-content: flex-start;
+    min-height: calc(100dvh - 1.45rem);
+  }
+
+  .stepper-grid {
+    gap: 0.55rem;
+  }
+
+  .stepper-card {
+    padding: 0.72rem 0.78rem;
+  }
+
+  .stepper-meta {
+    gap: 0.65rem;
+  }
+
+  .stepper-label {
+    font-size: 0.86rem;
+  }
+
+  .stepper-value {
+    font-size: clamp(1.45rem, 7vw, 2rem);
+  }
+
+  .stepper-unit {
+    font-size: 0.64rem;
+  }
+
+  .toolbar-label {
+    font-size: 0.92rem;
+  }
+
+  .toolbar-hint {
+    font-size: 0.78rem;
+  }
+
+  .toolbar-stack .toolbar-label,
+  .sound-meta,
+  .sound-meta > div {
+    width: 100%;
+    text-align: center;
+  }
+
+  .toggle {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .toolbar-actions {
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  .sound-switch {
+    align-self: stretch;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .clear-history-button {
+    width: 100%;
+  }
+
+  .summary-card strong {
+    font-size: 0.95rem;
+  }
+
+  .primary-button {
+    min-height: 3.2rem;
+    font-size: 0.98rem;
+  }
+
+  .history-chart {
+    min-height: 4.8rem;
+  }
+
+  .dialog-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  .app-content,
+  .success-overlay {
+    display: none;
+  }
+
+  .orientation-lock {
+    display: flex;
+  }
+}
