@@ -1,5 +1,5 @@
 const BASE_PATH = self.location.pathname.replace(/sw\.js$/, '');
-const CACHE_NAME = `pulse-hiit-v2:${BASE_PATH}`;
+const CACHE_NAME = `pulse-trainer-v3:${BASE_PATH}`;
 const APP_SHELL = [
   BASE_PATH,
   `${BASE_PATH}index.html`,

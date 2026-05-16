@@ -1,7 +1,7 @@
 {
-  "name": "Pulse HIIT Timer",
-  "short_name": "Pulse Timer",
-  "description": "An installable interval timer for HIIT and circuit training.",
+  "name": "Pulse Trainer",
+  "short_name": "Pulse Trainer",
+  "description": "An installable workout timer and training program planner.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
