@@ -41,6 +41,16 @@
   box-shadow: 0 0 18px rgba(74, 222, 128, 0.28);
 }
 
+.app-name-title {
+  margin: 0.52rem 0 0;
+  text-align: center;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(248, 250, 252, 0.88);
+}
+
 .stepper-grid {
   display: grid;
   gap: 0.7rem;

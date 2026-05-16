@@ -54,6 +54,7 @@ export function SetupScreen({
     <section className="panel setup-panel">
       <div className="headline">
         <AppMark label={messages.appName} />
+        <p className="app-name-title">{messages.appName}</p>
       </div>
 
       <div className="stepper-grid">

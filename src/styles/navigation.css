@@ -1,0 +1,36 @@
+.mode-tabs {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 28rem);
+  margin: 0 auto 0.75rem;
+  padding: 0.32rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.32rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(10, 18, 33, 0.58);
+  backdrop-filter: blur(16px);
+}
+
+.mode-tab {
+  min-height: 2.65rem;
+  border: 0;
+  border-radius: 999px;
+  color: rgba(226, 232, 240, 0.84);
+  background: transparent;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.mode-tab.is-active {
+  color: #fff7ed;
+  background: linear-gradient(135deg, rgba(251, 113, 133, 0.9), rgba(249, 115, 22, 0.84));
+  box-shadow: 0 12px 24px rgba(251, 113, 133, 0.24);
+}
