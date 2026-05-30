@@ -172,10 +172,11 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
                 <button
                   type="button"
                   className="edit-toggle"
-                  aria-label={messages.settingsLabel}
+                  aria-label={messages.editLabel}
                   onClick={() => toggleCardioEdit(entry.id)}
                 >
                   <GearIcon />
+                  <span>{messages.editLabel}</span>
                 </button>
               </div>
 

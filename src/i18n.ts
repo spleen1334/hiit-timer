@@ -15,6 +15,7 @@ export type Messages = {
   soundHint: string;
   languageLabel: string;
   settingsLabel: string;
+  editLabel: string;
   statsLabel: string;
   installAppLabel: string;
   installAppTitle: string;
@@ -110,6 +111,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     soundHint: 'Beeps for countdowns and transitions.',
     languageLabel: 'Language',
     settingsLabel: 'Settings',
+    editLabel: 'Edit',
     statsLabel: 'Session & history',
     installAppLabel: 'Install app',
     installAppTitle: 'Install Pulse Trainer',
@@ -195,6 +197,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     soundHint: 'Звучни сигнали за одбројавање и прелазе.',
     languageLabel: 'Језик',
     settingsLabel: 'Подешавања',
+    editLabel: 'Уреди',
     statsLabel: 'Сесија и историја',
     installAppLabel: 'Инсталирај апликацију',
     installAppTitle: 'Инсталирај Pulse Trainer',

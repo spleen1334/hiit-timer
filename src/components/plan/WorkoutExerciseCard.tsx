@@ -90,10 +90,11 @@ export function WorkoutExerciseCard({
         <button
           type="button"
           className="edit-toggle"
-          aria-label={messages.settingsLabel}
+          aria-label={messages.editLabel}
           onClick={() => onToggleEdit(exercise.id)}
         >
           <GearIcon />
+          <span>{messages.editLabel}</span>
         </button>
       </div>
 

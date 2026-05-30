@@ -27,14 +27,14 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
   - `Cooldown`
   - `Notes`
 - Workout cards:
-  - Compact summary + cog edit mode
+  - Compact summary + explicit `Edit` control
   - Add/remove workouts
   - Drag reorder
   - Drop on another card to create/extend supersets
   - Superset link icon to break superset
   - Reorder items within the same superset
 - Cardio entries:
-  - Compact summary + cog edit mode
+  - Compact summary + explicit `Edit` control
   - Add/remove cardio entries
 - Program and section visibility persist in `localStorage`
 

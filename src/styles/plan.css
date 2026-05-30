@@ -6,16 +6,16 @@
 }
 
 .plan-panel {
-  gap: 0.78rem;
+  gap: 0.62rem;
 }
 
 .plan-headline {
-  padding: 0.9rem 1rem;
+  padding: 0.72rem 0.85rem;
 }
 
 .plan-title-wrap h1 {
   margin: 0;
-  font-size: 1.24rem;
+  font-size: 1.12rem;
   letter-spacing: 0.02em;
 }
 
@@ -27,15 +27,15 @@
 }
 
 .plan-header-icons {
-  margin-top: 0.5rem;
+  margin-top: 0.35rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.36rem;
+  gap: 0.28rem;
 }
 
 .plan-header-icon {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.52rem;
+  height: 1.52rem;
   border-radius: 999px;
   display: grid;
   place-items: center;
@@ -45,8 +45,8 @@
 }
 
 .plan-header-icon .plan-mini-icon {
-  width: 0.92rem;
-  height: 0.92rem;
+  width: 0.8rem;
+  height: 0.8rem;
 }
 
 .plan-section-card {
@@ -55,7 +55,7 @@
   background: rgba(10, 18, 33, 0.7);
   box-shadow: var(--panel-shadow);
   backdrop-filter: blur(18px);
-  padding: 0.7rem;
+  padding: 0.62rem;
 }
 
 .plan-section-warmup {
@@ -93,7 +93,7 @@
 
 .plan-section-toggle {
   width: 100%;
-  padding: 0.22rem;
+  padding: 0.18rem;
   border: 0;
   border-radius: 0.95rem;
   background: transparent;
@@ -107,14 +107,14 @@
 
 .plan-section-head h2 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.96rem;
   flex: 1 1 auto;
   min-width: 0;
 }
 
 .plan-section-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.9rem;
+  height: 1.9rem;
   border-radius: 999px;
   display: grid;
   place-items: center;
@@ -162,7 +162,7 @@
 .plan-section-inner {
   min-height: 0;
   overflow: hidden;
-  padding-top: 0.72rem;
+  padding-top: 0.6rem;
 }
 
 .plan-mini-icon {
@@ -211,10 +211,10 @@
 .superset-link-icon {
   appearance: none;
   position: absolute;
-  left: -1.18rem;
-  top: 1.05rem;
-  width: 0.92rem;
-  height: 0.92rem;
+  left: -1.02rem;
+  top: 0.98rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 999px;
   display: grid;
   place-items: center;
@@ -224,11 +224,12 @@
   box-shadow: 0 0 0 3px rgba(2, 6, 23, 0.65);
   padding: 0;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .superset-link-icon .plan-mini-icon {
-  width: 0.72rem;
-  height: 0.72rem;
+  width: 0.82rem;
+  height: 0.82rem;
 }
 
 .superset-reorder-drop {
@@ -353,7 +354,7 @@
 
 .workout-summary h3 {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.22;
   white-space: nowrap;
   overflow: hidden;
@@ -363,7 +364,7 @@
 .workout-summary p {
   margin: 0.2rem 0 0;
   color: rgba(226, 232, 240, 0.76);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   line-height: 1.28;
 }
 
@@ -373,20 +374,29 @@
 }
 
 .edit-toggle {
-  width: 2.3rem;
-  height: 2.3rem;
+  min-height: 2.55rem;
+  padding: 0.38rem 0.7rem 0.38rem 0.58rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.72rem;
+  border-radius: 999px;
   background: rgba(15, 23, 42, 0.62);
-  color: rgba(226, 232, 240, 0.9);
-  display: grid;
-  place-items: center;
+  color: rgba(226, 232, 240, 0.94);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
   flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .edit-toggle .plan-mini-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.98rem;
+  height: 0.98rem;
+}
+
+.edit-toggle span {
+  white-space: nowrap;
 }
 
 .workout-editor {
@@ -396,7 +406,7 @@
 }
 
 .workout-remove-button {
-  min-height: 2.35rem;
+  min-height: 2.55rem;
   border: 1px solid rgba(248, 113, 113, 0.45);
   border-radius: 0.8rem;
   background: rgba(127, 29, 29, 0.34);
