@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlanScreen } from './components/plan/PlanScreen';
 import { RunScreen } from './components/run/RunScreen';
+import { SettingsScreen } from './components/settings/SettingsScreen';
 import { SetupScreen } from './components/setup/SetupScreen';
 import { ModeTabs } from './components/shared/ModeTabs';
 import { OrientationLock } from './components/shared/OrientationLock';
+import { CogIcon } from './components/shared/icons';
 import { SuccessOverlay } from './components/shared/SuccessOverlay';
 import { ConfirmDialog, InfoDialog, LocaleDialog } from './components/shared/dialogs';
 import { useAudioFeedback } from './hooks/useAudioFeedback';
@@ -22,7 +24,6 @@ import {
   HISTORY_KEY,
   LOCALE_KEY,
   SETTINGS_KEY,
-  SETTINGS_PANEL_KEY,
   STATS_PANEL_KEY,
 } from './timer/constants';
 import { getSessionTotals, readStoredBoolean, sanitizeHistory, sanitizeSettings } from './timer/math';
@@ -47,10 +48,6 @@ function App() {
   const [history, setHistory] = usePersistentState(HISTORY_KEY, () => [], {
     parse: (stored) => sanitizeHistory(JSON.parse(stored)),
   });
-  const [settingsOpen, setSettingsOpen] = usePersistentState(SETTINGS_PANEL_KEY, () => false, {
-    parse: (stored) => readStoredBoolean(stored, false),
-    serialize: serializeBoolean,
-  });
   const [statsOpen, setStatsOpen] = usePersistentState(STATS_PANEL_KEY, () => false, {
     parse: (stored) => readStoredBoolean(stored, false),
     serialize: serializeBoolean,
@@ -66,6 +63,8 @@ function App() {
       parse: (stored) => sanitizeTrainingProgram(JSON.parse(stored)),
     },
   );
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsReturnView, setSettingsReturnView] = useState<AppViewMode>('timer');
   const [isLocaleDialogOpen, setIsLocaleDialogOpen] = useState(false);
   const [isClearHistoryDialogOpen, setIsClearHistoryDialogOpen] = useState(false);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
@@ -96,13 +95,13 @@ function App() {
   useThemeColor(mode, phase);
 
   useEffect(() => {
-    if (settingsOpen) {
+    if (isSettingsOpen) {
       return;
     }
 
     setIsLocaleDialogOpen(false);
     setIsInstallDialogOpen(false);
-  }, [settingsOpen]);
+  }, [isSettingsOpen]);
 
   const messages = MESSAGES[locale];
   const localeMeta = LOCALE_OPTIONS.find((option) => option.id === locale) ?? LOCALE_OPTIONS[0];
@@ -145,7 +144,8 @@ function App() {
 
     return 'screen-delay';
   }, [mode, phase]);
-  const screenTone = appView === 'plan' ? 'screen-plan' : timerScreenTone;
+  const isTimerSessionActive = mode !== 'setup';
+  const screenTone = isSettingsOpen ? 'screen-settings' : isTimerSessionActive || appView === 'timer' ? timerScreenTone : 'screen-plan';
   const phaseCopy: Record<Exclude<Phase, 'complete'>, { title: string; kicker: string }> = {
     delay: { title: messages.phaseDelayTitle, kicker: messages.phaseDelayKicker },
     active: { title: messages.phaseActiveTitle, kicker: messages.phaseActiveKicker },
@@ -153,7 +153,23 @@ function App() {
   };
   const runningLabel = phase === 'complete' ? messages.phaseDoneTitle : phaseCopy[phase].title;
   const runningKicker = phase === 'complete' ? messages.phaseDoneKicker : phaseCopy[phase].kicker;
-  const showModeTabs = !(appView === 'timer' && mode !== 'setup');
+  const showModeTabs = !isSettingsOpen && !isTimerSessionActive;
+  const showGlobalSettingsButton = !isSettingsOpen && !isTimerSessionActive;
+
+  const openSettings = useCallback(
+    (returnView: AppViewMode) => {
+      setSettingsReturnView(returnView);
+      setIsLocaleDialogOpen(false);
+      setIsInstallDialogOpen(false);
+      setIsSettingsOpen(true);
+    },
+    [],
+  );
+
+  const closeSettings = useCallback(() => {
+    setIsSettingsOpen(false);
+    setAppView(settingsReturnView);
+  }, [settingsReturnView, setAppView]);
 
   const updateSetting = useCallback(
     <K extends keyof TimerSettings>(key: K, next: TimerSettings[K]) => {
@@ -176,60 +192,89 @@ function App() {
         <div className="ambient ambient-two" />
         {appView === 'timer' && isWarning ? <div className={`warning-overlay warning-overlay-${phase}`} aria-hidden="true" /> : null}
 
-        {showModeTabs ? (
-          <ModeTabs
-            timerLabel={messages.timerTabLabel}
-            planLabel={messages.planTabLabel}
-            value={appView}
-            onChange={setAppView}
-          />
+        {showModeTabs || showGlobalSettingsButton ? (
+          <div className="app-top-bar">
+            {showModeTabs ? (
+              <ModeTabs
+                timerLabel={messages.timerTabLabel}
+                planLabel={messages.planTabLabel}
+                value={appView}
+                onChange={setAppView}
+              />
+            ) : null}
+            {showGlobalSettingsButton ? (
+              <button
+                type="button"
+                className="app-chrome-settings-button"
+                onClick={() => openSettings(appView)}
+                aria-label={messages.settingsLabel}
+              >
+                <CogIcon />
+              </button>
+            ) : null}
+          </div>
         ) : null}
 
         <div key={appView} className="view-stage">
-          {appView === 'plan' ? (
-            <PlanScreen messages={messages} program={trainingProgram} onProgramChange={setTrainingProgram} />
-          ) : mode === 'setup' ? (
-            <SetupScreen
+          <div hidden={isSettingsOpen}>
+            {isTimerSessionActive ? (
+              <RunScreen
+                messages={messages}
+                mode={mode}
+                phase={phase}
+                round={round}
+                rounds={settings.rounds}
+                secondsLeft={secondsLeft}
+                phaseProgress={phaseProgress}
+                roundProgress={roundProgress}
+                isWarning={isWarning}
+                runningLabel={runningLabel}
+                runningKicker={runningKicker}
+                onPause={pauseSession}
+                onResume={() => void resumeSession()}
+                onRestart={() => void startSession()}
+                onStop={resetSession}
+              />
+            ) : appView === 'plan' ? (
+              <PlanScreen
+                messages={messages}
+                program={trainingProgram}
+                onProgramChange={setTrainingProgram}
+              />
+            ) : (
+              <SetupScreen
+                messages={messages}
+                settings={settings}
+                statsOpen={statsOpen}
+                sessionTotals={sessionTotals}
+                latestHistory={latestHistory}
+                recentHistory={recentHistory}
+                maxHistorySeconds={maxHistorySeconds}
+                dateFormatter={dateFormatter}
+                shortDateFormatter={shortDateFormatter}
+                onSettingChange={updateSetting}
+                onToggleStats={() => setStatsOpen((current) => !current)}
+                onStart={() => void startSession()}
+              />
+            )}
+          </div>
+
+          {isSettingsOpen ? (
+            <SettingsScreen
               messages={messages}
-              settings={settings}
-              settingsOpen={settingsOpen}
-              statsOpen={statsOpen}
               localeLabel={localeMeta.label}
               isLocaleDialogOpen={isLocaleDialogOpen}
               canInstall={canInstall}
-              sessionTotals={sessionTotals}
-              latestHistory={latestHistory}
-              recentHistory={recentHistory}
-              maxHistorySeconds={maxHistorySeconds}
-              dateFormatter={dateFormatter}
-              shortDateFormatter={shortDateFormatter}
-              onSettingChange={updateSetting}
-              onToggleSettings={() => setSettingsOpen((current) => !current)}
-              onToggleStats={() => setStatsOpen((current) => !current)}
+              trainingProgram={trainingProgram}
+              soundEnabled={settings.soundEnabled}
+              onBack={closeSettings}
               onOpenLocaleDialog={() => setIsLocaleDialogOpen(true)}
+              onToggleSound={() => updateSetting('soundEnabled', !settings.soundEnabled)}
               onInstall={() => void requestInstall()}
               onClearHistory={() => setIsClearHistoryDialogOpen(true)}
-              onStart={() => void startSession()}
+              onImportTrainingProgram={(next) => setTrainingProgram(sanitizeTrainingProgram(next))}
             />
-          ) : (
-            <RunScreen
-              messages={messages}
-              mode={mode}
-              phase={phase}
-              round={round}
-              rounds={settings.rounds}
-              secondsLeft={secondsLeft}
-              phaseProgress={phaseProgress}
-              roundProgress={roundProgress}
-              isWarning={isWarning}
-              runningLabel={runningLabel}
-              runningKicker={runningKicker}
-              onPause={pauseSession}
-              onResume={() => void resumeSession()}
-              onRestart={() => void startSession()}
-              onStop={resetSession}
-            />
-          )}
+          ) : null}
         </div>
       </div>
 

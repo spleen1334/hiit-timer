@@ -9,6 +9,14 @@ const asString = (value: unknown, fallback: string) => {
   return fallback;
 };
 
+const asTextSection = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return fallback;
+};
+
 const normalizeRestSeconds = (value: unknown, fallback: string) => {
   if (typeof value === 'number' && Number.isFinite(value)) {
     return String(Math.max(0, Math.round(value)));
@@ -88,7 +96,7 @@ export const sanitizeTrainingProgram = (value: unknown): TrainingProgram => {
 
   const warmup = Array.isArray(candidate.warmup)
     ? candidate.warmup.map((item) => asString(item, '')).filter((item) => item.length > 0).join('\n')
-    : asString(candidate.warmup, DEFAULT_PROGRAM.warmup);
+    : asTextSection(candidate.warmup, DEFAULT_PROGRAM.warmup);
   const workout = Array.isArray(candidate.workout)
     ? candidate.workout.map((item, index) => sanitizeWorkoutExercise(item ?? {}, index))
     : DEFAULT_PROGRAM.workout;
@@ -97,8 +105,8 @@ export const sanitizeTrainingProgram = (value: unknown): TrainingProgram => {
     : DEFAULT_PROGRAM.cardio;
   const cooldown = Array.isArray(candidate.cooldown)
     ? candidate.cooldown.map((item) => asString(item, '')).filter((item) => item.length > 0).join('\n')
-    : asString(candidate.cooldown, DEFAULT_PROGRAM.cooldown);
-  const notes = asString(candidate.notes, DEFAULT_PROGRAM.notes);
+    : asTextSection(candidate.cooldown, DEFAULT_PROGRAM.cooldown);
+  const notes = asTextSection(candidate.notes, DEFAULT_PROGRAM.notes);
 
   return {
     warmup,

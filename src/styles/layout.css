@@ -83,6 +83,7 @@
 }
 
 .headline {
+  position: relative;
   display: grid;
   place-items: center;
   border-radius: 1.8rem;

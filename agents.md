@@ -49,6 +49,8 @@ This app is mobile-only. Treat every task, layout choice, and UI decision as if 
 ## Product Behavior Guardrails
 
 - The app has two user modes: `Timer` and `Plan`.
-- While a timer session is running (not in setup), mode tabs are hidden; do not regress this behavior unless explicitly requested.
+- Settings are opened from global app chrome, not from inside Timer or Plan cards.
+- While a timer session is running (not in setup), mode tabs and Settings access are hidden; do not regress this behavior unless explicitly requested.
 - Plan mode includes five collapsible sections in this order: `Warmup`, `Workout`, `Cardio`, `Cooldown`, `Notes`.
+- Settings includes training plan JSON import/export for the plan only; do not mix timer settings, history, or language into plan import/export unless explicitly requested.
 - Plan interactions must remain touch-friendly: summary-first cards with explicit edit toggles, no hover-only critical flows.

@@ -1,18 +1,13 @@
 import type { Messages } from '../../i18n';
 import type { HistoryEntry, SessionTotals, TimerSettings } from '../../timer/types';
 import { AppMark } from '../shared/AppMark';
-import { SettingsPanel } from './SettingsPanel';
 import { StatsPanel } from './StatsPanel';
 import { Stepper } from './Stepper';
 
 type SetupScreenProps = {
   messages: Messages;
   settings: TimerSettings;
-  settingsOpen: boolean;
   statsOpen: boolean;
-  localeLabel: string;
-  isLocaleDialogOpen: boolean;
-  canInstall: boolean;
   sessionTotals: SessionTotals;
   latestHistory: HistoryEntry | null;
   recentHistory: HistoryEntry[];
@@ -20,22 +15,14 @@ type SetupScreenProps = {
   dateFormatter: Intl.DateTimeFormat;
   shortDateFormatter: Intl.DateTimeFormat;
   onSettingChange: <K extends keyof TimerSettings>(key: K, next: TimerSettings[K]) => void;
-  onToggleSettings: () => void;
   onToggleStats: () => void;
-  onOpenLocaleDialog: () => void;
-  onInstall: () => void;
-  onClearHistory: () => void;
   onStart: () => void;
 };
 
 export function SetupScreen({
   messages,
   settings,
-  settingsOpen,
   statsOpen,
-  localeLabel,
-  isLocaleDialogOpen,
-  canInstall,
   sessionTotals,
   latestHistory,
   recentHistory,
@@ -43,11 +30,7 @@ export function SetupScreen({
   dateFormatter,
   shortDateFormatter,
   onSettingChange,
-  onToggleSettings,
   onToggleStats,
-  onOpenLocaleDialog,
-  onInstall,
-  onClearHistory,
   onStart,
 }: SetupScreenProps) {
   return (
@@ -97,20 +80,6 @@ export function SetupScreen({
       </div>
 
       <div className="panel-toggle-row">
-        <SettingsPanel
-          messages={messages}
-          settings={settings}
-          isOpen={settingsOpen}
-          localeLabel={localeLabel}
-          isLocaleDialogOpen={isLocaleDialogOpen}
-          canInstall={canInstall}
-          onToggleOpen={onToggleSettings}
-          onOpenLocaleDialog={onOpenLocaleDialog}
-          onToggleSound={() => onSettingChange('soundEnabled', !settings.soundEnabled)}
-          onInstall={onInstall}
-          onClearHistory={onClearHistory}
-        />
-
         <StatsPanel
           messages={messages}
           isOpen={statsOpen}

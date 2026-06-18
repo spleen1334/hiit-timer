@@ -15,6 +15,9 @@ export type Messages = {
   soundHint: string;
   languageLabel: string;
   settingsLabel: string;
+  settingsTitle: string;
+  settingsSubtitle: string;
+  backLabel: string;
   editLabel: string;
   statsLabel: string;
   installAppLabel: string;
@@ -23,6 +26,11 @@ export type Messages = {
   clearHistoryLabel: string;
   clearHistoryConfirm: string;
   clearHistoryTitle: string;
+  exportPlanLabel: string;
+  importPlanLabel: string;
+  planImportHint: string;
+  planImportSuccess: string;
+  planImportError: string;
   cancelLabel: string;
   confirmLabel: string;
   onLabel: string;
@@ -111,6 +119,9 @@ export const MESSAGES: Record<Locale, Messages> = {
     soundHint: 'Beeps for countdowns and transitions.',
     languageLabel: 'Language',
     settingsLabel: 'Settings',
+    settingsTitle: 'Settings',
+    settingsSubtitle: 'Language, sound, history, and plan tools.',
+    backLabel: 'Back',
     editLabel: 'Edit',
     statsLabel: 'Session & history',
     installAppLabel: 'Install app',
@@ -120,6 +131,11 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Clear history',
     clearHistoryConfirm: 'Clear all successful workout history?',
     clearHistoryTitle: 'Clear saved history?',
+    exportPlanLabel: 'Export plan',
+    importPlanLabel: 'Import plan',
+    planImportHint: 'Use a training plan JSON file exported from this app.',
+    planImportSuccess: 'Training plan imported.',
+    planImportError: 'That JSON is not a valid training plan.',
     cancelLabel: 'Cancel',
     confirmLabel: 'Clear',
     onLabel: 'On',
@@ -197,6 +213,9 @@ export const MESSAGES: Record<Locale, Messages> = {
     soundHint: 'Звучни сигнали за одбројавање и прелазе.',
     languageLabel: 'Језик',
     settingsLabel: 'Подешавања',
+    settingsTitle: 'Подешавања',
+    settingsSubtitle: 'Језик, звук, историја и алати за план.',
+    backLabel: 'Назад',
     editLabel: 'Уреди',
     statsLabel: 'Сесија и историја',
     installAppLabel: 'Инсталирај апликацију',
@@ -206,6 +225,11 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Обриши историју',
     clearHistoryConfirm: 'Обрисати целу историју успешних тренинга?',
     clearHistoryTitle: 'Обрисати сачувану историју?',
+    exportPlanLabel: 'Извези план',
+    importPlanLabel: 'Увези план',
+    planImportHint: 'Користи JSON план тренинга извезен из ове апликације.',
+    planImportSuccess: 'План тренинга је увезен.',
+    planImportError: 'Тај JSON није важећи план тренинга.',
     cancelLabel: 'Откажи',
     confirmLabel: 'Обриши',
     onLabel: 'Укључено',
