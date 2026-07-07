@@ -2,9 +2,10 @@
 
 Mobile-first workout app built with React, TypeScript, and Vite.
 
-Pulse Trainer has two modes:
+Pulse Trainer has three modes:
 - `Timer`: HIIT timer with audio/vibration feedback, history, and PWA install support.
 - `Plan`: editable training program with warmup/workout/cardio/cooldown/notes, drag-and-drop ordering, and superset grouping.
+- `Body`: body-weight tracking with dated entries, body-fat data, BMI display, graph filters, and local history.
 
 Global Settings are available from the top app bar when no timer session is running.
 
@@ -40,13 +41,23 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
   - Add/remove cardio entries
 - Program and section visibility persist in `localStorage`
 
+### Body mode
+- Track one body measurement per day; saving the same date replaces that day
+- Store weight, optional body-fat percentage, and one shared height value for BMI
+- Graph weight over time with `1M`, `3M`, `6M`, `1Y`, and `All` filters
+- Body-fat graph series is optional and off by default
+- Tap/click graph points to inspect date, weight, and body-fat values
+- Recent entries are collapsed by default and load in small chunks
+- Body data persists in `localStorage`
+
 ### Settings
-- Opened from the global top app bar, outside Timer and Plan content
+- Opened from the global top app bar, outside Timer, Plan, and Body content
 - Hidden while a timer session is running
 - Language and sound controls
-- PWA install action and clear-history action
-- Export the current training plan as JSON
-- Import a valid training plan JSON file without changing timer settings, history, or language
+- PWA install action
+- Application Data import/export for app-owned `localStorage` data
+- Optional Google Drive export section, disabled until `VITE_GOOGLE_CLIENT_ID` is configured
+- Delete Data section with typed `YES` confirmations for timer history and body data
 
 ## Tech stack
 
@@ -65,7 +76,11 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
 - `src/timer/`
   Timer types/constants/math/platform helpers.
 - `src/plan/`
-  Plan types/constants/default program/sanitizers/import-export helpers.
+  Plan and body metrics types/constants/default program/sanitizers/helpers.
+- `src/appData.ts`
+  App-owned `localStorage` export/import helpers.
+- `src/googleDrive.ts`
+  Optional Google Drive export integration using Google Identity Services and Drive `drive.file` scope.
 - `src/styles/`
   Feature-split CSS (`base`, `layout`, `navigation`, `setup`, `settings`, `plan`, `run`, `dialogs`, `success`, `orientation`).
 - `public/manifest.webmanifest`
@@ -87,6 +102,23 @@ Plan:
 - `pulse-trainer-app-view`
 - `pulse-trainer-program`
 - `pulse-trainer-plan-section-visibility`
+
+Body:
+- `pulse-trainer-body-metrics`
+- `pulse-trainer-body-height`
+
+Google Drive:
+- `pulse-trainer-google-drive-folder-id`
+
+## Optional Google Drive export
+
+Google Drive export is disabled unless the app is built with a Google OAuth web client ID:
+
+```bash
+VITE_GOOGLE_CLIENT_ID=your-google-oauth-web-client-id
+```
+
+When configured, Settings can export app data to a `Pulse Trainer` folder in Google Drive using the least-privilege `drive.file` scope. Google Drive import is reserved for a future Picker/API-key integration.
 
 ## Development
 
