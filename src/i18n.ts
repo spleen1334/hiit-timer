@@ -2,6 +2,10 @@ export type Locale = 'en' | 'sr';
 
 export type Messages = {
   appName: string;
+  loadingSplashLabel: string;
+  loadingSplashHint: string;
+  timerHeaderTitle: string;
+  timerHeaderSubtitle: string;
   timerTabLabel: string;
   planTabLabel: string;
   portraitModeLabel: string;
@@ -156,6 +160,10 @@ export const isLocale = (value: string): value is Locale => LOCALE_OPTIONS.some(
 export const MESSAGES: Record<Locale, Messages> = {
   en: {
     appName: 'Pulse Trainer',
+    loadingSplashLabel: 'Preparing your session',
+    loadingSplashHint: 'Loading intervals and saved workout flow…',
+    timerHeaderTitle: 'Interval timer',
+    timerHeaderSubtitle: 'Fast work and rest sessions tuned for mobile setup.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
     portraitModeLabel: 'Use portrait mode',
@@ -300,6 +308,10 @@ export const MESSAGES: Record<Locale, Messages> = {
   },
   sr: {
     appName: 'Pulse Trainer',
+    loadingSplashLabel: 'Припрема сесије',
+    loadingSplashHint: 'Учитавање интервала и сачуваног тока тренинга…',
+    timerHeaderTitle: 'Интервални тајмер',
+    timerHeaderSubtitle: 'Брзе рад/одмор сесије прилагођене за мобилно подешавање.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
     portraitModeLabel: 'Користи усправни приказ',

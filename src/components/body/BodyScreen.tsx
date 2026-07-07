@@ -12,7 +12,8 @@ import {
   type BodyMetricDraft,
   type BodyMetricEntry,
 } from '../../body/bodyMetrics';
-import { BodyIcon, CogIcon } from '../shared/icons';
+import { BodyIcon, CogIcon, TimerStackIcon } from '../shared/icons';
+import { BodyMetricsIcon } from '../plan/PlanIcons';
 
 type BodyScreenProps = {
   messages: Messages;
@@ -596,14 +597,36 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   return (
     <section className="panel body-panel view-stage">
       <div className="headline body-headline">
-        <div className="body-title-wrap">
-          <span className="body-title-icon" aria-hidden="true">
-            <BodyIcon />
-          </span>
-          <div className="body-title-copy">
+        <div className="body-header-main">
+          <div className="body-header-copy">
+            <p className="screen-hero-kicker">{messages.bodyTabLabel}</p>
             <h1>{messages.bodyTitleLabel}</h1>
             <p>{messages.bodySubtitleLabel}</p>
           </div>
+
+          <div className="body-header-mark" aria-hidden="true">
+            <span className="body-header-ring body-header-ring-a" />
+            <span className="body-header-ring body-header-ring-b" />
+            <span className="body-header-ring body-header-ring-c" />
+            <span className="body-header-icon-shell">
+              <BodyIcon />
+            </span>
+          </div>
+        </div>
+
+        <div className="body-header-badges" aria-hidden="true">
+          <span className="body-header-chip">
+            <BodyIcon />
+            <span>{messages.weightLabel}</span>
+          </span>
+          <span className="body-header-chip">
+            <BodyMetricsIcon />
+            <span>{messages.bodyMetricsBmiLabel}</span>
+          </span>
+          <span className="body-header-chip">
+            <TimerStackIcon />
+            <span>{messages.bodyMetricsRecentLabel}</span>
+          </span>
         </div>
       </div>
 

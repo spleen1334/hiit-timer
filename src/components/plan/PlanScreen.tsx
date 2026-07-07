@@ -15,6 +15,7 @@ import {
 } from './PlanIcons';
 import { PlanSection } from './PlanSection';
 import { WorkoutList } from './WorkoutList';
+import { PlanIcon as AppPlanIcon } from '../shared/icons';
 
 type PlanScreenProps = {
   messages: Messages;
@@ -73,15 +74,29 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
   return (
     <section className="panel plan-panel">
       <div className="headline plan-headline">
-        <div className="plan-title-wrap">
-          <h1>{messages.planTitle}</h1>
-          <div className="plan-header-icons" aria-hidden="true">
-            <span className="plan-header-icon"><WarmupIcon /></span>
-            <span className="plan-header-icon"><WorkoutIcon /></span>
-            <span className="plan-header-icon"><CardioIcon /></span>
-            <span className="plan-header-icon"><CooldownIcon /></span>
-            <span className="plan-header-icon"><NotesIcon /></span>
+        <div className="plan-header-main">
+          <div className="plan-header-copy">
+            <p className="screen-hero-kicker">{messages.planTabLabel}</p>
+            <h1>{messages.planTitle}</h1>
+            <p>{messages.planSubtitle}</p>
           </div>
+
+          <div className="plan-header-mark" aria-hidden="true">
+            <span className="plan-header-ring plan-header-ring-a" />
+            <span className="plan-header-ring plan-header-ring-b" />
+            <span className="plan-header-ring plan-header-ring-c" />
+            <span className="plan-header-icon-shell">
+              <AppPlanIcon />
+            </span>
+          </div>
+        </div>
+
+        <div className="plan-header-icons" aria-hidden="true">
+          <span className="plan-header-icon"><WarmupIcon /></span>
+          <span className="plan-header-icon"><WorkoutIcon /></span>
+          <span className="plan-header-icon"><CardioIcon /></span>
+          <span className="plan-header-icon"><CooldownIcon /></span>
+          <span className="plan-header-icon"><NotesIcon /></span>
         </div>
       </div>
 

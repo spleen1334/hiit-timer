@@ -4,6 +4,7 @@ import { PlanScreen } from './components/plan/PlanScreen';
 import { RunScreen } from './components/run/RunScreen';
 import { SettingsScreen } from './components/settings/SettingsScreen';
 import { SetupScreen } from './components/setup/SetupScreen';
+import { SplashScreen } from './components/shared/SplashScreen';
 import { ModeTabs } from './components/shared/ModeTabs';
 import { OrientationLock } from './components/shared/OrientationLock';
 import { CogIcon } from './components/shared/icons';
@@ -36,6 +37,7 @@ function App() {
   const [isClearHistoryDialogOpen, setIsClearHistoryDialogOpen] = useState(false);
   const [isClearBodyDataDialogOpen, setIsClearBodyDataDialogOpen] = useState(false);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
+  const [splashPhase, setSplashPhase] = useState<'visible' | 'hiding' | 'hidden'>('visible');
 
   const feedback = useAudioFeedback(settings);
   const {
@@ -70,6 +72,20 @@ function App() {
     setIsLocaleDialogOpen(false);
     setIsInstallDialogOpen(false);
   }, [isSettingsOpen]);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const holdDuration = reduceMotion ? 800 : 2000;
+    const fadeDuration = reduceMotion ? 120 : 240;
+
+    const hideTimer = window.setTimeout(() => setSplashPhase('hiding'), holdDuration);
+    const cleanupTimer = window.setTimeout(() => setSplashPhase('hidden'), holdDuration + fadeDuration);
+
+    return () => {
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(cleanupTimer);
+    };
+  }, []);
 
   const messages = MESSAGES[locale];
   const localeMeta = LOCALE_OPTIONS.find((option) => option.id === locale) ?? LOCALE_OPTIONS[0];
@@ -169,6 +185,12 @@ function App() {
       <OrientationLock label={messages.portraitModeLabel} />
 
       <div className={`app-content ${appView === 'timer' && mode === 'complete' ? 'app-content-success' : ''}`}>
+        {splashPhase !== 'hidden' ? (
+          <SplashScreen
+            appName={messages.appName}
+            isHiding={splashPhase === 'hiding'}
+          />
+        ) : null}
         <div className="ambient ambient-one" />
         <div className="ambient ambient-two" />
         {appView === 'timer' && isWarning ? <div className={`warning-overlay warning-overlay-${phase}`} aria-hidden="true" /> : null}
