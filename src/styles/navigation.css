@@ -14,7 +14,7 @@
 }
 
 .mode-tab {
-  min-height: 3rem;
+  min-height: 3.15rem;
   display: grid;
   place-items: center;
   gap: 0.22rem;
@@ -39,15 +39,22 @@
 }
 
 .mode-tab-icon {
-  width: 1.02rem;
-  height: 1.02rem;
+  width: 1.28rem;
+  height: 1.28rem;
   display: grid;
   place-items: center;
+  filter: drop-shadow(0 0.22rem 0.45rem rgba(2, 6, 23, 0.28));
 }
 
 .mode-tab-icon .button-icon {
   width: 100%;
   height: 100%;
+  stroke-width: 2.35px;
+}
+
+.mode-tab.is-active .mode-tab-icon {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0.35rem 0.7rem rgba(127, 29, 29, 0.28));
 }
 
 .mode-tab-text {

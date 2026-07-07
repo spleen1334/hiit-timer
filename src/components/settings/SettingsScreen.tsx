@@ -103,18 +103,27 @@ export function SettingsScreen({
         </button>
 
         <div className="settings-hero">
-          <span className="settings-hero-icon" aria-hidden="true">
-            <CogIcon />
-          </span>
-          <div className="settings-hero-copy">
-            <h1>{messages.settingsTitle}</h1>
-            <p>{messages.settingsSubtitle}</p>
+          <div className="settings-hero-main">
+            <div className="settings-hero-copy">
+              <p className="screen-hero-kicker">{messages.settingsLabel}</p>
+              <h1>{messages.settingsTitle}</h1>
+              <p>{messages.settingsSubtitle}</p>
+            </div>
+
+            <div className="settings-hero-mark" aria-hidden="true">
+              <span className="settings-hero-ring settings-hero-ring-a" />
+              <span className="settings-hero-ring settings-hero-ring-b" />
+              <span className="settings-hero-ring settings-hero-ring-c" />
+              <span className="settings-hero-icon-shell">
+                <CogIcon />
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="settings-stack">
-        <section className="settings-card">
+        <section className="settings-card settings-card-language">
           <p className="settings-card-label">{messages.languageLabel}</p>
           <button
             type="button"
@@ -130,7 +139,7 @@ export function SettingsScreen({
           </button>
         </section>
 
-        <section className="settings-card">
+        <section className="settings-card settings-card-sound">
           <p className="settings-card-label">{messages.soundLabel}</p>
           <p className="settings-card-hint">{messages.soundHint}</p>
           <button
@@ -148,7 +157,7 @@ export function SettingsScreen({
         </section>
 
         {canInstall ? (
-          <section className="settings-card">
+          <section className="settings-card settings-card-install">
             <p className="settings-card-label">{messages.installAppLabel}</p>
             <button type="button" className="settings-button settings-button-primary" onClick={onInstall}>
               {messages.installAppLabel}
@@ -156,7 +165,7 @@ export function SettingsScreen({
           </section>
         ) : null}
 
-        <section className="settings-card">
+        <section className="settings-card settings-card-data">
           <p className="settings-card-label">{messages.applicationDataLabel}</p>
           <p className="settings-card-hint">{messages.dataImportHint}</p>
           <div className="settings-button-stack">
@@ -178,7 +187,7 @@ export function SettingsScreen({
           {importError ? <p className="settings-error">{importError}</p> : null}
         </section>
 
-        <section className="settings-card">
+        <section className="settings-card settings-card-drive">
           <p className="settings-card-label">{messages.googleDriveLabel}</p>
           <p className="settings-card-hint">
             {googleDriveConfigured ? messages.googleDriveHint : messages.googleDriveNotConfiguredHint}
