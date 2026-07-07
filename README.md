@@ -68,19 +68,23 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
 ## Project structure
 
 - `src/App.tsx`
-  Main app coordinator: mode routing, persistent state, dialogs, timer/plan screen wiring.
+  Main app coordinator: mode routing, dialogs, and screen wiring.
+- `src/app/`
+  App-level types such as the top-level view mode.
+- `src/data/`
+  App-owned `localStorage` keys, persisted state specs, import/export helpers, and destructive data operations.
+- `src/body/`
+  Body metrics domain helpers, defaults, sanitizers, and sorting.
 - `src/components/`
-  UI components split by domain (`setup`, `run`, `plan`, `settings`, `shared`).
+  UI components split by domain (`setup`, `run`, `plan`, `body`, `settings`, `shared`).
 - `src/hooks/`
   Stateful hooks (`useTimerSession`, `useAudioFeedback`, `useWakeLock`, `useInstallPrompt`, etc.).
+- `src/integrations/`
+  Optional external integrations, including Google Drive export.
 - `src/timer/`
   Timer types/constants/math/platform helpers.
 - `src/plan/`
-  Plan and body metrics types/constants/default program/sanitizers/helpers.
-- `src/appData.ts`
-  App-owned `localStorage` export/import helpers.
-- `src/googleDrive.ts`
-  Optional Google Drive export integration using Google Identity Services and Drive `drive.file` scope.
+  Training-plan types, default program, sanitizer, and import/export helpers.
 - `src/styles/`
   Feature-split CSS (`base`, `layout`, `navigation`, `setup`, `settings`, `plan`, `run`, `dialogs`, `success`, `orientation`).
 - `public/manifest.webmanifest`

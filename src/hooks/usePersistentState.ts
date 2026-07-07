@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { readLocalStorageItem, writeLocalStorageItem } from '../data/localStorage';
+import type { PersistedStateSpec } from '../data/persistedState';
 
 type PersistentStateOptions<T> = {
   parse: (stored: string) => T;
@@ -13,7 +15,7 @@ export function usePersistentState<T>(
   { parse, serialize = defaultSerialize }: PersistentStateOptions<T>,
 ) {
   const [value, setValue] = useState<T>(() => {
-    const stored = globalThis.localStorage?.getItem(key);
+    const stored = readLocalStorageItem(key);
 
     if (stored === null || stored === undefined) {
       return getFallback();
@@ -27,8 +29,12 @@ export function usePersistentState<T>(
   });
 
   useEffect(() => {
-    window.localStorage.setItem(key, serialize(value));
+    writeLocalStorageItem(key, serialize(value));
   }, [key, serialize, value]);
 
   return [value, setValue] as const;
+}
+
+export function usePersistedState<T>(spec: PersistedStateSpec<T>) {
+  return usePersistentState(spec.key, spec.fallback, spec);
 }

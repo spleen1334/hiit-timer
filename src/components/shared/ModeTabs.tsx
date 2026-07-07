@@ -1,4 +1,4 @@
-import type { AppViewMode } from '../../plan/types';
+import type { AppViewMode } from '../../app/types';
 import { BodyIcon, PlanIcon, TimerStackIcon } from './icons';
 
 type ModeTabsProps = {

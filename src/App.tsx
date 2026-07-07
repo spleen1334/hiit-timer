@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BodyScreen } from './components/plan/BodyMetricsSection';
+import { BodyScreen } from './components/body/BodyScreen';
 import { PlanScreen } from './components/plan/PlanScreen';
 import { RunScreen } from './components/run/RunScreen';
 import { SettingsScreen } from './components/settings/SettingsScreen';
@@ -9,61 +9,27 @@ import { OrientationLock } from './components/shared/OrientationLock';
 import { CogIcon } from './components/shared/icons';
 import { SuccessOverlay } from './components/shared/SuccessOverlay';
 import { InfoDialog, LocaleDialog, TypedConfirmDialog } from './components/shared/dialogs';
+import type { AppViewMode } from './app/types';
+import { clearBodyData as clearStoredBodyData, clearStoredTimerHistory } from './data/clearData';
+import { persistedState } from './data/persistedState';
 import { useAudioFeedback } from './hooks/useAudioFeedback';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
-import { usePersistentState } from './hooks/usePersistentState';
+import { usePersistedState } from './hooks/usePersistentState';
 import { useThemeColor } from './hooks/useThemeColor';
 import { useTimerSession } from './hooks/useTimerSession';
 import { useWakeLock } from './hooks/useWakeLock';
-import { DEFAULT_LOCALE, LOCALE_OPTIONS, MESSAGES, isLocale, type Locale } from './i18n';
-import { APP_VIEW_KEY, BODY_HEIGHT_KEY, BODY_METRICS_KEY, TRAINING_PROGRAM_KEY } from './plan/constants';
-import { DEFAULT_PROGRAM } from './plan/defaultProgram';
-import type { AppViewMode, TrainingProgram } from './plan/types';
-import { sanitizeTrainingProgram } from './plan/utils';
-import {
-  DEFAULT_SETTINGS,
-  HISTORY_KEY,
-  LOCALE_KEY,
-  SETTINGS_KEY,
-  STATS_PANEL_KEY,
-} from './timer/constants';
-import { getSessionTotals, readStoredBoolean, sanitizeHistory, sanitizeSettings } from './timer/math';
+import { LOCALE_OPTIONS, MESSAGES, type Locale } from './i18n';
+import type { TrainingProgram } from './plan/types';
+import { getSessionTotals, sanitizeSettings } from './timer/math';
 import type { Phase, TimerSettings } from './timer/types';
 
-const serializeString = (value: string) => value;
-const serializeBoolean = (value: boolean) => String(value);
-const isAppViewMode = (value: string): value is AppViewMode => value === 'timer' || value === 'plan' || value === 'body';
-
 function App() {
-  const [settings, setSettings] = usePersistentState<TimerSettings>(
-    SETTINGS_KEY,
-    () => sanitizeSettings(DEFAULT_SETTINGS),
-    {
-      parse: (stored) => sanitizeSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(stored) }),
-    },
-  );
-  const [locale, setLocale] = usePersistentState<Locale>(LOCALE_KEY, () => DEFAULT_LOCALE, {
-    parse: (stored) => (isLocale(stored) ? stored : DEFAULT_LOCALE),
-    serialize: serializeString,
-  });
-  const [history, setHistory] = usePersistentState(HISTORY_KEY, () => [], {
-    parse: (stored) => sanitizeHistory(JSON.parse(stored)),
-  });
-  const [statsOpen, setStatsOpen] = usePersistentState(STATS_PANEL_KEY, () => false, {
-    parse: (stored) => readStoredBoolean(stored, false),
-    serialize: serializeBoolean,
-  });
-  const [appView, setAppView] = usePersistentState<AppViewMode>(APP_VIEW_KEY, () => 'timer', {
-    parse: (stored) => (isAppViewMode(stored) ? stored : 'timer'),
-    serialize: serializeString,
-  });
-  const [trainingProgram, setTrainingProgram] = usePersistentState<TrainingProgram>(
-    TRAINING_PROGRAM_KEY,
-    () => DEFAULT_PROGRAM,
-    {
-      parse: (stored) => sanitizeTrainingProgram(JSON.parse(stored)),
-    },
-  );
+  const [settings, setSettings] = usePersistedState<TimerSettings>(persistedState.timerSettings);
+  const [locale, setLocale] = usePersistedState<Locale>(persistedState.locale);
+  const [history, setHistory] = usePersistedState(persistedState.timerHistory);
+  const [statsOpen, setStatsOpen] = usePersistedState(persistedState.statsPanelOpen);
+  const [appView, setAppView] = usePersistedState<AppViewMode>(persistedState.appView);
+  const [trainingProgram, setTrainingProgram] = usePersistedState<TrainingProgram>(persistedState.trainingProgram);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsReturnView, setSettingsReturnView] = useState<AppViewMode>('timer');
   const [isLocaleDialogOpen, setIsLocaleDialogOpen] = useState(false);
@@ -188,13 +154,12 @@ function App() {
 
   const clearHistory = useCallback(() => {
     setHistory([]);
-    globalThis.localStorage?.setItem(HISTORY_KEY, JSON.stringify([]));
+    clearStoredTimerHistory();
     setIsClearHistoryDialogOpen(false);
   }, [setHistory]);
 
   const clearBodyData = useCallback(() => {
-    globalThis.localStorage?.setItem(BODY_METRICS_KEY, JSON.stringify([]));
-    globalThis.localStorage?.removeItem(BODY_HEIGHT_KEY);
+    clearStoredBodyData();
     setIsClearBodyDataDialogOpen(false);
     window.location.reload();
   }, []);

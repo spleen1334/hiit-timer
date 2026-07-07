@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { persistedState } from '../../data/persistedState';
 import type { Messages } from '../../i18n';
-import { usePersistentState } from '../../hooks/usePersistentState';
-import { PLAN_SECTION_VISIBILITY_KEY } from '../../plan/constants';
+import { usePersistedState } from '../../hooks/usePersistentState';
 import type { CardioExercise, SectionVisibility, TrainingProgram } from '../../plan/types';
 import {
   CardioIcon,
@@ -22,38 +22,9 @@ type PlanScreenProps = {
   onProgramChange: (next: TrainingProgram) => void;
 };
 
-const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
-  warmup: true,
-  workout: true,
-  cardio: true,
-  cooldown: true,
-  notes: true,
-};
-
-const sanitizeSectionVisibility = (value: unknown): SectionVisibility => {
-  if (!value || typeof value !== 'object') {
-    return DEFAULT_SECTION_VISIBILITY;
-  }
-
-  const candidate = value as Partial<SectionVisibility>;
-  return {
-    warmup: candidate.warmup ?? true,
-    workout: candidate.workout ?? true,
-    cardio: candidate.cardio ?? true,
-    cooldown: candidate.cooldown ?? true,
-    notes: candidate.notes ?? true,
-  };
-};
-
 export function PlanScreen({ messages, program, onProgramChange }: PlanScreenProps) {
   const [editingCardioById, setEditingCardioById] = useState<Record<string, boolean>>({});
-  const [sections, setSections] = usePersistentState<SectionVisibility>(
-    PLAN_SECTION_VISIBILITY_KEY,
-    () => DEFAULT_SECTION_VISIBILITY,
-    {
-      parse: (stored) => sanitizeSectionVisibility(JSON.parse(stored)),
-    },
-  );
+  const [sections, setSections] = usePersistedState<SectionVisibility>(persistedState.planSectionVisibility);
 
   const updateCardio = (id: string, patch: Partial<CardioExercise>) => {
     onProgramChange({
