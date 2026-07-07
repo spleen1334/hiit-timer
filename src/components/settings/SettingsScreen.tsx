@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { downloadAppDataExport, importAppData } from '../../appData';
+import { exportAppDataToGoogleDrive, isGoogleDriveConfigured, preloadGoogleDriveAuth } from '../../googleDrive';
 import type { Messages } from '../../i18n';
 import { BackIcon, CogIcon } from '../shared/icons';
 
@@ -35,9 +36,31 @@ export function SettingsScreen({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
+  const [driveStatus, setDriveStatus] = useState<'idle' | 'exporting' | 'success' | 'error'>('idle');
+  const googleDriveConfigured = isGoogleDriveConfigured();
+
+  useEffect(() => {
+    if (!googleDriveConfigured) {
+      return;
+    }
+
+    void preloadGoogleDriveAuth().catch(() => {
+      // Export still reports the load failure when the user taps the Drive action.
+    });
+  }, [googleDriveConfigured]);
 
   const handleExport = () => {
     downloadAppDataExport();
+  };
+
+  const handleGoogleDriveExport = async () => {
+    setDriveStatus('exporting');
+    try {
+      await exportAppDataToGoogleDrive();
+      setDriveStatus('success');
+    } catch {
+      setDriveStatus('error');
+    }
   };
 
   const handleImportClick = () => {
@@ -153,6 +176,29 @@ export function SettingsScreen({
           />
           {importSuccess ? <p className="settings-success">{messages.dataImportSuccess}</p> : null}
           {importError ? <p className="settings-error">{importError}</p> : null}
+        </section>
+
+        <section className="settings-card">
+          <p className="settings-card-label">{messages.googleDriveLabel}</p>
+          <p className="settings-card-hint">
+            {googleDriveConfigured ? messages.googleDriveHint : messages.googleDriveNotConfiguredHint}
+          </p>
+          <div className="settings-button-stack">
+            <button
+              type="button"
+              className="settings-button settings-button-primary"
+              onClick={() => void handleGoogleDriveExport()}
+              disabled={!googleDriveConfigured || driveStatus === 'exporting'}
+            >
+              {driveStatus === 'exporting' ? messages.googleDriveExportingLabel : messages.googleDriveExportLabel}
+            </button>
+            <button type="button" className="settings-button settings-button-secondary" disabled>
+              {messages.googleDriveImportLabel}
+            </button>
+          </div>
+          <p className="settings-card-hint">{messages.googleDriveImportComingSoon}</p>
+          {driveStatus === 'success' ? <p className="settings-success">{messages.googleDriveExportSuccess}</p> : null}
+          {driveStatus === 'error' ? <p className="settings-error">{messages.googleDriveExportError}</p> : null}
         </section>
 
         <section className="settings-card settings-delete-card">

@@ -32,6 +32,15 @@ export type Messages = {
   dataImportHint: string;
   dataImportSuccess: string;
   dataImportError: string;
+  googleDriveLabel: string;
+  googleDriveHint: string;
+  googleDriveNotConfiguredHint: string;
+  googleDriveExportLabel: string;
+  googleDriveExportingLabel: string;
+  googleDriveImportLabel: string;
+  googleDriveImportComingSoon: string;
+  googleDriveExportSuccess: string;
+  googleDriveExportError: string;
   deleteDataLabel: string;
   clearTimerHistoryLabel: string;
   clearTimerHistoryTitle: string;
@@ -178,6 +187,15 @@ export const MESSAGES: Record<Locale, Messages> = {
     dataImportHint: 'Export or import all Pulse Trainer app data saved on this device.',
     dataImportSuccess: 'Application data imported. Reloading…',
     dataImportError: 'That JSON is not valid Pulse Trainer app data.',
+    googleDriveLabel: 'Google Drive',
+    googleDriveHint: 'Save a full app data backup to your Google Drive Pulse Trainer folder.',
+    googleDriveNotConfiguredHint: 'Google Drive export is not configured for this build.',
+    googleDriveExportLabel: 'Export to Google Drive',
+    googleDriveExportingLabel: 'Exporting…',
+    googleDriveImportLabel: 'Import from Google Drive',
+    googleDriveImportComingSoon: 'Import requires future Picker/API key setup and is not available yet.',
+    googleDriveExportSuccess: 'Exported to Google Drive.',
+    googleDriveExportError: 'Google Drive export failed. Try again later.',
     deleteDataLabel: 'Delete Data',
     clearTimerHistoryLabel: 'Clear Timer History',
     clearTimerHistoryTitle: 'Clear timer history?',
@@ -313,6 +331,15 @@ export const MESSAGES: Record<Locale, Messages> = {
     dataImportHint: 'Извези или увези све Pulse Trainer податке сачуване на овом уређају.',
     dataImportSuccess: 'Подаци апликације су увезени. Поновно учитавање…',
     dataImportError: 'Тај JSON није важећи извоз Pulse Trainer података.',
+    googleDriveLabel: 'Google Drive',
+    googleDriveHint: 'Сачувај резервну копију свих података апликације у Pulse Trainer фасциклу на Google Drive-у.',
+    googleDriveNotConfiguredHint: 'Google Drive извоз није подешен у овој верзији.',
+    googleDriveExportLabel: 'Извези на Google Drive',
+    googleDriveExportingLabel: 'Извоз у току…',
+    googleDriveImportLabel: 'Увези са Google Drive-а',
+    googleDriveImportComingSoon: 'Увоз захтева будуће Picker/API key подешавање и још није доступан.',
+    googleDriveExportSuccess: 'Извезено на Google Drive.',
+    googleDriveExportError: 'Google Drive извоз није успео. Покушај поново касније.',
     deleteDataLabel: 'Брисање података',
     clearTimerHistoryLabel: 'Обриши историју тајмера',
     clearTimerHistoryTitle: 'Обрисати историју тајмера?',

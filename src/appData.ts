@@ -2,6 +2,7 @@ import {
   APP_VIEW_KEY,
   BODY_HEIGHT_KEY,
   BODY_METRICS_KEY,
+  GOOGLE_DRIVE_FOLDER_ID_KEY,
   PLAN_SECTION_VISIBILITY_KEY,
   TRAINING_PROGRAM_KEY,
 } from './plan/constants';
@@ -17,6 +18,7 @@ export const APP_LOCAL_STORAGE_KEYS = [
   PLAN_SECTION_VISIBILITY_KEY,
   BODY_METRICS_KEY,
   BODY_HEIGHT_KEY,
+  GOOGLE_DRIVE_FOLDER_ID_KEY,
 ] as const;
 
 type AppLocalStorageKey = (typeof APP_LOCAL_STORAGE_KEYS)[number];
@@ -30,7 +32,13 @@ type AppDataExport = {
 const isAppKey = (key: string): key is AppLocalStorageKey =>
   (APP_LOCAL_STORAGE_KEYS as readonly string[]).includes(key);
 
-export function downloadAppDataExport() {
+const padDatePart = (value: number) => String(value).padStart(2, '0');
+
+export function getAppDataExportFilename(date = new Date()) {
+  return `pulse-trainer-${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}-${padDatePart(date.getHours())}-${padDatePart(date.getMinutes())}.json`;
+}
+
+export function buildAppDataExport(date = new Date()): AppDataExport {
   const localStorageData: AppDataExport['localStorage'] = {};
 
   for (const key of APP_LOCAL_STORAGE_KEYS) {
@@ -40,16 +48,23 @@ export function downloadAppDataExport() {
     }
   }
 
-  const payload: AppDataExport = {
+  return {
     version: 1,
-    exportedAt: new Date().toISOString(),
+    exportedAt: date.toISOString(),
     localStorage: localStorageData,
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+}
+
+export function serializeCurrentAppDataExport() {
+  return JSON.stringify(buildAppDataExport(), null, 2);
+}
+
+export function downloadAppDataExport() {
+  const blob = new Blob([serializeCurrentAppDataExport()], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `pulse-trainer-data-${new Date().toISOString().slice(0, 10)}.json`;
+  link.download = getAppDataExportFilename();
   document.body.append(link);
   link.click();
   link.remove();
