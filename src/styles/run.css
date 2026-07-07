@@ -1,30 +1,122 @@
 .run-meta {
+  position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-  padding: 1rem 1.1rem;
+  padding: 0.95rem 0.95rem 1rem;
   border-radius: 1.6rem;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(10, 18, 33, 0.5);
+  background:
+    radial-gradient(circle at 16% 16%, rgba(251, 113, 133, 0.22), transparent 24%),
+    radial-gradient(circle at 84% 20%, rgba(56, 189, 248, 0.18), transparent 24%),
+    linear-gradient(135deg, rgba(10, 18, 33, 0.82), rgba(15, 23, 42, 0.88));
   backdrop-filter: blur(16px);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.run-meta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 14px),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 58%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.run-meta-main,
+.run-meta-copy,
+.run-meta-mark {
+  position: relative;
+  z-index: 1;
+}
+
+.run-meta-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .run-meta-copy {
   flex: 1;
   display: grid;
-  justify-items: center;
-  text-align: center;
+  justify-items: start;
+  text-align: left;
+}
+
+.run-meta-mark {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.run-meta-icon-shell {
+  position: relative;
+  z-index: 2;
+  width: 4.25rem;
+  height: 4.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.16), rgba(59, 130, 246, 0.18));
+  box-shadow:
+    0 0 0 10px rgba(255, 255, 255, 0.04),
+    0 18px 34px rgba(37, 99, 235, 0.18);
+}
+
+.run-meta-icon-shell .button-icon {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
+.run-meta-ring {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  border-radius: 999px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.run-meta-ring-a {
+  width: 5.8rem;
+  height: 5.8rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  animation: run-spin 12s linear infinite;
+}
+
+.run-meta-ring-b {
+  width: 6.9rem;
+  height: 6.9rem;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  animation: run-spin-reverse 16s linear infinite;
+}
+
+.run-meta-ring-c {
+  width: 8rem;
+  height: 8rem;
+  border: 1px solid rgba(250, 204, 21, 0.12);
+  opacity: 0.72;
+  animation: run-pulse 3.4s ease-in-out infinite;
 }
 
 .round-pill {
   margin: 0;
   padding: 0.65rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.14);
   color: rgba(248, 250, 252, 0.96);
   font-weight: 700;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -210,6 +302,15 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.9rem;
+  padding: 0.85rem;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 16% 16%, rgba(251, 113, 133, 0.08), transparent 24%),
+    radial-gradient(circle at 84% 20%, rgba(56, 189, 248, 0.08), transparent 24%),
+    rgba(10, 18, 33, 0.52);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2);
 }
 
 .secondary-button {
@@ -302,4 +403,45 @@
   background:
     radial-gradient(circle at 50% 50%, rgba(254, 240, 138, 0.42), transparent 36%),
     linear-gradient(180deg, rgba(250, 204, 21, 0.22), rgba(96, 165, 250, 0.12));
+}
+
+@keyframes run-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes run-spin-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes run-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.98);
+    opacity: 0.34;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 0.82;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run-meta-ring-a,
+  .run-meta-ring-b,
+  .run-meta-ring-c {
+    animation: none;
+  }
 }
