@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { BodyScreen } from './components/plan/BodyMetricsSection';
 import { PlanScreen } from './components/plan/PlanScreen';
 import { RunScreen } from './components/run/RunScreen';
 import { SettingsScreen } from './components/settings/SettingsScreen';
@@ -31,7 +32,7 @@ import type { Phase, TimerSettings } from './timer/types';
 
 const serializeString = (value: string) => value;
 const serializeBoolean = (value: boolean) => String(value);
-const isAppViewMode = (value: string): value is AppViewMode => value === 'timer' || value === 'plan';
+const isAppViewMode = (value: string): value is AppViewMode => value === 'timer' || value === 'plan' || value === 'body';
 
 function App() {
   const [settings, setSettings] = usePersistentState<TimerSettings>(
@@ -145,7 +146,13 @@ function App() {
     return 'screen-delay';
   }, [mode, phase]);
   const isTimerSessionActive = mode !== 'setup';
-  const screenTone = isSettingsOpen ? 'screen-settings' : isTimerSessionActive || appView === 'timer' ? timerScreenTone : 'screen-plan';
+  const screenTone = isSettingsOpen
+    ? 'screen-settings'
+    : isTimerSessionActive || appView === 'timer'
+      ? timerScreenTone
+      : appView === 'plan'
+        ? 'screen-plan'
+        : 'screen-body';
   const phaseCopy: Record<Exclude<Phase, 'complete'>, { title: string; kicker: string }> = {
     delay: { title: messages.phaseDelayTitle, kicker: messages.phaseDelayKicker },
     active: { title: messages.phaseActiveTitle, kicker: messages.phaseActiveKicker },
@@ -198,6 +205,7 @@ function App() {
               <ModeTabs
                 timerLabel={messages.timerTabLabel}
                 planLabel={messages.planTabLabel}
+                bodyLabel={messages.bodyTabLabel}
                 value={appView}
                 onChange={setAppView}
               />
@@ -240,6 +248,11 @@ function App() {
                 messages={messages}
                 program={trainingProgram}
                 onProgramChange={setTrainingProgram}
+              />
+            ) : appView === 'body' ? (
+              <BodyScreen
+                messages={messages}
+                locale={localeMeta.intl}
               />
             ) : (
               <SetupScreen

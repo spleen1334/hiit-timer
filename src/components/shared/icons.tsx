@@ -127,6 +127,35 @@ export function TimerStackIcon() {
   );
 }
 
+export function PlanIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">
+      <rect x="5" y="4" width="14" height="16" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 8H16M8 12H16M8 16H13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="7" cy="8" r="1" fill="currentColor" />
+      <circle cx="7" cy="12" r="1" fill="currentColor" />
+      <circle cx="7" cy="16" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function BodyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">
+      <path
+        d="M6 9.2C6 7.4 7.5 6 9.3 6H14.7C16.5 6 18 7.4 18 9.2V15.2C18 16.9 16.6 18.4 14.9 18.4H9.1C7.4 18.4 6 16.9 6 15.2V9.2Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path d="M8.5 12.2C8.5 10.6 9.9 9.4 11.7 9.4C13.6 9.4 15 10.6 15 12.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M11.7 12.2L13.2 10.8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="11.7" cy="12.2" r="0.9" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function HistoryIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">

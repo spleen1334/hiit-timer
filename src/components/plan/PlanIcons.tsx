@@ -116,6 +116,17 @@ export function CardioIcon() {
   );
 }
 
+export function BodyMetricsIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="plan-mini-icon" aria-hidden="true">
+      <path d="M4.2 5.2H15.8C16.5 5.2 17 5.8 17 6.4V13.6C17 14.2 16.5 14.8 15.8 14.8H4.2C3.5 14.8 3 14.2 3 13.6V6.4C3 5.8 3.5 5.2 4.2 5.2Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M6.2 10.4C6.2 8.2 8.1 6.8 10 6.8C11.9 6.8 13.8 8.2 13.8 10.4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M10 10.4L12.2 8.3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <circle cx="10" cy="10.4" r="0.9" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function ExerciseFieldIcon() {
   return (
     <svg viewBox="0 0 20 20" className="plan-mini-icon plan-inline-icon" aria-hidden="true">

@@ -62,11 +62,37 @@ export type Messages = {
   settingsUsedLabel: string;
   planTitle: string;
   planSubtitle: string;
+  bodyTabLabel: string;
+  bodyTitleLabel: string;
+  bodySubtitleLabel: string;
   workoutSectionLabel: string;
   warmupSectionLabel: string;
   cardioSectionLabel: string;
   cooldownSectionLabel: string;
   notesSectionLabel: string;
+  bodyMetricsSectionLabel: string;
+  bodyMetricsCurrentLabel: string;
+  bodyMetricsRecentLabel: string;
+  bodyMetricsLoadMoreLabel: string;
+  bodyMetricsChartLabel: string;
+  bodyMetricsChartHintLabel: string;
+  bodyMetricsEmptyLabel: string;
+  bodyMetricsChartEmptyLabel: string;
+  bodyMetricsDateLabel: string;
+  bodyMetricsDateHint: string;
+  bodyMetricsBodyFatLabel: string;
+  bodyMetricsBodyFatToggleLabel: string;
+  bodyMetricsHeightLabel: string;
+  bodyMetricsHeightHint: string;
+  bodyMetricsBmiLabel: string;
+  bodyMetricsSaveLabel: string;
+  bodyMetricsUpdateLabel: string;
+  bodyMetricsRemoveLabel: string;
+  bodyMetricsRange1MonthLabel: string;
+  bodyMetricsRange3MonthsLabel: string;
+  bodyMetricsRange6MonthsLabel: string;
+  bodyMetricsRange1YearLabel: string;
+  bodyMetricsRangeAllLabel: string;
   notesInputLabel: string;
   warmupInputLabel: string;
   cooldownInputLabel: string;
@@ -167,11 +193,37 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsUsedLabel: 'Settings used',
     planTitle: 'Training Program',
     planSubtitle: 'Build supersets by dragging one exercise card onto another.',
+    bodyTabLabel: 'Body',
+    bodyTitleLabel: 'Body',
+    bodySubtitleLabel: 'Weight, fat, history.',
     workoutSectionLabel: 'Workout',
     warmupSectionLabel: 'Warmup',
     cardioSectionLabel: 'Cardio',
     cooldownSectionLabel: 'Cooldown',
     notesSectionLabel: 'Notes',
+    bodyMetricsSectionLabel: 'Body weight',
+    bodyMetricsCurrentLabel: 'Latest',
+    bodyMetricsRecentLabel: 'Recent entries',
+    bodyMetricsLoadMoreLabel: 'Load more',
+    bodyMetricsChartLabel: 'Filter',
+    bodyMetricsChartHintLabel: 'Tap a dot',
+    bodyMetricsEmptyLabel: 'No entries yet.',
+    bodyMetricsChartEmptyLabel: 'No data in range.',
+    bodyMetricsDateLabel: 'Date',
+    bodyMetricsDateHint: 'Today. Saving the same date replaces that day.',
+    bodyMetricsBodyFatLabel: 'Body fat %',
+    bodyMetricsBodyFatToggleLabel: 'Body fat',
+    bodyMetricsHeightLabel: 'Height (cm)',
+    bodyMetricsHeightHint: 'Used for BMI.',
+    bodyMetricsBmiLabel: 'BMI',
+    bodyMetricsSaveLabel: 'Save',
+    bodyMetricsUpdateLabel: 'Update',
+    bodyMetricsRemoveLabel: 'Remove',
+    bodyMetricsRange1MonthLabel: '1M',
+    bodyMetricsRange3MonthsLabel: '3M',
+    bodyMetricsRange6MonthsLabel: '6M',
+    bodyMetricsRange1YearLabel: '1Y',
+    bodyMetricsRangeAllLabel: 'All',
     notesInputLabel: 'Session notes',
     warmupInputLabel: 'Warmup details',
     cooldownInputLabel: 'Cooldown details',
@@ -261,11 +313,37 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsUsedLabel: 'Коришћена подешавања',
     planTitle: 'План тренинга',
     planSubtitle: 'Направи суперсет превлачењем једне вежбе на другу.',
+    bodyTabLabel: 'Тело',
+    bodyTitleLabel: 'Тело',
+    bodySubtitleLabel: 'Тежина, масти, историја.',
     workoutSectionLabel: 'Главни тренинг',
     warmupSectionLabel: 'Загревање',
     cardioSectionLabel: 'Кардио',
     cooldownSectionLabel: 'Хлађење',
     notesSectionLabel: 'Белешке',
+    bodyMetricsSectionLabel: 'Телесна тежина',
+    bodyMetricsCurrentLabel: 'Последњи унос',
+    bodyMetricsRecentLabel: 'Недавни уноси',
+    bodyMetricsLoadMoreLabel: 'Учитај још',
+    bodyMetricsChartLabel: 'Филтер',
+    bodyMetricsChartHintLabel: 'Додирни тачку',
+    bodyMetricsEmptyLabel: 'Нема уноса.',
+    bodyMetricsChartEmptyLabel: 'Нема података у опсегу.',
+    bodyMetricsDateLabel: 'Датум',
+    bodyMetricsDateHint: 'Данас. Снимање истог датума замењује тај дан.',
+    bodyMetricsBodyFatLabel: 'Проценат масти',
+    bodyMetricsBodyFatToggleLabel: 'Масти',
+    bodyMetricsHeightLabel: 'Висина (см)',
+    bodyMetricsHeightHint: 'За BMI.',
+    bodyMetricsBmiLabel: 'BMI',
+    bodyMetricsSaveLabel: 'Сачувај',
+    bodyMetricsUpdateLabel: 'Ажурирај',
+    bodyMetricsRemoveLabel: 'Уклони',
+    bodyMetricsRange1MonthLabel: '1M',
+    bodyMetricsRange3MonthsLabel: '3M',
+    bodyMetricsRange6MonthsLabel: '6M',
+    bodyMetricsRange1YearLabel: '1Y',
+    bodyMetricsRangeAllLabel: 'Све',
     notesInputLabel: 'Белешке за сесију',
     warmupInputLabel: 'Детаљи загревања',
     cooldownInputLabel: 'Детаљи хлађења',
