@@ -355,7 +355,7 @@
   display: grid;
   gap: 0;
   padding-top: 0.14rem;
-  padding-left: 1.06rem;
+  padding-left: 1.42rem;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -364,12 +364,13 @@
 
 .superset-left-line {
   position: absolute;
-  left: 0.44rem;
+  left: 0.78rem;
   top: 0.35rem;
   bottom: 0.35rem;
   width: 2px;
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(74, 222, 128, 0.7), rgba(56, 189, 248, 0.4));
+  z-index: 1;
 }
 
 .superset-member {
@@ -384,8 +385,8 @@
 .superset-link-icon {
   appearance: none;
   position: absolute;
-  left: 0.25rem;
-  top: 0.1rem;
+  left: -0.64rem;
+  top: 1.98rem;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 999px;
@@ -398,8 +399,8 @@
   padding: 0;
   cursor: pointer;
   touch-action: manipulation;
-  z-index: 4;
-  transform: translateY(-50%);
+  z-index: 6;
+  transform: translate(-50%, -50%);
 }
 
 .superset-link-icon .plan-mini-icon {
