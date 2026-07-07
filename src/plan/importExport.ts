@@ -1,5 +1,5 @@
 import type { TrainingProgram } from './types';
-import { sanitizeTrainingProgram } from './utils';
+import { sanitizeTrainingProgram } from './sanitizeProgram';
 
 export const TRAINING_PROGRAM_EXPORT_VERSION = 1;
 export const TRAINING_PROGRAM_EXPORT_FILENAME = 'pulse-trainer-plan.json';

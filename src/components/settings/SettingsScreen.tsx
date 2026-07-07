@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { downloadAppDataExport, importAppData } from '../../appData';
-import { exportAppDataToGoogleDrive, isGoogleDriveConfigured, preloadGoogleDriveAuth } from '../../googleDrive';
+import { downloadAppDataExport, importAppData } from '../../data/appDataExport';
+import { exportAppDataToGoogleDrive, isGoogleDriveConfigured, preloadGoogleDriveAuth } from '../../integrations/googleDrive';
 import type { Messages } from '../../i18n';
 import { BackIcon, CogIcon } from '../shared/icons';
 

@@ -1,5 +1,6 @@
-import { getAppDataExportFilename, serializeCurrentAppDataExport } from './appData';
-import { GOOGLE_DRIVE_FOLDER_ID_KEY } from './plan/constants';
+import { getAppDataExportFilename, serializeCurrentAppDataExport } from '../data/appDataExport';
+import { readLocalStorageItem, removeLocalStorageItem, writeLocalStorageItem } from '../data/localStorage';
+import { GOOGLE_DRIVE_FOLDER_ID_KEY } from '../data/storageKeys';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 const DRIVE_FILE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
@@ -138,12 +139,12 @@ const createPulseTrainerFolder = async (accessToken: string) => {
   if (!data.id) {
     throw new Error('Google Drive folder was not created.');
   }
-  globalThis.localStorage?.setItem(GOOGLE_DRIVE_FOLDER_ID_KEY, data.id);
+  writeLocalStorageItem(GOOGLE_DRIVE_FOLDER_ID_KEY, data.id);
   return data.id;
 };
 
 const ensurePulseTrainerFolder = async (accessToken: string) => {
-  const storedFolderId = globalThis.localStorage?.getItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
+  const storedFolderId = readLocalStorageItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
   if (storedFolderId) {
     return storedFolderId;
   }
@@ -181,7 +182,7 @@ export async function exportAppDataToGoogleDrive() {
   }
 
   const accessToken = await requestAccessToken();
-  const storedFolderId = globalThis.localStorage?.getItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
+  const storedFolderId = readLocalStorageItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
   const folderId = await ensurePulseTrainerFolder(accessToken);
 
   try {
@@ -191,7 +192,7 @@ export async function exportAppDataToGoogleDrive() {
       throw error;
     }
 
-    globalThis.localStorage?.removeItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
+    removeLocalStorageItem(GOOGLE_DRIVE_FOLDER_ID_KEY);
     const nextFolderId = await createPulseTrainerFolder(accessToken);
     await uploadJsonFile(accessToken, nextFolderId);
   }

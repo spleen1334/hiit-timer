@@ -1,21 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
+import { persistedState } from '../../data/persistedState';
 import type { Messages } from '../../i18n';
-import { usePersistentState } from '../../hooks/usePersistentState';
-import { BODY_HEIGHT_KEY, BODY_METRICS_KEY } from '../../plan/constants';
+import { usePersistedState, usePersistentState } from '../../hooks/usePersistentState';
 import {
   calculateBodyMetricBmi,
   createBodyMetricDraft,
-  createDemoBodyMetricEntries,
   getLatestBodyMetricHeight,
   parseBodyMetricNumber,
-  sanitizeBodyMetricEntries,
   sortBodyMetricEntries,
   type BodyMetricDraft,
   type BodyMetricEntry,
-} from '../../plan/bodyMetrics';
-import { GearIcon } from './PlanIcons';
-import { BodyIcon } from '../shared/icons';
+} from '../../body/bodyMetrics';
+import { BodyIcon, CogIcon } from '../shared/icons';
 
 type BodyScreenProps = {
   messages: Messages;
@@ -194,23 +191,13 @@ const sampleChartEntries = (entries: ChartEntry[]) => {
     .map((index) => entries[index]);
 };
 
-const getBodyMetricFallbackEntries = () => {
-  const stored = globalThis.localStorage?.getItem(BODY_METRICS_KEY);
-
-  return stored == null ? createDemoBodyMetricEntries() : [];
-};
-
 export function BodyScreen({ messages, locale }: BodyScreenProps) {
-  const [entries, setEntries] = usePersistentState<BodyMetricEntry[]>(BODY_METRICS_KEY, getBodyMetricFallbackEntries, {
-    parse: (stored) => sanitizeBodyMetricEntries(JSON.parse(stored)),
-  });
+  const [entries, setEntries] = usePersistedState<BodyMetricEntry[]>(persistedState.bodyMetricEntries);
+  const bodyHeightSpec = persistedState.bodyHeight;
   const [bodyHeight, setBodyHeight] = usePersistentState<string>(
-    BODY_HEIGHT_KEY,
+    bodyHeightSpec.key,
     () => getLatestBodyMetricHeight(entries),
-    {
-      parse: (stored) => stored.trim(),
-      serialize: (value) => value,
-    },
+    bodyHeightSpec,
   );
   const [isEditingHeight, setIsEditingHeight] = useState(() => !bodyHeight.trim());
   const [heightDraft, setHeightDraft] = useState(() => bodyHeight.trim());
@@ -799,7 +786,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
 
                         <div className="body-metrics-entry-actions">
                           <button type="button" className="body-metrics-edit-button" onClick={() => beginEdit(entry)}>
-                            <GearIcon />
+                            <CogIcon />
                             <span>{messages.editLabel}</span>
                           </button>
                           <button

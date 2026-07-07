@@ -1,5 +1,3 @@
-export type AppViewMode = 'timer' | 'plan' | 'body';
-
 export type BodyPartIcon =
   | 'back'
   | 'legs'

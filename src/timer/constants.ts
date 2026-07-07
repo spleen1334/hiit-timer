@@ -1,9 +1,5 @@
 import type { TimerSettings } from './types';
 
-export const SETTINGS_KEY = 'pulse-hiit-settings';
-export const LOCALE_KEY = 'pulse-hiit-locale';
-export const HISTORY_KEY = 'pulse-hiit-history';
-export const STATS_PANEL_KEY = 'pulse-hiit-stats-panel-open';
 export const MAX_HISTORY = 12;
 export const TICK_MS = 100;
 
