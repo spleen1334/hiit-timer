@@ -26,6 +26,21 @@ export type Messages = {
   clearHistoryLabel: string;
   clearHistoryConfirm: string;
   clearHistoryTitle: string;
+  applicationDataLabel: string;
+  exportDataLabel: string;
+  importDataLabel: string;
+  dataImportHint: string;
+  dataImportSuccess: string;
+  dataImportError: string;
+  deleteDataLabel: string;
+  clearTimerHistoryLabel: string;
+  clearTimerHistoryTitle: string;
+  clearTimerHistoryConfirm: string;
+  clearBodyDataLabel: string;
+  clearBodyDataTitle: string;
+  clearBodyDataConfirm: string;
+  typeYesInstruction: string;
+  deleteLabel: string;
   exportPlanLabel: string;
   importPlanLabel: string;
   planImportHint: string;
@@ -146,7 +161,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     languageLabel: 'Language',
     settingsLabel: 'Settings',
     settingsTitle: 'Settings',
-    settingsSubtitle: 'Language, sound, history, and plan tools.',
+    settingsSubtitle: 'Language, sound, and app data tools.',
     backLabel: 'Back',
     editLabel: 'Edit',
     statsLabel: 'Session & history',
@@ -157,6 +172,21 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Clear history',
     clearHistoryConfirm: 'Clear all successful workout history?',
     clearHistoryTitle: 'Clear saved history?',
+    applicationDataLabel: 'Application Data',
+    exportDataLabel: 'Export Data',
+    importDataLabel: 'Import Data',
+    dataImportHint: 'Export or import all Pulse Trainer app data saved on this device.',
+    dataImportSuccess: 'Application data imported. Reloading…',
+    dataImportError: 'That JSON is not valid Pulse Trainer app data.',
+    deleteDataLabel: 'Delete Data',
+    clearTimerHistoryLabel: 'Clear Timer History',
+    clearTimerHistoryTitle: 'Clear timer history?',
+    clearTimerHistoryConfirm: 'This deletes saved timer workout history only. Timer settings will be kept.',
+    clearBodyDataLabel: 'Clear Body Data History',
+    clearBodyDataTitle: 'Clear body data?',
+    clearBodyDataConfirm: 'This deletes body metrics history and saved height from this device.',
+    typeYesInstruction: 'Type YES to confirm.',
+    deleteLabel: 'Delete',
     exportPlanLabel: 'Export plan',
     importPlanLabel: 'Import plan',
     planImportHint: 'Use a training plan JSON file exported from this app.',
@@ -266,7 +296,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     languageLabel: 'Језик',
     settingsLabel: 'Подешавања',
     settingsTitle: 'Подешавања',
-    settingsSubtitle: 'Језик, звук, историја и алати за план.',
+    settingsSubtitle: 'Језик, звук и алати за податке апликације.',
     backLabel: 'Назад',
     editLabel: 'Уреди',
     statsLabel: 'Сесија и историја',
@@ -277,6 +307,21 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Обриши историју',
     clearHistoryConfirm: 'Обрисати целу историју успешних тренинга?',
     clearHistoryTitle: 'Обрисати сачувану историју?',
+    applicationDataLabel: 'Подаци апликације',
+    exportDataLabel: 'Извези податке',
+    importDataLabel: 'Увези податке',
+    dataImportHint: 'Извези или увези све Pulse Trainer податке сачуване на овом уређају.',
+    dataImportSuccess: 'Подаци апликације су увезени. Поновно учитавање…',
+    dataImportError: 'Тај JSON није важећи извоз Pulse Trainer података.',
+    deleteDataLabel: 'Брисање података',
+    clearTimerHistoryLabel: 'Обриши историју тајмера',
+    clearTimerHistoryTitle: 'Обрисати историју тајмера?',
+    clearTimerHistoryConfirm: 'Ово брише само сачувану историју тренинга тајмера. Подешавања тајмера остају.',
+    clearBodyDataLabel: 'Обриши историју тела',
+    clearBodyDataTitle: 'Обрисати податке о телу?',
+    clearBodyDataConfirm: 'Ово брише историју телесних мерења и сачувану висину са овог уређаја.',
+    typeYesInstruction: 'Упиши YES за потврду.',
+    deleteLabel: 'Обриши',
     exportPlanLabel: 'Извези план',
     importPlanLabel: 'Увези план',
     planImportHint: 'Користи JSON план тренинга извезен из ове апликације.',

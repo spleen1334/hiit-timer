@@ -8,7 +8,7 @@ import { ModeTabs } from './components/shared/ModeTabs';
 import { OrientationLock } from './components/shared/OrientationLock';
 import { CogIcon } from './components/shared/icons';
 import { SuccessOverlay } from './components/shared/SuccessOverlay';
-import { ConfirmDialog, InfoDialog, LocaleDialog } from './components/shared/dialogs';
+import { InfoDialog, LocaleDialog, TypedConfirmDialog } from './components/shared/dialogs';
 import { useAudioFeedback } from './hooks/useAudioFeedback';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
 import { usePersistentState } from './hooks/usePersistentState';
@@ -16,7 +16,7 @@ import { useThemeColor } from './hooks/useThemeColor';
 import { useTimerSession } from './hooks/useTimerSession';
 import { useWakeLock } from './hooks/useWakeLock';
 import { DEFAULT_LOCALE, LOCALE_OPTIONS, MESSAGES, isLocale, type Locale } from './i18n';
-import { APP_VIEW_KEY, TRAINING_PROGRAM_KEY } from './plan/constants';
+import { APP_VIEW_KEY, BODY_HEIGHT_KEY, BODY_METRICS_KEY, TRAINING_PROGRAM_KEY } from './plan/constants';
 import { DEFAULT_PROGRAM } from './plan/defaultProgram';
 import type { AppViewMode, TrainingProgram } from './plan/types';
 import { sanitizeTrainingProgram } from './plan/utils';
@@ -68,6 +68,7 @@ function App() {
   const [settingsReturnView, setSettingsReturnView] = useState<AppViewMode>('timer');
   const [isLocaleDialogOpen, setIsLocaleDialogOpen] = useState(false);
   const [isClearHistoryDialogOpen, setIsClearHistoryDialogOpen] = useState(false);
+  const [isClearBodyDataDialogOpen, setIsClearBodyDataDialogOpen] = useState(false);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
 
   const feedback = useAudioFeedback(settings);
@@ -187,8 +188,16 @@ function App() {
 
   const clearHistory = useCallback(() => {
     setHistory([]);
+    globalThis.localStorage?.setItem(HISTORY_KEY, JSON.stringify([]));
     setIsClearHistoryDialogOpen(false);
   }, [setHistory]);
+
+  const clearBodyData = useCallback(() => {
+    globalThis.localStorage?.setItem(BODY_METRICS_KEY, JSON.stringify([]));
+    globalThis.localStorage?.removeItem(BODY_HEIGHT_KEY);
+    setIsClearBodyDataDialogOpen(false);
+    window.location.reload();
+  }, []);
 
   return (
     <main className={`app-shell ${screenTone} ${appView === 'timer' && isWarning ? 'screen-warning' : ''}`}>
@@ -278,14 +287,13 @@ function App() {
               localeLabel={localeMeta.label}
               isLocaleDialogOpen={isLocaleDialogOpen}
               canInstall={canInstall}
-              trainingProgram={trainingProgram}
               soundEnabled={settings.soundEnabled}
               onBack={closeSettings}
               onOpenLocaleDialog={() => setIsLocaleDialogOpen(true)}
               onToggleSound={() => updateSetting('soundEnabled', !settings.soundEnabled)}
               onInstall={() => void requestInstall()}
-              onClearHistory={() => setIsClearHistoryDialogOpen(true)}
-              onImportTrainingProgram={(next) => setTrainingProgram(sanitizeTrainingProgram(next))}
+              onClearTimerHistory={() => setIsClearHistoryDialogOpen(true)}
+              onClearBodyData={() => setIsClearBodyDataDialogOpen(true)}
             />
           ) : null}
         </div>
@@ -293,13 +301,25 @@ function App() {
 
       {appView === 'timer' && mode === 'complete' ? <SuccessOverlay onDismiss={resetSession} returnLabel={messages.returnHomeLabel} /> : null}
       {isClearHistoryDialogOpen ? (
-        <ConfirmDialog
-          title={messages.clearHistoryTitle}
-          body={messages.clearHistoryConfirm}
+        <TypedConfirmDialog
+          title={messages.clearTimerHistoryTitle}
+          body={messages.clearTimerHistoryConfirm}
+          instruction={messages.typeYesInstruction}
           cancelLabel={messages.cancelLabel}
-          confirmLabel={messages.confirmLabel}
+          confirmLabel={messages.deleteLabel}
           onCancel={() => setIsClearHistoryDialogOpen(false)}
           onConfirm={clearHistory}
+        />
+      ) : null}
+      {isClearBodyDataDialogOpen ? (
+        <TypedConfirmDialog
+          title={messages.clearBodyDataTitle}
+          body={messages.clearBodyDataConfirm}
+          instruction={messages.typeYesInstruction}
+          cancelLabel={messages.cancelLabel}
+          confirmLabel={messages.deleteLabel}
+          onCancel={() => setIsClearBodyDataDialogOpen(false)}
+          onConfirm={clearBodyData}
         />
       ) : null}
       {isInstallDialogOpen ? (

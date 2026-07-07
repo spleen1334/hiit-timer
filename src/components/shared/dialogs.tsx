@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { LOCALE_OPTIONS, type Locale } from '../../i18n';
 
 export function ConfirmDialog({
@@ -27,6 +28,50 @@ export function ConfirmDialog({
             {cancelLabel}
           </button>
           <button type="button" className="dialog-button dialog-button-danger" onClick={onConfirm}>
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TypedConfirmDialog({
+  title,
+  body,
+  instruction,
+  cancelLabel,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+}: {
+  title: string;
+  body: string;
+  instruction: string;
+  cancelLabel: string;
+  confirmLabel: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const [confirmation, setConfirmation] = useState('');
+  const canConfirm = confirmation === 'YES';
+
+  return (
+    <div className="dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="typed-confirm-dialog-title">
+      <div className="dialog-card">
+        <p id="typed-confirm-dialog-title" className="dialog-title">
+          {title}
+        </p>
+        <p className="dialog-body">{body}</p>
+        <label className="dialog-confirm-field">
+          <span>{instruction}</span>
+          <input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoCapitalize="characters" />
+        </label>
+        <div className="dialog-actions">
+          <button type="button" className="dialog-button dialog-button-secondary" onClick={onCancel}>
+            {cancelLabel}
+          </button>
+          <button type="button" className="dialog-button dialog-button-danger" onClick={onConfirm} disabled={!canConfirm}>
             {confirmLabel}
           </button>
         </div>

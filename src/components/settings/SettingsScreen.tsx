@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
+import { downloadAppDataExport, importAppData } from '../../appData';
 import type { Messages } from '../../i18n';
-import type { TrainingProgram } from '../../plan/types';
-import { downloadTrainingProgramExport, parseTrainingProgramImport } from '../../plan/importExport';
 import { BackIcon, CogIcon } from '../shared/icons';
 
 const MAX_IMPORT_FILE_SIZE_BYTES = 1_000_000;
@@ -11,14 +10,13 @@ type SettingsScreenProps = {
   localeLabel: string;
   isLocaleDialogOpen: boolean;
   canInstall: boolean;
-  trainingProgram: TrainingProgram;
   soundEnabled: boolean;
   onBack: () => void;
   onOpenLocaleDialog: () => void;
   onToggleSound: () => void;
   onInstall: () => void;
-  onClearHistory: () => void;
-  onImportTrainingProgram: (next: unknown) => void;
+  onClearTimerHistory: () => void;
+  onClearBodyData: () => void;
 };
 
 export function SettingsScreen({
@@ -26,21 +24,20 @@ export function SettingsScreen({
   localeLabel,
   isLocaleDialogOpen,
   canInstall,
-  trainingProgram,
   soundEnabled,
   onBack,
   onOpenLocaleDialog,
   onToggleSound,
   onInstall,
-  onClearHistory,
-  onImportTrainingProgram,
+  onClearTimerHistory,
+  onClearBodyData,
 }: SettingsScreenProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
 
   const handleExport = () => {
-    downloadTrainingProgramExport(trainingProgram);
+    downloadAppDataExport();
   };
 
   const handleImportClick = () => {
@@ -56,16 +53,16 @@ export function SettingsScreen({
 
     try {
       if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
-        throw new Error('Training plan import file is too large.');
+        throw new Error('App data import file is too large.');
       }
 
       const rawJson = await file.text();
-      const imported = parseTrainingProgramImport(rawJson);
-      onImportTrainingProgram(imported);
+      importAppData(rawJson);
       setImportError(null);
       setImportSuccess(true);
+      window.setTimeout(() => window.location.reload(), 250);
     } catch {
-      setImportError(messages.planImportError);
+      setImportError(messages.dataImportError);
       setImportSuccess(false);
     } finally {
       if (fileInputRef.current) {
@@ -137,21 +134,14 @@ export function SettingsScreen({
         ) : null}
 
         <section className="settings-card">
-          <p className="settings-card-label">{messages.clearHistoryLabel}</p>
-          <button type="button" className="clear-history-button" onClick={onClearHistory}>
-            {messages.clearHistoryLabel}
-          </button>
-        </section>
-
-        <section className="settings-card">
-          <p className="settings-card-label">{messages.planTitle}</p>
-          <p className="settings-card-hint">{messages.planImportHint}</p>
+          <p className="settings-card-label">{messages.applicationDataLabel}</p>
+          <p className="settings-card-hint">{messages.dataImportHint}</p>
           <div className="settings-button-stack">
             <button type="button" className="settings-button settings-button-primary" onClick={handleExport}>
-              {messages.exportPlanLabel}
+              {messages.exportDataLabel}
             </button>
             <button type="button" className="settings-button settings-button-secondary" onClick={handleImportClick}>
-              {messages.importPlanLabel}
+              {messages.importDataLabel}
             </button>
           </div>
           <input
@@ -161,8 +151,20 @@ export function SettingsScreen({
             className="settings-file-input"
             onChange={(event) => void handleImportFile(event.target.files?.[0] ?? null)}
           />
-          {importSuccess ? <p className="settings-success">{messages.planImportSuccess}</p> : null}
+          {importSuccess ? <p className="settings-success">{messages.dataImportSuccess}</p> : null}
           {importError ? <p className="settings-error">{importError}</p> : null}
+        </section>
+
+        <section className="settings-card settings-delete-card">
+          <p className="settings-card-label">{messages.deleteDataLabel}</p>
+          <div className="settings-button-stack">
+            <button type="button" className="settings-button settings-button-danger" onClick={onClearTimerHistory}>
+              {messages.clearTimerHistoryLabel}
+            </button>
+            <button type="button" className="settings-button settings-button-danger" onClick={onClearBodyData}>
+              {messages.clearBodyDataLabel}
+            </button>
+          </div>
         </section>
       </div>
     </section>
