@@ -44,6 +44,10 @@
     grid-template-columns: 1fr;
   }
 
+  .stopwatch-inline-controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
   .run-meta {
     grid-template-columns: 1fr;
   }

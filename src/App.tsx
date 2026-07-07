@@ -16,16 +16,18 @@ import { persistedState } from './data/persistedState';
 import { useAudioFeedback } from './hooks/useAudioFeedback';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
 import { usePersistedState } from './hooks/usePersistentState';
+import { useStopwatchSession } from './hooks/useStopwatchSession';
 import { useThemeColor } from './hooks/useThemeColor';
 import { useTimerSession } from './hooks/useTimerSession';
 import { useWakeLock } from './hooks/useWakeLock';
 import { LOCALE_OPTIONS, MESSAGES, type Locale } from './i18n';
 import type { TrainingProgram } from './plan/types';
 import { getSessionTotals, sanitizeSettings } from './timer/math';
-import type { Phase, TimerSettings } from './timer/types';
+import type { Phase, TimerSettings, TimerToolMode } from './timer/types';
 
 function App() {
   const [settings, setSettings] = usePersistedState<TimerSettings>(persistedState.timerSettings);
+  const [timerTool, setTimerTool] = usePersistedState<TimerToolMode>(persistedState.timerTool);
   const [locale, setLocale] = usePersistedState<Locale>(persistedState.locale);
   const [history, setHistory] = usePersistedState(persistedState.timerHistory);
   const [statsOpen, setStatsOpen] = usePersistedState(persistedState.statsPanelOpen);
@@ -57,12 +59,21 @@ function App() {
     onComplete: setHistory,
     feedback,
   });
+  const {
+    mode: stopwatchMode,
+    elapsedMs,
+    startSession: startStopwatch,
+    pauseSession: pauseStopwatch,
+    resumeSession: resumeStopwatch,
+    resetSession: resetStopwatch,
+  } = useStopwatchSession();
   const { canInstall, requestInstall } = useInstallPrompt({
     onFallbackPrompt: useCallback(() => setIsInstallDialogOpen(true), []),
   });
 
-  useWakeLock(mode);
-  useThemeColor(mode, phase);
+  const activeTimerMode = timerTool === 'hiit' ? mode : stopwatchMode;
+  useWakeLock(activeTimerMode);
+  useThemeColor(timerTool, activeTimerMode, phase);
 
   useEffect(() => {
     if (isSettingsOpen) {
@@ -110,6 +121,10 @@ function App() {
     [localeMeta.intl],
   );
   const timerScreenTone = useMemo(() => {
+    if (timerTool === 'stopwatch') {
+      return 'screen-stopwatch';
+    }
+
     if (mode === 'setup') {
       return 'screen-setup';
     }
@@ -127,8 +142,9 @@ function App() {
     }
 
     return 'screen-delay';
-  }, [mode, phase]);
-  const isTimerSessionActive = mode !== 'setup';
+  }, [timerTool, mode, phase]);
+  const isHiitSessionActive = timerTool === 'hiit' && mode !== 'setup';
+  const isTimerSessionActive = activeTimerMode !== 'setup';
   const screenTone = isSettingsOpen
     ? 'screen-settings'
     : isTimerSessionActive || appView === 'timer'
@@ -143,8 +159,8 @@ function App() {
   };
   const runningLabel = phase === 'complete' ? messages.phaseDoneTitle : phaseCopy[phase].title;
   const runningKicker = phase === 'complete' ? messages.phaseDoneKicker : phaseCopy[phase].kicker;
-  const showModeTabs = !isSettingsOpen && !isTimerSessionActive;
-  const showGlobalSettingsButton = !isSettingsOpen && !isTimerSessionActive;
+  const showModeTabs = !isSettingsOpen && !isHiitSessionActive;
+  const showGlobalSettingsButton = !isSettingsOpen && !isHiitSessionActive;
 
   const openSettings = useCallback(
     (returnView: AppViewMode) => {
@@ -221,14 +237,15 @@ function App() {
 
         <div key={appView} className="view-stage">
           <div hidden={isSettingsOpen}>
-            {isTimerSessionActive ? (
+            {isTimerSessionActive && timerTool === 'hiit' ? (
               <RunScreen
                 messages={messages}
-                mode={mode}
+                mode={activeTimerMode}
                 phase={phase}
                 round={round}
                 rounds={settings.rounds}
                 secondsLeft={secondsLeft}
+                elapsedMs={elapsedMs}
                 phaseProgress={phaseProgress}
                 roundProgress={roundProgress}
                 isWarning={isWarning}
@@ -253,6 +270,7 @@ function App() {
             ) : (
               <SetupScreen
                 messages={messages}
+                timerTool={timerTool}
                 settings={settings}
                 statsOpen={statsOpen}
                 sessionTotals={sessionTotals}
@@ -261,9 +279,22 @@ function App() {
                 maxHistorySeconds={maxHistorySeconds}
                 dateFormatter={dateFormatter}
                 shortDateFormatter={shortDateFormatter}
+                stopwatchMode={stopwatchMode}
+                stopwatchElapsedMs={elapsedMs}
                 onSettingChange={updateSetting}
                 onToggleStats={() => setStatsOpen((current) => !current)}
-                onStart={() => void startSession()}
+                onToolChange={setTimerTool}
+                onStart={() => {
+                  if (timerTool === 'hiit') {
+                    void startSession();
+                    return;
+                  }
+
+                  void startStopwatch();
+                }}
+                onStopwatchPause={pauseStopwatch}
+                onStopwatchResume={resumeStopwatch}
+                onStopwatchReset={resetStopwatch}
               />
             )}
           </div>

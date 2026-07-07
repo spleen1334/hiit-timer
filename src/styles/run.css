@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'DSEG7ClassicMini';
+  src: url('../assets/fonts/DSEG7ClassicMini-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 .run-meta {
   position: relative;
   width: 100%;
@@ -112,6 +120,41 @@
   animation: run-pulse 3.4s ease-in-out infinite;
 }
 
+.run-meta-stopwatch {
+  background:
+    radial-gradient(circle at 16% 16%, rgba(56, 189, 248, 0.24), transparent 24%),
+    radial-gradient(circle at 84% 20%, rgba(250, 204, 21, 0.12), transparent 18%),
+    linear-gradient(135deg, rgba(5, 23, 41, 0.9), rgba(7, 40, 52, 0.92));
+  border-color: rgba(125, 211, 252, 0.2);
+}
+
+.run-meta-stopwatch .run-meta-icon-shell {
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(125, 211, 252, 0.2), rgba(14, 165, 233, 0.24));
+  box-shadow:
+    0 0 0 10px rgba(255, 255, 255, 0.04),
+    0 18px 34px rgba(14, 165, 233, 0.18);
+}
+
+.stopwatch-run-title {
+  margin: 0.18rem 0 0;
+  font-size: 1.2rem;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+
+.stopwatch-run-subtitle {
+  margin: 0.3rem 0 0;
+  color: rgba(226, 232, 240, 0.74);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.stopwatch-run-pill {
+  width: fit-content;
+}
+
 .round-pill {
   margin: 0;
   padding: 0.65rem 1rem;
@@ -205,6 +248,236 @@
     linear-gradient(180deg, rgba(148, 163, 184, 0.26), rgba(15, 23, 42, 0.86)),
     rgba(15, 23, 42, 0.82);
   border-color: rgba(203, 213, 225, 0.38);
+}
+
+.timer-card-stopwatch {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  min-height: clamp(19.5rem, 43vh, 24rem);
+  padding: 0.55rem;
+  border-color: rgba(248, 113, 113, 0.24);
+  background:
+    radial-gradient(circle at 50% 10%, rgba(248, 113, 113, 0.22), transparent 30%),
+    radial-gradient(circle at 16% 84%, rgba(251, 113, 133, 0.14), transparent 18%),
+    linear-gradient(180deg, rgba(3, 16, 27, 0.98), rgba(4, 34, 48, 0.98));
+  box-shadow:
+    0 28px 72px rgba(2, 6, 23, 0.42),
+    inset 0 0 0 1px rgba(248, 113, 113, 0.08);
+}
+
+.timer-card-stopwatch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 14px),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 58%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.timer-card-stopwatch::after {
+  content: '';
+  position: absolute;
+  inset: 0.7rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.timer-card-stopwatch.is-running {
+  box-shadow:
+    0 30px 78px rgba(2, 6, 23, 0.42),
+    0 0 36px rgba(248, 113, 113, 0.18),
+    inset 0 0 0 1px rgba(248, 113, 113, 0.12);
+}
+
+.timer-card-stopwatch.is-paused {
+  filter: saturate(0.92) brightness(0.96);
+}
+
+.stopwatch-card-shell {
+  position: absolute;
+  inset: -0.65rem;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.stopwatch-card-orbit,
+.stopwatch-card-dial {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+}
+
+.stopwatch-card-orbit {
+  border-radius: 999px;
+}
+
+.stopwatch-card-orbit-a {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(248, 113, 113, 0.16);
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+.stopwatch-card-orbit-b {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.stopwatch-card-dial {
+  width: min(118%, 21rem);
+  aspect-ratio: 1 / 0.92;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 2.05rem;
+  border: 1px solid rgba(191, 219, 254, 0.16);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 60%),
+    repeating-conic-gradient(from -90deg, rgba(255, 255, 255, 0.17) 0 1deg, transparent 1deg 6deg),
+    linear-gradient(180deg, rgba(4, 15, 26, 0.96), rgba(7, 42, 58, 0.98));
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 26px 56px rgba(2, 6, 23, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.stopwatch-card-dial::before {
+  content: '';
+  position: absolute;
+  inset: 0.85rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 0.35rem rgba(255, 255, 255, 0.02);
+}
+
+.stopwatch-card-dial::after {
+  content: '';
+  position: absolute;
+  inset: 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 113, 113, 0.1);
+  box-shadow:
+    0 0 0 0.7rem rgba(248, 113, 113, 0.03),
+    inset 0 0 0 0.25rem rgba(255, 255, 255, 0.02);
+}
+
+.timer-card-content.stopwatch-card-content {
+  z-index: 1;
+  width: min(100%, 16.4rem);
+  gap: 0.2rem;
+  padding: 0.78rem 0.72rem 0.74rem;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(248, 113, 113, 0.16), transparent 28%),
+    radial-gradient(circle at 78% 20%, rgba(56, 189, 248, 0.14), transparent 24%),
+    radial-gradient(circle at 50% 110%, rgba(250, 204, 21, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(6, 15, 24, 0.92), rgba(9, 24, 35, 0.94));
+  box-shadow:
+    0 18px 32px rgba(2, 6, 23, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+}
+
+.timer-card-content.stopwatch-card-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 34%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 12px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.timer-card-content.stopwatch-card-content::after {
+  content: '';
+  position: absolute;
+  inset: 0.4rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+.stopwatch-card-hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.05rem;
+  height: 72%;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(var(--stopwatch-angle));
+  transition: transform 100ms linear;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(252, 165, 165, 0.92) 36%, rgba(248, 113, 113, 0.96) 72%, rgba(185, 28, 28, 0.88));
+  box-shadow:
+    0 0 0 0.48rem rgba(248, 113, 113, 0.1),
+    0 0 26px rgba(248, 113, 113, 0.56);
+}
+
+.stopwatch-card-hand::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0.32rem;
+  transform: translateX(-50%);
+  width: 1.12rem;
+  height: 1.12rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.9), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(248, 113, 113, 0.66));
+  opacity: 0.9;
+}
+
+.stopwatch-card-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.55rem;
+  height: 1.55rem;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.1) 34%, transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 113, 113, 0.16));
+  box-shadow:
+    0 0 0 0.4rem rgba(255, 255, 255, 0.05),
+    0 0 18px rgba(248, 113, 113, 0.26);
+}
+
+.countdown.stopwatch-countdown {
+  width: 100%;
+  max-width: 100%;
+  font-family: 'DSEG7ClassicMini', 'SF Mono', 'Menlo', 'Monaco', 'Cascadia Mono', 'Segoe UI Mono', ui-monospace, monospace;
+  font-weight: 700;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  text-align: center;
+  font-size: clamp(2.5rem, 10.2vw, 3.5rem);
+  letter-spacing: 0.02em;
+  line-height: 0.98;
+  font-variant-numeric: tabular-nums;
+  color: #defbff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.22);
+  -webkit-text-stroke: 0;
+}
+
+.stopwatch-card-content .phase-name,
+.stopwatch-card-content .countdown {
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.22);
 }
 
 .timer-card-progress {
@@ -313,10 +586,40 @@
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2);
 }
 
+.stopwatch-inline-controls {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  padding: 0.72rem;
+}
+
+.stopwatch-inline-controls .action-button {
+  min-height: 3.35rem;
+  padding-inline: 0.55rem;
+}
+
+.stopwatch-inline-controls .action-button-icon-only {
+  width: 3.35rem;
+  min-width: 3.35rem;
+  padding: 0;
+  border-radius: 999px;
+}
+
 .secondary-button {
   background: linear-gradient(180deg, #fde68a, #facc15);
   color: #422006;
   box-shadow: 0 16px 34px rgba(250, 204, 21, 0.28);
+}
+
+.action-button-pause {
+  background: linear-gradient(180deg, #fde68a, #facc15);
+  color: #422006;
+  box-shadow: 0 16px 34px rgba(250, 204, 21, 0.28);
+}
+
+.action-button-resume {
+  background: linear-gradient(180deg, #86efac, #22c55e);
+  color: #052e16;
+  box-shadow: 0 16px 34px rgba(34, 197, 94, 0.28);
 }
 
 .ghost-button {
@@ -324,6 +627,22 @@
   border: 1px solid rgba(254, 202, 202, 0.22);
   color: #fff5f5;
   box-shadow: 0 16px 34px rgba(220, 38, 38, 0.26);
+}
+
+.action-button-danger {
+  background: linear-gradient(180deg, #f87171, #dc2626);
+  border: 1px solid rgba(254, 202, 202, 0.22);
+  color: #fff5f5;
+  box-shadow: 0 16px 34px rgba(220, 38, 38, 0.26);
+}
+
+.action-button:disabled {
+  cursor: default;
+  color: rgba(226, 232, 240, 0.55);
+  background: linear-gradient(180deg, rgba(71, 85, 105, 0.74), rgba(51, 65, 85, 0.82));
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: none;
+  opacity: 0.72;
 }
 
 .action-button {
@@ -405,6 +724,23 @@
     linear-gradient(180deg, rgba(250, 204, 21, 0.22), rgba(96, 165, 250, 0.12));
 }
 
+.screen-stopwatch {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(56, 189, 248, 0.34), transparent 28%),
+    radial-gradient(circle at 82% 22%, rgba(250, 204, 21, 0.16), transparent 22%),
+    radial-gradient(circle at 50% 100%, rgba(8, 145, 178, 0.14), transparent 36%),
+    linear-gradient(180deg, #03111d, #0a4a5b 48%, #06283a 100%);
+}
+
+.setup-panel-stopwatch-active {
+  justify-content: flex-start;
+  gap: 0.62rem;
+}
+
+.setup-panel-stopwatch-active .run-controls {
+  margin-top: 0;
+}
+
 @keyframes run-spin {
   from {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -438,10 +774,34 @@
   }
 }
 
+@keyframes stopwatch-ring {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes stopwatch-ring-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .run-meta-ring-a,
   .run-meta-ring-b,
   .run-meta-ring-c {
     animation: none;
+  }
+
+  .stopwatch-card-hand {
+    transition: none;
   }
 }

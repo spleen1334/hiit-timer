@@ -158,6 +158,342 @@
   gap: 0.42rem;
 }
 
+.setup-headline-stopwatch {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.34), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(250, 204, 21, 0.18), transparent 22%),
+    linear-gradient(135deg, rgba(9, 23, 45, 0.98), rgba(6, 34, 50, 0.98));
+}
+
+.stopwatch-echo {
+  position: relative;
+  width: 100%;
+  min-height: clamp(4.75rem, 10vh, 6.1rem);
+  border-radius: 1.45rem;
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  background:
+    radial-gradient(circle at 18% 24%, rgba(56, 189, 248, 0.2), transparent 22%),
+    radial-gradient(circle at 82% 30%, rgba(250, 204, 21, 0.1), transparent 18%),
+    linear-gradient(135deg, rgba(9, 23, 45, 0.88), rgba(6, 34, 50, 0.9));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.stopwatch-echo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 13px),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 56%);
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.stopwatch-echo::after {
+  content: '';
+  position: absolute;
+  inset: 0.45rem;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.stopwatch-echo-glow,
+.stopwatch-echo-ring,
+.stopwatch-echo-core {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.stopwatch-echo-glow {
+  width: 7rem;
+  height: 4rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 68%);
+  filter: blur(10px);
+  opacity: 0.82;
+}
+
+.stopwatch-echo-ring {
+  border-radius: 999px;
+}
+
+.stopwatch-echo-ring-a {
+  width: 4.2rem;
+  height: 4.2rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.stopwatch-echo-ring-b {
+  width: 5.25rem;
+  height: 5.25rem;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.stopwatch-echo-ring-c {
+  width: 6.35rem;
+  height: 6.35rem;
+  border: 1px solid rgba(250, 204, 21, 0.12);
+  opacity: 0.68;
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.stopwatch-echo-core {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.92), transparent 34%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.92), rgba(14, 165, 233, 0.92));
+  box-shadow:
+    0 0 0 0.45rem rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(56, 189, 248, 0.22);
+}
+
+.setup-panel-stopwatch {
+  justify-content: flex-start;
+  gap: 0.62rem;
+}
+
+.setup-panel-stopwatch-active {
+  justify-content: flex-start;
+  gap: 0.62rem;
+}
+
+.setup-panel-stopwatch .setup-headline {
+  gap: 0.56rem;
+  padding: 0.64rem;
+}
+
+.setup-panel-stopwatch .setup-header-main {
+  gap: 0.58rem;
+}
+
+.setup-panel-stopwatch .setup-header-copy h1 {
+  margin-top: 0.08rem;
+  font-size: 1.06rem;
+}
+
+.setup-panel-stopwatch .setup-header-copy p:last-child {
+  margin-top: 0.22rem;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.setup-panel-stopwatch .setup-header-mark {
+  width: 4.35rem;
+  height: 4.35rem;
+}
+
+.setup-panel-stopwatch .setup-header-icon {
+  width: 3.6rem;
+  height: 3.6rem;
+}
+
+.setup-panel-stopwatch .setup-header-ring-a {
+  width: 4.9rem;
+  height: 4.9rem;
+}
+
+.setup-panel-stopwatch .setup-header-ring-b {
+  width: 5.7rem;
+  height: 5.7rem;
+}
+
+.setup-panel-stopwatch .setup-header-ring-c {
+  width: 6.5rem;
+  height: 6.5rem;
+}
+
+.setup-headline-stopwatch .setup-header-icon {
+  background:
+    radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(125, 211, 252, 0.94), rgba(14, 165, 233, 0.94));
+  box-shadow:
+    0 0 0 10px rgba(255, 255, 255, 0.05),
+    0 18px 28px rgba(14, 165, 233, 0.24);
+}
+
+.setup-headline-stopwatch .setup-header-ring-a {
+  border-color: rgba(125, 211, 252, 0.26);
+}
+
+.setup-headline-stopwatch .setup-header-ring-b {
+  border-color: rgba(250, 204, 21, 0.18);
+}
+
+.setup-headline-stopwatch .setup-header-ring-c {
+  border-color: rgba(125, 211, 252, 0.12);
+}
+
+.timer-tool-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-radius: 1.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 18, 33, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.timer-tool-tab {
+  min-height: 3.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.7rem;
+  border: 0;
+  border-radius: 1rem;
+  background: transparent;
+  color: rgba(226, 232, 240, 0.8);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.timer-tool-tab .button-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.timer-tool-tab.is-active {
+  color: #fff7ed;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.92), rgba(14, 165, 233, 0.88));
+  box-shadow: 0 14px 28px rgba(14, 165, 233, 0.2);
+}
+
+.timer-tool-tab.is-active:last-child {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(250, 204, 21, 0.9));
+  color: #06283a;
+}
+
+.stopwatch-ready-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.95rem;
+  padding: 1rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(125, 211, 252, 0.2), transparent 28%),
+    radial-gradient(circle at 80% 16%, rgba(250, 204, 21, 0.14), transparent 18%),
+    linear-gradient(180deg, rgba(9, 23, 45, 0.92), rgba(8, 22, 35, 0.96));
+  box-shadow:
+    0 20px 48px rgba(2, 6, 23, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.stopwatch-ready-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 12px),
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.04), transparent 58%);
+  pointer-events: none;
+  opacity: 0.58;
+}
+
+.stopwatch-ready-mark,
+.stopwatch-ready-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.stopwatch-ready-mark {
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  display: grid;
+  place-items: center;
+}
+
+.stopwatch-ready-icon-shell {
+  position: relative;
+  z-index: 2;
+  width: 4.8rem;
+  height: 4.8rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #ecfeff;
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.94), rgba(14, 165, 233, 0.92));
+  box-shadow:
+    0 0 0 10px rgba(255, 255, 255, 0.04),
+    0 18px 28px rgba(14, 165, 233, 0.24);
+}
+
+.stopwatch-ready-icon-shell .button-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.stopwatch-ready-ring {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  border-radius: 999px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.stopwatch-ready-ring-a {
+  width: 6.6rem;
+  height: 6.6rem;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  animation: stopwatch-spin 11s linear infinite;
+}
+
+.stopwatch-ready-ring-b {
+  width: 7.7rem;
+  height: 7.7rem;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  animation: stopwatch-spin-reverse 15s linear infinite;
+}
+
+.stopwatch-ready-ring-c {
+  width: 8.8rem;
+  height: 8.8rem;
+  border: 1px solid rgba(250, 204, 21, 0.14);
+  opacity: 0.8;
+  animation: stopwatch-pulse 3.2s ease-in-out infinite;
+}
+
+.stopwatch-ready-copy {
+  display: grid;
+  justify-items: center;
+  gap: 0.28rem;
+  text-align: center;
+}
+
+.stopwatch-ready-time {
+  font-family: "IBM Plex Mono", "SF Mono", monospace;
+  font-size: clamp(2.5rem, 14vw, 4rem);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  color: #f8fafc;
+}
+
+.stopwatch-ready-hint {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
 .setup-header-chip {
   min-height: 2rem;
   display: inline-flex;
@@ -212,10 +548,46 @@
   }
 }
 
+@keyframes stopwatch-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes stopwatch-spin-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes stopwatch-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.98);
+    opacity: 0.42;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 0.86;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .setup-header-ring-a,
   .setup-header-ring-b,
-  .setup-header-ring-c {
+  .setup-header-ring-c,
+  .stopwatch-ready-ring-a,
+  .stopwatch-ready-ring-b,
+  .stopwatch-ready-ring-c {
     animation: none;
   }
 }

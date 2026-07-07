@@ -100,3 +100,18 @@ export const formatClockDuration = (totalSeconds: number) => {
 
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 };
+
+export const formatStopwatchTime = (totalMs: number) => {
+  const clampedMs = Math.max(0, Math.floor(totalMs));
+  const totalSeconds = Math.floor(clampedMs / 1000);
+  const hundredths = Math.floor((clampedMs % 1000) / 10);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`;
+  }
+
+  return `${minutes}:${String(seconds).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`;
+};

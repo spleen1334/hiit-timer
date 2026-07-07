@@ -2,6 +2,8 @@ export type Phase = 'delay' | 'active' | 'rest' | 'complete';
 
 export type SessionMode = 'setup' | 'running' | 'paused' | 'complete';
 
+export type TimerToolMode = 'hiit' | 'stopwatch';
+
 export type TimerSettings = {
   activeSeconds: number;
   restSeconds: number;

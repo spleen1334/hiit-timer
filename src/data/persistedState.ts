@@ -7,7 +7,7 @@ import type { SectionVisibility, TrainingProgram } from '../plan/types';
 import { sanitizeTrainingProgram } from '../plan/sanitizeProgram';
 import { DEFAULT_SETTINGS } from '../timer/constants';
 import { readStoredBoolean, sanitizeHistory, sanitizeSettings } from '../timer/math';
-import type { HistoryEntry, TimerSettings } from '../timer/types';
+import type { HistoryEntry, TimerSettings, TimerToolMode } from '../timer/types';
 import {
   APP_VIEW_KEY,
   BODY_HEIGHT_KEY,
@@ -17,6 +17,7 @@ import {
   TIMER_HISTORY_KEY,
   TIMER_LOCALE_KEY,
   TIMER_SETTINGS_KEY,
+  TIMER_TOOL_KEY,
   TRAINING_PROGRAM_KEY,
 } from './storageKeys';
 import { readLocalStorageItem } from './localStorage';
@@ -24,6 +25,7 @@ import { readLocalStorageItem } from './localStorage';
 const serializeString = (value: string) => value;
 const serializeBoolean = (value: boolean) => String(value);
 const isAppViewMode = (value: string): value is AppViewMode => value === 'timer' || value === 'plan' || value === 'body';
+const isTimerToolMode = (value: string): value is TimerToolMode => value === 'hiit' || value === 'stopwatch';
 const getBodyMetricEntriesFallback = () =>
   readLocalStorageItem(BODY_METRICS_KEY) == null ? createDemoBodyMetricEntries() : [];
 
@@ -68,6 +70,12 @@ export const persistedState = {
     fallback: () => [] as HistoryEntry[],
     parse: (stored: string) => sanitizeHistory(JSON.parse(stored)),
   } satisfies PersistedStateSpec<HistoryEntry[]>,
+  timerTool: {
+    key: TIMER_TOOL_KEY,
+    fallback: () => 'hiit' as TimerToolMode,
+    parse: (stored: string) => (isTimerToolMode(stored) ? stored : 'hiit'),
+    serialize: serializeString,
+  } satisfies PersistedStateSpec<TimerToolMode>,
   locale: {
     key: TIMER_LOCALE_KEY,
     fallback: () => DEFAULT_LOCALE,

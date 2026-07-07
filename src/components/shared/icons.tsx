@@ -127,6 +127,20 @@ export function TimerStackIcon() {
   );
 }
 
+export function StopwatchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">
+      <circle cx="12" cy="13" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M10 3H14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 6V4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M16.2 5.8L17.7 4.3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 13L15.2 11.1" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M18.2 8.2L19.6 6.8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="12" cy="13" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function PlanIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">

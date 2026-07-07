@@ -8,6 +8,12 @@ export type Messages = {
   timerHeaderSubtitle: string;
   timerTabLabel: string;
   planTabLabel: string;
+  hiitTimerLabel: string;
+  stopwatchLabel: string;
+  stopwatchHeaderTitle: string;
+  stopwatchHeaderSubtitle: string;
+  startStopwatch: string;
+  resetLabel: string;
   portraitModeLabel: string;
   activeLabel: string;
   restLabel: string;
@@ -166,6 +172,12 @@ export const MESSAGES: Record<Locale, Messages> = {
     timerHeaderSubtitle: 'Fast work and rest sessions tuned for mobile setup.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
+    hiitTimerLabel: 'HIIT Timer',
+    stopwatchLabel: 'Stopwatch',
+    stopwatchHeaderTitle: 'Stopwatch',
+    stopwatchHeaderSubtitle: 'Track elapsed time with a clean pause and reset.',
+    startStopwatch: 'Start stopwatch',
+    resetLabel: 'Reset',
     portraitModeLabel: 'Use portrait mode',
     activeLabel: 'Active',
     restLabel: 'Rest',
@@ -314,6 +326,12 @@ export const MESSAGES: Record<Locale, Messages> = {
     timerHeaderSubtitle: 'Брзе рад/одмор сесије прилагођене за мобилно подешавање.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
+    hiitTimerLabel: 'HIIT tajmer',
+    stopwatchLabel: 'Štoperica',
+    stopwatchHeaderTitle: 'Štoperica',
+    stopwatchHeaderSubtitle: 'Prati proteklo vreme uz pauzu i reset.',
+    startStopwatch: 'Pokreni štopericu',
+    resetLabel: 'Resetuj',
     portraitModeLabel: 'Користи усправни приказ',
     activeLabel: 'Активно',
     restLabel: 'Одмор',

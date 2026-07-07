@@ -1,4 +1,5 @@
 import type { Messages } from '../../i18n';
+import { formatStopwatchTime } from '../../timer/math';
 import type { Phase, SessionMode } from '../../timer/types';
 import { RunControls } from './RunControls';
 import { RunMeta } from './RunMeta';
@@ -11,6 +12,7 @@ type RunScreenProps = {
   round: number;
   rounds: number;
   secondsLeft: number;
+  elapsedMs: number;
   phaseProgress: number;
   roundProgress: number;
   isWarning: boolean;
@@ -29,6 +31,7 @@ export function RunScreen({
   round,
   rounds,
   secondsLeft,
+  elapsedMs,
   phaseProgress,
   roundProgress,
   isWarning,
@@ -48,19 +51,24 @@ export function RunScreen({
       />
 
       <TimerCard
+        timerTool="hiit"
         phase={phase}
         isWarning={isWarning}
         phaseProgress={phaseProgress}
         label={runningLabel}
         secondsLeft={secondsLeft}
+        elapsedTime={formatStopwatchTime(elapsedMs)}
+        elapsedMs={elapsedMs}
       />
 
       <RunControls
         messages={messages}
+        timerTool="hiit"
         mode={mode}
         onPause={onPause}
         onResume={onResume}
         onRestart={onRestart}
+        onReset={onStop}
         onStop={onStop}
       />
     </section>

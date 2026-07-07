@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
-import type { Phase, SessionMode } from '../timer/types';
+import type { Phase, SessionMode, TimerToolMode } from '../timer/types';
 
-export function useThemeColor(mode: SessionMode, phase: Phase) {
+export function useThemeColor(timerTool: TimerToolMode, mode: SessionMode, phase: Phase) {
   useEffect(() => {
     const themeColor = (() => {
+      if (timerTool === 'stopwatch') {
+        return '#083344';
+      }
+
       if (mode === 'setup') {
         return '#111827';
       }
@@ -24,5 +28,5 @@ export function useThemeColor(mode: SessionMode, phase: Phase) {
     })();
 
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
-  }, [mode, phase]);
+  }, [timerTool, mode, phase]);
 }
