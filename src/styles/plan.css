@@ -448,6 +448,9 @@
   min-width: 0;
   box-sizing: border-box;
   z-index: 1;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .workout-card.row-even {
@@ -468,6 +471,12 @@
 
 .workout-card:active {
   cursor: grabbing;
+  transform: scale(0.995);
+}
+
+.workout-card :is(input, textarea, select) {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .superset-stack .workout-card + .workout-card {

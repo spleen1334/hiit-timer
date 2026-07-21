@@ -37,3 +37,14 @@ input {
 button {
   cursor: pointer;
 }
+
+:where(button, [role='button']) {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: transform 120ms ease;
+}
+
+:where(button, [role='button']):active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
