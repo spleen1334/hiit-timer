@@ -1,0 +1,244 @@
+/* A small, shared motion language for touch controls. Keep feedback quick enough
+   to feel immediate, but soft enough that the interface never feels springy. */
+:where(button, [role='button']) {
+  touch-action: manipulation;
+}
+
+button:not(:disabled),
+[role='button'] {
+  transition:
+    transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+button:not(:disabled):active,
+[role='button']:active {
+  transform: translateY(1px) scale(0.985);
+  filter: brightness(0.96);
+}
+
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid rgba(125, 211, 252, 0.92);
+  outline-offset: 3px;
+}
+
+/* Switching modes gets one short, directional settle. It is tied to the
+   existing keyed view stage, so it never loops or adds a new interaction. */
+.view-stage {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.mode-tab,
+.timer-tool-tab {
+  transition:
+    transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 220ms ease,
+    color 180ms ease,
+    box-shadow 220ms ease;
+}
+
+.mode-tab.is-active,
+.timer-tool-tab.is-active {
+  box-shadow:
+    0 12px 24px rgba(251, 113, 133, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.timer-tool-tab.is-active {
+  box-shadow:
+    0 14px 28px rgba(14, 165, 233, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.mode-tab-icon,
+.timer-tool-tab > .button-icon,
+.action-button > .button-icon,
+.app-chrome-settings-button > .button-icon,
+.settings-back-button > .button-icon,
+.edit-toggle > .plan-mini-icon,
+.body-metrics-edit-button > .button-icon {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.mode-tab.is-active .mode-tab-icon {
+  transform: scale(1.06);
+}
+
+.mode-tab:active .mode-tab-icon,
+.timer-tool-tab:active > .button-icon,
+.action-button:active > .button-icon,
+.edit-toggle:active > .plan-mini-icon,
+.body-metrics-edit-button:active > .button-icon {
+  transform: translateX(0.08rem) scale(0.92);
+}
+
+.app-chrome-settings-button:active > .button-icon {
+  transform: rotate(-12deg) scale(0.92);
+}
+
+.settings-back-button:active > .button-icon {
+  transform: translateX(-0.1rem) scale(0.92);
+}
+
+.plan-section-toggle .plan-section-chevron,
+.body-metrics-recent-toggle-state {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), color 180ms ease;
+}
+
+.plan-section-toggle:active .plan-section-chevron {
+  transform: rotate(45deg) scale(0.88);
+}
+
+.plan-section-toggle:active .plan-section-chevron.is-open {
+  transform: rotate(-135deg) scale(0.88);
+}
+
+.sound-switch-thumb {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease;
+}
+
+.sound-switch:active .sound-switch-thumb {
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.4);
+}
+
+/* Populate the plotted marks, not the graph container. The grid arrives first,
+   lines draw from left to right, and points settle after their series. Nothing
+   here changes the graph's overall opacity or clips its bounds. */
+.body-metrics-grid-line {
+  opacity: 0.18;
+}
+
+.body-metrics-chart.is-populating .body-metrics-grid-line {
+  animation: body-chart-grid-populate 220ms ease-out both;
+}
+
+.body-metrics-chart.is-populating .body-metrics-grid-line-25 {
+  animation-delay: 50ms;
+}
+
+.body-metrics-chart.is-populating .body-metrics-grid-line-50 {
+  animation-delay: 90ms;
+}
+
+.body-metrics-chart.is-populating .body-metrics-grid-line-75 {
+  animation-delay: 130ms;
+}
+
+.body-metrics-series-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.body-metrics-chart.is-populating .body-metrics-series-path {
+  animation: body-chart-series-draw 1200ms cubic-bezier(0.2, 0.78, 0.24, 1) 380ms both;
+}
+
+.body-metrics-chart.is-populating .body-metrics-series-path-body-fat {
+  animation-delay: 440ms;
+}
+
+.body-metrics-series-point {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+.body-metrics-chart.is-populating .body-metrics-series-point {
+  animation: body-chart-point-populate 240ms cubic-bezier(0.2, 0.78, 0.24, 1) 1580ms both;
+}
+
+.body-metrics-chart-point-core {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.35);
+}
+
+.body-metrics-chart.is-populating .body-metrics-chart-point-core {
+  animation: body-chart-point-core-populate 240ms cubic-bezier(0.2, 0.78, 0.24, 1) 1580ms both;
+}
+
+@keyframes body-chart-grid-populate {
+  from {
+    opacity: 0.18;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes body-chart-series-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes body-chart-point-populate {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes body-chart-point-core-populate {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .view-stage {
+    animation: none;
+  }
+
+  .body-metrics-grid-line {
+    animation: none;
+    opacity: 1;
+  }
+
+  .body-metrics-series-path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .body-metrics-series-point {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .body-metrics-chart-point-core {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}

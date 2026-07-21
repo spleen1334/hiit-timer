@@ -15,6 +15,7 @@ import {
 } from './PlanIcons';
 import { PlanSection } from './PlanSection';
 import { WorkoutList } from './WorkoutList';
+import { PlanEditTransition } from './PlanEditTransition';
 import { PlanIcon as AppPlanIcon } from '../shared/icons';
 
 type PlanScreenProps = {
@@ -166,7 +167,7 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
                 </button>
               </div>
 
-              {editingCardioById[entry.id] ? (
+              <PlanEditTransition isOpen={Boolean(editingCardioById[entry.id])}>
                 <div className="cardio-editor">
                   <label className="cardio-field">
                     <span>
@@ -198,7 +199,7 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
                     {messages.removeCardioLabel}
                   </button>
                 </div>
-              ) : null}
+              </PlanEditTransition>
             </div>
           ))}
         </div>

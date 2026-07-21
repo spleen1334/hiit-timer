@@ -2,6 +2,7 @@ import type { ChangeEvent, DragEvent, ReactNode } from 'react';
 import type { Messages } from '../../i18n';
 import type { BodyPartIcon, WorkoutExercise } from '../../plan/types';
 import { BodyPartBadge, GearIcon, RepsIcon, RestIcon, SetsIcon, WeightIcon } from './PlanIcons';
+import { PlanEditTransition } from './PlanEditTransition';
 
 type WorkoutExerciseCardProps = {
   exercise: WorkoutExercise;
@@ -98,7 +99,7 @@ export function WorkoutExerciseCard({
         </button>
       </div>
 
-      {isEditing ? (
+      <PlanEditTransition isOpen={isEditing}>
         <div className="workout-editor">
           <div className="editor-grid">
             <label className="editor-label">
@@ -133,7 +134,7 @@ export function WorkoutExerciseCard({
             {messages.removeWorkoutLabel}
           </button>
         </div>
-      ) : null}
+      </PlanEditTransition>
     </article>
   );
 }

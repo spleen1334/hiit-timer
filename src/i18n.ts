@@ -110,6 +110,9 @@ export type Messages = {
   bodyMetricsLoadMoreLabel: string;
   bodyMetricsChartLabel: string;
   bodyMetricsChartHintLabel: string;
+  bodyMetricsMonthNavigationLabel: string;
+  bodyMetricsPreviousMonthLabel: string;
+  bodyMetricsNextMonthLabel: string;
   bodyMetricsEmptyLabel: string;
   bodyMetricsChartEmptyLabel: string;
   bodyMetricsDateLabel: string;
@@ -275,6 +278,9 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsLoadMoreLabel: 'Load more',
     bodyMetricsChartLabel: 'Filter',
     bodyMetricsChartHintLabel: 'Tap a dot',
+    bodyMetricsMonthNavigationLabel: 'Anchor month',
+    bodyMetricsPreviousMonthLabel: 'Previous',
+    bodyMetricsNextMonthLabel: 'Next',
     bodyMetricsEmptyLabel: 'No entries yet.',
     bodyMetricsChartEmptyLabel: 'No data in range.',
     bodyMetricsDateLabel: 'Date',
@@ -287,7 +293,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsSaveLabel: 'Save',
     bodyMetricsUpdateLabel: 'Update',
     bodyMetricsRemoveLabel: 'Remove',
-    bodyMetricsRange1MonthLabel: '1M',
+    bodyMetricsRange1MonthLabel: 'Current month',
     bodyMetricsRange3MonthsLabel: '3M',
     bodyMetricsRange6MonthsLabel: '6M',
     bodyMetricsRange1YearLabel: '1Y',
@@ -429,6 +435,9 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsLoadMoreLabel: 'Учитај још',
     bodyMetricsChartLabel: 'Филтер',
     bodyMetricsChartHintLabel: 'Додирни тачку',
+    bodyMetricsMonthNavigationLabel: 'Месец сидро',
+    bodyMetricsPreviousMonthLabel: 'Претходни',
+    bodyMetricsNextMonthLabel: 'Следећи',
     bodyMetricsEmptyLabel: 'Нема уноса.',
     bodyMetricsChartEmptyLabel: 'Нема података у опсегу.',
     bodyMetricsDateLabel: 'Датум',
@@ -441,7 +450,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsSaveLabel: 'Сачувај',
     bodyMetricsUpdateLabel: 'Ажурирај',
     bodyMetricsRemoveLabel: 'Уклони',
-    bodyMetricsRange1MonthLabel: '1M',
+    bodyMetricsRange1MonthLabel: 'Текући месец',
     bodyMetricsRange3MonthsLabel: '3M',
     bodyMetricsRange6MonthsLabel: '6M',
     bodyMetricsRange1YearLabel: '1Y',

@@ -20,14 +20,13 @@ type BodyScreenProps = {
   locale: string;
 };
 
-type BodyMetricsRange = '1m' | '3m' | '6m' | '1y' | 'all';
+type BodyMetricsRange = '1m' | '3m' | '6m' | '1y';
 
 type BodyMetricsRangeLabelKey =
   | 'bodyMetricsRange1MonthLabel'
   | 'bodyMetricsRange3MonthsLabel'
   | 'bodyMetricsRange6MonthsLabel'
-  | 'bodyMetricsRange1YearLabel'
-  | 'bodyMetricsRangeAllLabel';
+  | 'bodyMetricsRange1YearLabel';
 
 type ChartEntry = {
   id: string;
@@ -60,7 +59,6 @@ const RANGE_OPTIONS: Array<{ id: BodyMetricsRange; labelKey: BodyMetricsRangeLab
   { id: '3m', labelKey: 'bodyMetricsRange3MonthsLabel' },
   { id: '6m', labelKey: 'bodyMetricsRange6MonthsLabel' },
   { id: '1y', labelKey: 'bodyMetricsRange1YearLabel' },
-  { id: 'all', labelKey: 'bodyMetricsRangeAllLabel' },
 ];
 
 const parseBodyMetricDate = (value: string) => {
@@ -81,25 +79,35 @@ const isEntryReady = (draft: BodyMetricDraft) => {
   return Boolean(draft.date.trim()) && Number.isFinite(weight) && weight > 0;
 };
 
-const getRangeCutoff = (range: BodyMetricsRange) => {
-  if (range === 'all') {
-    return null;
-  }
+const getMonthKey = (date = new Date()) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
-  const now = new Date();
-  const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+const getMonthDate = (monthKey: string) => {
+  const [year, month] = monthKey.split('-').map(Number);
+  return new Date(year, month - 1, 1, 12);
+};
 
-  if (range === '1y') {
-    cutoff.setFullYear(cutoff.getFullYear() - 1);
-  } else if (range === '6m') {
-    cutoff.setMonth(cutoff.getMonth() - 6);
-  } else if (range === '3m') {
-    cutoff.setMonth(cutoff.getMonth() - 3);
-  } else {
-    cutoff.setMonth(cutoff.getMonth() - 1);
-  }
+const shiftMonth = (monthKey: string, offset: number) => {
+  const next = getMonthDate(monthKey);
+  next.setMonth(next.getMonth() + offset);
+  return getMonthKey(next);
+};
 
-  return cutoff;
+const getRangeMonths = (range: BodyMetricsRange) => {
+  if (range === '1y') return 12;
+  if (range === '6m') return 6;
+  if (range === '3m') return 3;
+  return 1;
+};
+
+const getRangeBounds = (anchorMonth: string, range: BodyMetricsRange, currentMonth: string) => {
+  const start = getMonthDate(shiftMonth(anchorMonth, -(getRangeMonths(range) - 1)));
+  const anchorDate = getMonthDate(anchorMonth);
+  const end = anchorMonth === currentMonth
+    ? new Date()
+    : new Date(anchorDate.getFullYear(), anchorDate.getMonth() + 1, 0, 23, 59, 59, 999);
+
+  return { start, end };
 };
 
 const getSeriesBounds = (values: number[]) => {
@@ -166,7 +174,7 @@ const buildPathData = (points: ChartPoint[]) =>
 const buildRangeLabel = (messages: Messages, range: BodyMetricsRange) => {
   const option = RANGE_OPTIONS.find((item) => item.id === range);
 
-  return option ? messages[option.labelKey] : messages.bodyMetricsRangeAllLabel;
+  return option ? messages[option.labelKey] : messages.bodyMetricsRange1MonthLabel;
 };
 
 const getPointX = (index: number, total: number) => {
@@ -206,7 +214,10 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [recentOpen, setRecentOpen] = useState(false);
   const [recentLimit, setRecentLimit] = useState(RECENT_INITIAL_LIMIT);
-  const [range, setRange] = useState<BodyMetricsRange>('all');
+  const [range, setRange] = useState<BodyMetricsRange>('1m');
+  const [anchorMonth, setAnchorMonth] = useState(() => getMonthKey());
+  const [chartPopulationKey, setChartPopulationKey] = useState(0);
+  const [isChartPopulationActive, setIsChartPopulationActive] = useState(false);
   const [showBodyFat, setShowBodyFat] = useState(false);
   const [selectedChartEntryId, setSelectedChartEntryId] = useState<string | null>(null);
   const [hoverChartEntryId, setHoverChartEntryId] = useState<string | null>(null);
@@ -217,8 +228,12 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   );
   const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }), [locale]);
 
-  const latestEntry = entries[0] ?? null;
   const selectedHeight = bodyHeight.trim();
+  const currentMonth = getMonthKey();
+  const anchorMonthLabel = useMemo(
+    () => new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(getMonthDate(anchorMonth)),
+    [anchorMonth, locale],
+  );
   const primaryButtonLabel = editingEntryId ? messages.bodyMetricsUpdateLabel : messages.bodyMetricsSaveLabel;
   const canSave = isEntryReady(draft);
 
@@ -252,6 +267,16 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
       setHeightDraft(bodyHeight.trim());
     }
   }, [bodyHeight, isEditingHeight]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setIsChartPopulationActive(true));
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    setRecentLimit(RECENT_INITIAL_LIMIT);
+  }, [anchorMonth, range]);
 
   const beginHeightEdit = () => {
     setHeightDraft(selectedHeight);
@@ -298,6 +323,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
       return sortBodyMetricEntries([nextEntry, ...remaining]);
     });
     resetDraft();
+    setChartPopulationKey((current) => current + 1);
   };
 
   const beginEdit = (entry: BodyMetricEntry) => {
@@ -325,30 +351,41 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     setRecentOpen((current) => !current);
   };
 
-  const chartEntries = useMemo<ChartEntry[]>(() => {
-    const cutoff = getRangeCutoff(range);
+  const filteredEntries = useMemo(() => {
+    const { start, end } = getRangeBounds(anchorMonth, range, currentMonth);
 
     return entries
-      .map((entry) => {
+      .filter((entry) => {
         const date = parseBodyMetricDate(entry.date);
+        return Boolean(date && date >= start && date <= end);
+      });
+  }, [anchorMonth, currentMonth, entries, range]);
 
-        if (!date) {
-          return null;
-        }
+  const latestEntry = filteredEntries[0] ?? null;
 
-        const weight = parseBodyMetricNumber(entry.weightKg);
-        const bodyFat = parseBodyMetricNumber(entry.bodyFatPercent);
+  const chartEntries = useMemo<ChartEntry[]>(
+    () =>
+      filteredEntries
+        .map((entry) => {
+          const date = parseBodyMetricDate(entry.date);
+          const weight = parseBodyMetricNumber(entry.weightKg);
+          const bodyFat = parseBodyMetricNumber(entry.bodyFatPercent);
 
-        return {
-          id: entry.id,
-          date,
-          weight: Number.isFinite(weight) && weight > 0 ? weight : null,
-          bodyFat: Number.isFinite(bodyFat) && bodyFat >= 0 ? bodyFat : null,
-        };
-      })
-      .filter((entry): entry is ChartEntry => Boolean(entry && (!cutoff || entry.date >= cutoff)))
-      .sort((left, right) => left.date.getTime() - right.date.getTime());
-  }, [entries, range]);
+          if (!date) {
+            return null;
+          }
+
+          return {
+            id: entry.id,
+            date,
+            weight: Number.isFinite(weight) && weight > 0 ? weight : null,
+            bodyFat: Number.isFinite(bodyFat) && bodyFat >= 0 ? bodyFat : null,
+          };
+        })
+        .filter((entry): entry is ChartEntry => Boolean(entry))
+        .sort((left, right) => left.date.getTime() - right.date.getTime()),
+    [filteredEntries],
+  );
 
   useEffect(() => {
     const hasSelectedEntry = selectedChartEntryId ? chartEntries.some((entry) => entry.id === selectedChartEntryId) : false;
@@ -366,10 +403,31 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   const latestChartEntry = chartEntries[chartEntries.length - 1] ?? null;
   const displayChartEntries = useMemo(() => sampleChartEntries(chartEntries), [chartEntries]);
   const visibleRecentEntries = useMemo(
-    () => entries.slice(0, recentLimit),
-    [entries, recentLimit],
+    () => filteredEntries.slice(0, recentLimit),
+    [filteredEntries, recentLimit],
   );
-  const hasMoreRecentEntries = recentLimit < entries.length;
+  const hasMoreRecentEntries = recentLimit < filteredEntries.length;
+  const canGoNextMonth = anchorMonth < currentMonth;
+
+  const moveAnchorMonth = (offset: number) => {
+    const next = shiftMonth(anchorMonth, offset);
+
+    if ((offset > 0 && next > currentMonth) || next === anchorMonth) {
+      return;
+    }
+
+    setAnchorMonth(next);
+    setChartPopulationKey((current) => current + 1);
+  };
+
+  const selectRange = (nextRange: BodyMetricsRange) => {
+    if (nextRange === range) {
+      return;
+    }
+
+    setRange(nextRange);
+    setChartPopulationKey((current) => current + 1);
+  };
 
   const weightBounds = useMemo(
     () =>
@@ -435,8 +493,9 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     <>
       <div className="body-metrics-chart-frame">
         <svg
+          key={`chart-svg-${chartPopulationKey}`}
           viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-          className="body-metrics-chart"
+          className={`body-metrics-chart ${isChartPopulationActive ? 'is-populating' : ''}`}
           role="img"
           aria-label={messages.bodyMetricsChartLabel}
         >
@@ -456,6 +515,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
           {[0.25, 0.5, 0.75].map((ratio) => (
             <line
               key={ratio}
+              className={`body-metrics-grid-line body-metrics-grid-line-${ratio * 100}`}
               x1={CHART_PADDING_X}
               x2={CHART_WIDTH - CHART_PADDING_X}
               y1={CHART_PADDING_Y + (CHART_HEIGHT - CHART_PADDING_Y * 2) * ratio}
@@ -468,6 +528,8 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
           {weightSegments.map((segment, segmentIndex) => (
             <g key={`weight-${segmentIndex}`}>
               <path
+                className="body-metrics-series-path"
+                pathLength={1}
                 d={buildPathData(segment)}
                 fill="none"
                 stroke="url(#body-metrics-weight-stroke)"
@@ -481,6 +543,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
                   cx={point.x}
                   cy={point.y}
                   r="3.5"
+                  className="body-metrics-series-point"
                   fill="#7dd3fc"
                   stroke="#0f172a"
                   strokeWidth="2"
@@ -493,6 +556,8 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
             ? bodyFatSegments.map((segment, segmentIndex) => (
                 <g key={`body-fat-${segmentIndex}`}>
                   <path
+                    className="body-metrics-series-path body-metrics-series-path-body-fat"
+                    pathLength={1}
                     d={buildPathData(segment)}
                     fill="none"
                     stroke="url(#body-metrics-body-fat-stroke)"
@@ -507,6 +572,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
                       cx={point.x}
                       cy={point.y}
                       r="3.2"
+                      className="body-metrics-series-point body-metrics-series-point-body-fat"
                       fill="#fde68a"
                       stroke="#0f172a"
                       strokeWidth="2"
@@ -517,7 +583,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
             : null}
         </svg>
 
-        <div className="body-metrics-chart-points">
+        <div key={`chart-points-${chartPopulationKey}`} className="body-metrics-chart-points">
           {chartDots.map((dot) => (
             <button
               key={dot.id}
@@ -632,7 +698,9 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
 
       <div className="body-metrics-stack">
         <section className="body-metrics-card body-metrics-current-card">
-          <p className="body-metrics-kicker">{messages.bodyMetricsCurrentLabel}</p>
+          <p className="body-metrics-kicker">
+            {messages.bodyMetricsCurrentLabel} · {buildRangeLabel(messages, range)} · {anchorMonthLabel}
+          </p>
           {latestEntry ? (
             <div className="body-metrics-summary">
               <strong className="body-metrics-summary-date">{formatDateForDisplay(dateFormatter, latestEntry.date)}</strong>
@@ -699,7 +767,36 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
           <div className="body-metrics-card-head">
             <div>
               <p className="body-metrics-kicker">{messages.bodyMetricsChartLabel}</p>
-              <strong className="body-metrics-card-title">{buildRangeLabel(messages, range)}</strong>
+              <div className="body-metrics-chart-title-row">
+                <strong className="body-metrics-card-title">
+                  {buildRangeLabel(messages, range)} · {anchorMonthLabel}
+                </strong>
+                <span className="body-metrics-chart-count" aria-live="polite">
+                  {chartEntries.length}
+                </span>
+              </div>
+            </div>
+            <div className="body-metrics-month-nav" aria-label={messages.bodyMetricsMonthNavigationLabel}>
+              <button
+                type="button"
+                className="body-metrics-month-button"
+                onClick={() => moveAnchorMonth(-1)}
+                aria-label={messages.bodyMetricsPreviousMonthLabel}
+                title={messages.bodyMetricsPreviousMonthLabel}
+              >
+                <span className="body-metrics-month-icon body-metrics-month-icon-previous" aria-hidden="true" />
+              </button>
+              <span className="body-metrics-month-anchor" aria-live="polite">{anchorMonthLabel}</span>
+              <button
+                type="button"
+                className="body-metrics-month-button"
+                onClick={() => moveAnchorMonth(1)}
+                disabled={!canGoNextMonth}
+                aria-label={messages.bodyMetricsNextMonthLabel}
+                title={messages.bodyMetricsNextMonthLabel}
+              >
+                <span className="body-metrics-month-icon body-metrics-month-icon-next" aria-hidden="true" />
+              </button>
             </div>
             <div className="body-metrics-range-grid">
               {RANGE_OPTIONS.map((option) => (
@@ -707,7 +804,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
                   key={option.id}
                   type="button"
                   className={`body-metrics-range-button ${range === option.id ? 'is-active' : ''}`}
-                  onClick={() => setRange(option.id)}
+                  onClick={() => selectRange(option.id)}
                   aria-pressed={range === option.id}
                 >
                   {messages[option.labelKey]}
@@ -784,7 +881,9 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
             aria-expanded={recentOpen}
             aria-controls="body-recent-list"
           >
-            <span className="body-metrics-kicker">{messages.bodyMetricsRecentLabel}</span>
+            <span className="body-metrics-kicker">
+              {messages.bodyMetricsRecentLabel} · {filteredEntries.length}
+            </span>
             <span className="body-metrics-recent-toggle-state">{recentOpen ? messages.collapseLabel : messages.expandLabel}</span>
           </button>
 
@@ -834,7 +933,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
                 <button
                   type="button"
                   className="body-metrics-load-more-button"
-                  onClick={() => setRecentLimit((current) => Math.min(current + RECENT_PAGE_SIZE, entries.length))}
+                  onClick={() => setRecentLimit((current) => Math.min(current + RECENT_PAGE_SIZE, filteredEntries.length))}
                 >
                   {messages.bodyMetricsLoadMoreLabel}
                 </button>

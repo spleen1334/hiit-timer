@@ -527,6 +527,35 @@
   padding-bottom: 0.72rem;
 }
 
+.plan-edit-transition {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    grid-template-rows 220ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    opacity 160ms ease,
+    visibility 0ms linear 220ms;
+}
+
+.plan-edit-transition.is-opening,
+.plan-edit-transition.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    grid-template-rows 220ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    opacity 160ms ease,
+    visibility 0ms;
+}
+
+.plan-edit-transition-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .workout-summary {
   display: flex;
   align-items: center;
@@ -849,6 +878,14 @@
   gap: 0.56rem;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .plan-edit-transition,
+  .plan-edit-transition.is-opening,
+  .plan-edit-transition.is-open {
+    transition: none;
+  }
+}
+
 .cardio-field {
   display: grid;
   gap: 0.3rem;
@@ -886,8 +923,94 @@
   line-height: 1.2;
 }
 
+.body-metrics-chart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+.body-metrics-chart-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  min-height: 1.35rem;
+  padding-inline: 0.28rem;
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  border-radius: 999px;
+  background: rgba(13, 148, 136, 0.18);
+  color: #ccfbf1;
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
 .body-metrics-chart-card {
   gap: 0.58rem;
+}
+
+.body-metrics-month-nav {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.38rem;
+  width: 100%;
+  padding: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.95rem;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.body-metrics-month-button {
+  width: 3.15rem;
+  min-width: 3.15rem;
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-radius: 0.72rem;
+  background: rgba(14, 116, 144, 0.18);
+  color: #dbeafe;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.body-metrics-month-icon {
+  width: 0.72rem;
+  height: 0.72rem;
+  display: block;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+.body-metrics-month-icon-previous {
+  transform: rotate(-135deg);
+}
+
+.body-metrics-month-icon-next {
+  transform: rotate(45deg);
+}
+
+.body-metrics-month-button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.body-metrics-month-anchor {
+  min-width: 0;
+  color: #f8fafc;
+  font-size: 0.83rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .body-metrics-height-card {
@@ -958,7 +1081,7 @@
 
 .body-metrics-range-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.38rem;
 }
 
