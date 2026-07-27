@@ -103,8 +103,9 @@ const getRangeMonths = (range: BodyMetricsRange) => {
 const getRangeBounds = (anchorMonth: string, range: BodyMetricsRange, currentMonth: string) => {
   const start = getMonthDate(shiftMonth(anchorMonth, -(getRangeMonths(range) - 1)));
   const anchorDate = getMonthDate(anchorMonth);
+  const now = new Date();
   const end = anchorMonth === currentMonth
-    ? new Date()
+    ? new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
     : new Date(anchorDate.getFullYear(), anchorDate.getMonth() + 1, 0, 23, 59, 59, 999);
 
   return { start, end };

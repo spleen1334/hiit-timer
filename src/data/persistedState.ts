@@ -20,7 +20,7 @@ import {
   TIMER_TOOL_KEY,
   TRAINING_PROGRAM_KEY,
 } from './storageKeys';
-import { readLocalStorageItem } from './localStorage';
+import { isLocalStorageQuotaError, readLocalStorageItem } from './localStorage';
 
 const serializeString = (value: string) => value;
 const serializeBoolean = (value: boolean) => String(value);
@@ -57,6 +57,8 @@ export type PersistedStateSpec<T> = {
   fallback: () => T;
   parse: (stored: string) => T;
   serialize?: (value: T) => string;
+  recover?: (value: T, error: unknown) => T | undefined;
+  skipInitialPersist?: boolean;
 };
 
 export const persistedState = {
@@ -108,6 +110,18 @@ export const persistedState = {
     key: BODY_METRICS_KEY,
     fallback: getBodyMetricEntriesFallback,
     parse: (stored: string) => sanitizeBodyMetricEntries(JSON.parse(stored)),
+    skipInitialPersist: true,
+    recover: (entries, error) => {
+      if (!isLocalStorageQuotaError(error)) {
+        return undefined;
+      }
+
+      if (entries.length <= 2) {
+        return undefined;
+      }
+
+      return entries.slice(0, entries.length - 2);
+    },
   } satisfies PersistedStateSpec<BodyMetricEntry[]>,
   bodyHeight: {
     key: BODY_HEIGHT_KEY,
