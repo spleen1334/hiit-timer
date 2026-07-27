@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { persistedState } from '../../data/persistedState';
 import type { Messages } from '../../i18n';
-import { usePersistedState, usePersistentState } from '../../hooks/usePersistentState';
+import { useBodyData } from '../../hooks/useBodyData';
 import {
   calculateBodyMetricBmi,
   createBodyMetricDraft,
-  getLatestBodyMetricHeight,
   parseBodyMetricNumber,
   sortBodyMetricEntries,
   type BodyMetricDraft,
@@ -202,13 +200,7 @@ const sampleChartEntries = (entries: ChartEntry[]) => {
 };
 
 export function BodyScreen({ messages, locale }: BodyScreenProps) {
-  const [entries, setEntries] = usePersistedState<BodyMetricEntry[]>(persistedState.bodyMetricEntries);
-  const bodyHeightSpec = persistedState.bodyHeight;
-  const [bodyHeight, setBodyHeight] = usePersistentState<string>(
-    bodyHeightSpec.key,
-    () => getLatestBodyMetricHeight(entries),
-    bodyHeightSpec,
-  );
+  const { entries, height: bodyHeight, ready, error: bodyDataError, setEntries, setHeight: setBodyHeight } = useBodyData();
   const [isEditingHeight, setIsEditingHeight] = useState(() => !bodyHeight.trim());
   const [heightDraft, setHeightDraft] = useState(() => bodyHeight.trim());
   const [draft, setDraft] = useState<BodyMetricDraft>(() => createBodyMetricDraft());
@@ -222,6 +214,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   const [showBodyFat, setShowBodyFat] = useState(false);
   const [selectedChartEntryId, setSelectedChartEntryId] = useState<string | null>(null);
   const [hoverChartEntryId, setHoverChartEntryId] = useState<string | null>(null);
+
 
   const numberFormatter = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }),
@@ -289,14 +282,14 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     setIsEditingHeight(false);
   };
 
-  const saveHeight = () => {
+  const saveHeight = async () => {
     const nextHeight = heightDraft.trim();
 
     if (!nextHeight) {
       return;
     }
 
-    setBodyHeight(nextHeight);
+    await setBodyHeight(nextHeight);
     setIsEditingHeight(false);
   };
 
@@ -305,7 +298,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     return Number.isFinite(parsed) && parsed > 0;
   })();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!canSave) {
@@ -319,7 +312,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
       bodyFatPercent: draft.bodyFatPercent.trim(),
     };
 
-    setEntries((current) => {
+    await setEntries((current) => {
       const remaining = current.filter((entry) => entry.id !== editingEntryId && entry.date !== nextEntry.date);
       return sortBodyMetricEntries([nextEntry, ...remaining]);
     });
@@ -336,8 +329,8 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     });
   };
 
-  const removeEntry = (entryId: string) => {
-    setEntries((current) => sortBodyMetricEntries(current.filter((entry) => entry.id !== entryId)));
+  const removeEntry = async (entryId: string) => {
+    await setEntries((current) => sortBodyMetricEntries(current.filter((entry) => entry.id !== entryId)));
 
     if (editingEntryId === entryId) {
       resetDraft();
@@ -660,6 +653,8 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
       </button>
     </>
   );
+
+  if (!ready || bodyDataError) return null;
 
   return (
     <section className="panel body-panel view-stage">

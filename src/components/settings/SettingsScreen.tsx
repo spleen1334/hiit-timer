@@ -49,8 +49,8 @@ export function SettingsScreen({
     });
   }, [googleDriveConfigured]);
 
-  const handleExport = () => {
-    downloadAppDataExport();
+  const handleExport = async () => {
+    await downloadAppDataExport();
   };
 
   const handleGoogleDriveExport = async () => {
@@ -80,7 +80,7 @@ export function SettingsScreen({
       }
 
       const rawJson = await file.text();
-      importAppData(rawJson);
+      await importAppData(rawJson);
       setImportError(null);
       setImportSuccess(true);
       window.setTimeout(() => window.location.reload(), 250);

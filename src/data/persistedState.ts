@@ -1,7 +1,5 @@
 import { DEFAULT_LOCALE, isLocale, type Locale } from '../i18n';
 import type { AppViewMode } from '../app/types';
-import type { BodyMetricEntry } from '../body/bodyMetrics';
-import { createDemoBodyMetricEntries, sanitizeBodyMetricEntries } from '../body/bodyMetrics';
 import { DEFAULT_PROGRAM } from '../plan/defaultProgram';
 import type { SectionVisibility, TrainingProgram } from '../plan/types';
 import { sanitizeTrainingProgram } from '../plan/sanitizeProgram';
@@ -10,8 +8,6 @@ import { readStoredBoolean, sanitizeHistory, sanitizeSettings } from '../timer/m
 import type { HistoryEntry, TimerSettings, TimerToolMode } from '../timer/types';
 import {
   APP_VIEW_KEY,
-  BODY_HEIGHT_KEY,
-  BODY_METRICS_KEY,
   PLAN_SECTION_VISIBILITY_KEY,
   STATS_PANEL_OPEN_KEY,
   TIMER_HISTORY_KEY,
@@ -20,15 +16,12 @@ import {
   TIMER_TOOL_KEY,
   TRAINING_PROGRAM_KEY,
 } from './storageKeys';
-import { isLocalStorageQuotaError, readLocalStorageItem } from './localStorage';
+import { readLocalStorageItem } from './localStorage';
 
 const serializeString = (value: string) => value;
 const serializeBoolean = (value: boolean) => String(value);
 const isAppViewMode = (value: string): value is AppViewMode => value === 'timer' || value === 'plan' || value === 'body';
 const isTimerToolMode = (value: string): value is TimerToolMode => value === 'hiit' || value === 'stopwatch';
-const getBodyMetricEntriesFallback = () =>
-  readLocalStorageItem(BODY_METRICS_KEY) == null ? createDemoBodyMetricEntries() : [];
-
 export const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   warmup: true,
   workout: true,
@@ -106,27 +99,4 @@ export const persistedState = {
     fallback: () => DEFAULT_SECTION_VISIBILITY,
     parse: (stored: string) => sanitizeSectionVisibility(JSON.parse(stored)),
   } satisfies PersistedStateSpec<SectionVisibility>,
-  bodyMetricEntries: {
-    key: BODY_METRICS_KEY,
-    fallback: getBodyMetricEntriesFallback,
-    parse: (stored: string) => sanitizeBodyMetricEntries(JSON.parse(stored)),
-    skipInitialPersist: true,
-    recover: (entries, error) => {
-      if (!isLocalStorageQuotaError(error)) {
-        return undefined;
-      }
-
-      if (entries.length <= 2) {
-        return undefined;
-      }
-
-      return entries.slice(0, entries.length - 2);
-    },
-  } satisfies PersistedStateSpec<BodyMetricEntry[]>,
-  bodyHeight: {
-    key: BODY_HEIGHT_KEY,
-    fallback: () => '',
-    parse: (stored: string) => stored.trim(),
-    serialize: serializeString,
-  } satisfies PersistedStateSpec<string>,
 };

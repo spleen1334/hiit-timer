@@ -190,8 +190,8 @@ function App() {
     setIsClearHistoryDialogOpen(false);
   }, [setHistory]);
 
-  const clearBodyData = useCallback(() => {
-    clearStoredBodyData();
+  const clearBodyData = useCallback(async () => {
+    await clearStoredBodyData();
     setIsClearBodyDataDialogOpen(false);
     window.location.reload();
   }, []);

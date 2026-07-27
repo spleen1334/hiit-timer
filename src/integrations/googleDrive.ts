@@ -164,7 +164,7 @@ const uploadJsonFile = async (accessToken: string, folderId: string) => {
     `--${boundary}`,
     'Content-Type: application/json; charset=UTF-8',
     '',
-    serializeCurrentAppDataExport(),
+    await serializeCurrentAppDataExport(),
     `--${boundary}--`,
     '',
   ].join('\r\n');

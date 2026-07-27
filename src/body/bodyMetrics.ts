@@ -124,6 +124,19 @@ export const sanitizeBodyMetricEntries = (value: unknown): BodyMetricEntry[] => 
     });
 };
 
+export const validateBodyMetricEntries = (value: unknown): BodyMetricEntry[] => {
+  if (!Array.isArray(value)) throw new Error('Invalid body metric entries.');
+  const dates = new Set<string>();
+  for (const entry of value) {
+    if (!isRecord(entry) || typeof entry.id !== 'string' || !entry.id.trim() || typeof entry.date !== 'string' || !parseBodyMetricDate(entry.date) || typeof entry.weightKg !== 'string' || !Number.isFinite(parseBodyMetricNumber(entry.weightKg)) || parseBodyMetricNumber(entry.weightKg) <= 0 || typeof entry.bodyFatPercent !== 'string' || (entry.bodyFatPercent !== '' && (!Number.isFinite(parseBodyMetricNumber(entry.bodyFatPercent)) || parseBodyMetricNumber(entry.bodyFatPercent) < 0)) || (entry.heightCm !== undefined && typeof entry.heightCm !== 'string')) throw new Error('Invalid body metric entries.');
+    if (dates.has(entry.date)) throw new Error('Duplicate body metric dates.');
+    dates.add(entry.date);
+  }
+  const sanitized = sanitizeBodyMetricEntries(value);
+  if (JSON.stringify(sanitized) !== JSON.stringify(value)) throw new Error('Invalid body metric entries.');
+  return sanitized;
+};
+
 export const sortBodyMetricEntries = (entries: BodyMetricEntry[]) => sanitizeBodyMetricEntries(entries);
 
 export const calculateBodyMetricBmi = (weightKg: string, heightCm: string) => {
