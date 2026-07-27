@@ -279,8 +279,12 @@
   background: linear-gradient(180deg, rgba(19, 48, 40, 0.84), rgba(10, 18, 33, 0.74));
 }
 
-.settings-card-data {
+.settings-card-plan-timer {
   background: linear-gradient(180deg, rgba(43, 32, 66, 0.86), rgba(10, 18, 33, 0.74));
+}
+
+.settings-card-body-data {
+  background: linear-gradient(180deg, rgba(19, 55, 58, 0.86), rgba(10, 18, 33, 0.74));
 }
 
 .settings-card-drive {

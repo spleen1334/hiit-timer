@@ -36,12 +36,20 @@ export type Messages = {
   clearHistoryLabel: string;
   clearHistoryConfirm: string;
   clearHistoryTitle: string;
-  applicationDataLabel: string;
-  exportDataLabel: string;
-  importDataLabel: string;
-  dataImportHint: string;
-  dataImportSuccess: string;
-  dataImportError: string;
+  planTimerDataLabel: string;
+  planTimerDataHint: string;
+  exportPlanTimerDataLabel: string;
+  importPlanTimerDataLabel: string;
+  planTimerDataExportSuccess: string;
+  planTimerDataSuccess: string;
+  planTimerDataError: string;
+  bodyDataLabel: string;
+  bodyDataHint: string;
+  exportBodyDataLabel: string;
+  importBodyDataLabel: string;
+  bodyDataExportSuccess: string;
+  bodyDataSuccess: string;
+  bodyDataError: string;
   googleDriveLabel: string;
   googleDriveHint: string;
   googleDriveNotConfiguredHint: string;
@@ -204,12 +212,20 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Clear history',
     clearHistoryConfirm: 'Clear all successful workout history?',
     clearHistoryTitle: 'Clear saved history?',
-    applicationDataLabel: 'Application Data',
-    exportDataLabel: 'Export Data',
-    importDataLabel: 'Import Data',
-    dataImportHint: 'Export or import all Pulse Trainer app data saved on this device.',
-    dataImportSuccess: 'Application data imported. Reloading…',
-    dataImportError: 'That JSON is not valid Pulse Trainer app data.',
+    planTimerDataLabel: 'Plan & Timer',
+    planTimerDataHint: 'Back up your training plan, timer settings, and workout history as JSON.',
+    exportPlanTimerDataLabel: 'Export Plan & Timer JSON',
+    importPlanTimerDataLabel: 'Import Plan & Timer JSON',
+    planTimerDataExportSuccess: 'Plan & Timer JSON exported.',
+    planTimerDataSuccess: 'Plan & Timer data imported. Reloading…',
+    planTimerDataError: 'That file is not valid Plan & Timer data.',
+    bodyDataLabel: 'Body',
+    bodyDataHint: 'Back up your body measurements and saved height as a CSV file.',
+    exportBodyDataLabel: 'Export Body CSV',
+    importBodyDataLabel: 'Import Body CSV',
+    bodyDataExportSuccess: 'Body CSV exported.',
+    bodyDataSuccess: 'Body data imported. Reloading…',
+    bodyDataError: 'That file is not valid Body CSV data.',
     googleDriveLabel: 'Google Drive',
     googleDriveHint: 'Save a full app data backup to your Google Drive Pulse Trainer folder.',
     googleDriveNotConfiguredHint: 'Google Drive export is not configured for this build.',
@@ -361,12 +377,20 @@ export const MESSAGES: Record<Locale, Messages> = {
     clearHistoryLabel: 'Обриши историју',
     clearHistoryConfirm: 'Обрисати целу историју успешних тренинга?',
     clearHistoryTitle: 'Обрисати сачувану историју?',
-    applicationDataLabel: 'Подаци апликације',
-    exportDataLabel: 'Извези податке',
-    importDataLabel: 'Увези податке',
-    dataImportHint: 'Извези или увези све Pulse Trainer податке сачуване на овом уређају.',
-    dataImportSuccess: 'Подаци апликације су увезени. Поновно учитавање…',
-    dataImportError: 'Тај JSON није важећи извоз Pulse Trainer података.',
+    planTimerDataLabel: 'План и тајмер',
+    planTimerDataHint: 'Сачувај план тренинга, подешавања тајмера и историју тренинга као JSON.',
+    exportPlanTimerDataLabel: 'Извези JSON плана и тајмера',
+    importPlanTimerDataLabel: 'Увези JSON плана и тајмера',
+    planTimerDataExportSuccess: 'JSON плана и тајмера је извезен.',
+    planTimerDataSuccess: 'Подаци плана и тајмера су увезени. Поновно учитавање…',
+    planTimerDataError: 'Тај фајл није важећи извоз плана и тајмера.',
+    bodyDataLabel: 'Тело',
+    bodyDataHint: 'Сачувај мерења тела и сачувану висину као CSV фајл.',
+    exportBodyDataLabel: 'Извези CSV тела',
+    importBodyDataLabel: 'Увези CSV тела',
+    bodyDataExportSuccess: 'CSV тела је извезен.',
+    bodyDataSuccess: 'Подаци о телу су увезени. Поновно учитавање…',
+    bodyDataError: 'Тај фајл није важећи CSV података о телу.',
     googleDriveLabel: 'Google Drive',
     googleDriveHint: 'Сачувај резервну копију свих података апликације у Pulse Trainer фасциклу на Google Drive-у.',
     googleDriveNotConfiguredHint: 'Google Drive извоз није подешен у овој верзији.',
