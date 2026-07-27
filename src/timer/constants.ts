@@ -1,6 +1,6 @@
 import type { TimerSettings } from './types';
 
-export const MAX_HISTORY = 12;
+export const MAX_HISTORY = 3;
 export const TICK_MS = 100;
 
 export const DEFAULT_SETTINGS: TimerSettings = {
