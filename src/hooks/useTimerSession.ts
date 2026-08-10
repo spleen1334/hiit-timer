@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MAX_HISTORY, TICK_MS } from '../timer/constants';
-import { getPhaseProgress, getRoundProgress, getSessionTotals } from '../timer/math';
-import type { HistoryEntry, Phase, SessionMode, TimerSettings } from '../timer/types';
+import { TICK_MS } from '../timer/constants';
+import { getPhaseProgress, getRoundProgress } from '../timer/math';
+import type { Phase, SessionMode, TimerSettings } from '../timer/types';
 
 type TimerFeedback = {
   ensureAudioContext: () => Promise<void>;
@@ -11,11 +11,10 @@ type TimerFeedback = {
 
 type UseTimerSessionOptions = {
   settings: TimerSettings;
-  onComplete: (updater: (current: HistoryEntry[]) => HistoryEntry[]) => void;
   feedback: TimerFeedback;
 };
 
-export function useTimerSession({ settings, onComplete, feedback }: UseTimerSessionOptions) {
+export function useTimerSession({ settings, feedback }: UseTimerSessionOptions) {
   const [mode, setMode] = useState<SessionMode>('setup');
   const [phase, setPhase] = useState<Phase>('delay');
   const [round, setRound] = useState(1);
@@ -64,28 +63,15 @@ export function useTimerSession({ settings, onComplete, feedback }: UseTimerSess
   }, []);
 
   const finishSession = useCallback(() => {
-    const completedSettings = settingsRef.current;
-    const totals = getSessionTotals(completedSettings);
-
     deadlineRef.current = null;
     phaseRef.current = 'complete';
     wholeSecondsRef.current = 0;
-    onComplete((current) =>
-      [
-        {
-          completedAt: new Date().toISOString(),
-          ...totals,
-          settings: completedSettings,
-        },
-        ...current,
-      ].slice(0, MAX_HISTORY),
-    );
     setMode('complete');
     setPhase('complete');
     setRemainingMs(0);
     setPhaseDuration(0);
     feedbackRef.current.notifyTransition('complete');
-  }, [onComplete]);
+  }, []);
 
   const advancePhase = useCallback(() => {
     const currentPhase = phaseRef.current;

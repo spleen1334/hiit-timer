@@ -874,23 +874,6 @@
   box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
 }
 
-.clear-history-button {
-  min-height: 2.3rem;
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid rgba(248, 113, 113, 0.3);
-  border-radius: 999px;
-  background: rgba(127, 29, 29, 0.2);
-  color: #fecaca;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .utility-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1052,8 +1035,7 @@
 }
 
 .info-card-head strong,
-.session-stat-grid strong,
-.history-meta strong {
+.session-stat-grid strong {
   display: block;
   margin-top: 0.18rem;
   font-size: 1rem;
@@ -1088,59 +1070,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(7.25rem, 1fr));
   gap: 0.5rem;
-}
-
-.history-meta {
-  margin-top: 0.75rem;
-  display: grid;
-  gap: 0.65rem;
-}
-
-.history-settings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-top: 0.22rem;
-}
-
-.history-settings span {
-  padding: 0.35rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(248, 250, 252, 0.94);
-  font-size: 0.78rem;
-}
-
-.history-chart {
-  margin-top: 0.85rem;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  align-items: end;
-  gap: 0.45rem;
-  min-height: 5.8rem;
-}
-
-.history-bar-wrap {
-  display: grid;
-  justify-items: center;
-  align-items: end;
-  gap: 0.35rem;
-  min-width: 0;
-  height: 100%;
-}
-
-.history-bar {
-  width: 100%;
-  min-height: 1rem;
-  border-radius: 999px 999px 0.45rem 0.45rem;
-  background: linear-gradient(180deg, #f59e0b, #fb7185);
-  box-shadow: 0 0 18px rgba(250, 204, 21, 0.2);
-}
-
-.history-bar-wrap span {
-  font-size: 0.68rem;
-  color: rgba(226, 232, 240, 0.64);
-  white-space: nowrap;
 }
 
 .empty-state {

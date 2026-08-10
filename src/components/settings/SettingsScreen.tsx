@@ -17,7 +17,6 @@ type SettingsScreenProps = {
   onOpenLocaleDialog: () => void;
   onToggleSound: () => void;
   onInstall: () => void;
-  onClearTimerHistory: () => void;
   onClearBodyData: () => void;
 };
 
@@ -31,7 +30,6 @@ export function SettingsScreen({
   onOpenLocaleDialog,
   onToggleSound,
   onInstall,
-  onClearTimerHistory,
   onClearBodyData,
 }: SettingsScreenProps) {
   const planTimerFileInputRef = useRef<HTMLInputElement>(null);
@@ -280,9 +278,6 @@ export function SettingsScreen({
         <section className="settings-card settings-delete-card">
           <p className="settings-card-label">{messages.deleteDataLabel}</p>
           <div className="settings-button-stack">
-            <button type="button" className="settings-button settings-button-danger" onClick={onClearTimerHistory}>
-              {messages.clearTimerHistoryLabel}
-            </button>
             <button type="button" className="settings-button settings-button-danger" onClick={onClearBodyData}>
               {messages.clearBodyDataLabel}
             </button>

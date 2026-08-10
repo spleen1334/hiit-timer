@@ -170,22 +170,6 @@ export function BodyIcon() {
   );
 }
 
-export function HistoryIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="button-icon">
-      <path
-        d="M6.5 8.5A7 7 0 1 1 5 13"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path d="M5 6V10H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 9.5V13L14.6 14.8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function PhoneRotateIcon() {
   return (
     <svg viewBox="0 0 64 64" className="orientation-lock-icon" aria-hidden="true">

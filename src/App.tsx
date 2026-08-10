@@ -11,7 +11,7 @@ import { CogIcon } from './components/shared/icons';
 import { SuccessOverlay } from './components/shared/SuccessOverlay';
 import { InfoDialog, LocaleDialog, TypedConfirmDialog } from './components/shared/dialogs';
 import type { AppViewMode } from './app/types';
-import { clearBodyData as clearStoredBodyData, clearStoredTimerHistory } from './data/clearData';
+import { clearBodyData as clearStoredBodyData } from './data/clearData';
 import { persistedState } from './data/persistedState';
 import { useAudioFeedback } from './hooks/useAudioFeedback';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
@@ -29,14 +29,12 @@ function App() {
   const [settings, setSettings] = usePersistedState<TimerSettings>(persistedState.timerSettings);
   const [timerTool, setTimerTool] = usePersistedState<TimerToolMode>(persistedState.timerTool);
   const [locale, setLocale] = usePersistedState<Locale>(persistedState.locale);
-  const [history, setHistory] = usePersistedState(persistedState.timerHistory);
   const [statsOpen, setStatsOpen] = usePersistedState(persistedState.statsPanelOpen);
   const [appView, setAppView] = usePersistedState<AppViewMode>(persistedState.appView);
   const [trainingProgram, setTrainingProgram] = usePersistedState<TrainingProgram>(persistedState.trainingProgram);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsReturnView, setSettingsReturnView] = useState<AppViewMode>('timer');
   const [isLocaleDialogOpen, setIsLocaleDialogOpen] = useState(false);
-  const [isClearHistoryDialogOpen, setIsClearHistoryDialogOpen] = useState(false);
   const [isClearBodyDataDialogOpen, setIsClearBodyDataDialogOpen] = useState(false);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
   const [splashPhase, setSplashPhase] = useState<'visible' | 'hiding' | 'hidden'>('visible');
@@ -56,7 +54,6 @@ function App() {
     resetSession,
   } = useTimerSession({
     settings,
-    onComplete: setHistory,
     feedback,
   });
   const {
@@ -101,25 +98,6 @@ function App() {
   const messages = MESSAGES[locale];
   const localeMeta = LOCALE_OPTIONS.find((option) => option.id === locale) ?? LOCALE_OPTIONS[0];
   const sessionTotals = useMemo(() => getSessionTotals(settings), [settings]);
-  const latestHistory = history[0] ?? null;
-  const recentHistory = history.slice(0, 6).reverse();
-  const maxHistorySeconds = Math.max(...recentHistory.map((entry) => entry.totalSeconds), 1);
-  const dateFormatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat(localeMeta.intl, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }),
-    [localeMeta.intl],
-  );
-  const shortDateFormatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat(localeMeta.intl, {
-        month: 'numeric',
-        day: 'numeric',
-      }),
-    [localeMeta.intl],
-  );
   const timerScreenTone = useMemo(() => {
     if (timerTool === 'stopwatch') {
       return 'screen-stopwatch';
@@ -183,12 +161,6 @@ function App() {
     },
     [setSettings],
   );
-
-  const clearHistory = useCallback(() => {
-    setHistory([]);
-    clearStoredTimerHistory();
-    setIsClearHistoryDialogOpen(false);
-  }, [setHistory]);
 
   const clearBodyData = useCallback(async () => {
     await clearStoredBodyData();
@@ -274,11 +246,6 @@ function App() {
                 settings={settings}
                 statsOpen={statsOpen}
                 sessionTotals={sessionTotals}
-                latestHistory={latestHistory}
-                recentHistory={recentHistory}
-                maxHistorySeconds={maxHistorySeconds}
-                dateFormatter={dateFormatter}
-                shortDateFormatter={shortDateFormatter}
                 stopwatchMode={stopwatchMode}
                 stopwatchElapsedMs={elapsedMs}
                 onSettingChange={updateSetting}
@@ -310,7 +277,6 @@ function App() {
               onOpenLocaleDialog={() => setIsLocaleDialogOpen(true)}
               onToggleSound={() => updateSetting('soundEnabled', !settings.soundEnabled)}
               onInstall={() => void requestInstall()}
-              onClearTimerHistory={() => setIsClearHistoryDialogOpen(true)}
               onClearBodyData={() => setIsClearBodyDataDialogOpen(true)}
             />
           ) : null}
@@ -318,17 +284,6 @@ function App() {
       </div>
 
       {appView === 'timer' && mode === 'complete' ? <SuccessOverlay onDismiss={resetSession} returnLabel={messages.returnHomeLabel} /> : null}
-      {isClearHistoryDialogOpen ? (
-        <TypedConfirmDialog
-          title={messages.clearTimerHistoryTitle}
-          body={messages.clearTimerHistoryConfirm}
-          instruction={messages.typeYesInstruction}
-          cancelLabel={messages.cancelLabel}
-          confirmLabel={messages.deleteLabel}
-          onCancel={() => setIsClearHistoryDialogOpen(false)}
-          onConfirm={clearHistory}
-        />
-      ) : null}
       {isClearBodyDataDialogOpen ? (
         <TypedConfirmDialog
           title={messages.clearBodyDataTitle}

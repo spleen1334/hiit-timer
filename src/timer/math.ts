@@ -1,5 +1,5 @@
-import { DEFAULT_SETTINGS, MAX_HISTORY } from './constants';
-import type { HistoryEntry, Phase, SessionMode, SessionTotals, TimerSettings } from './types';
+import { DEFAULT_SETTINGS } from './constants';
+import type { Phase, SessionMode, SessionTotals, TimerSettings } from './types';
 
 export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -22,32 +22,6 @@ export const sanitizeSettings = (settings: Partial<TimerSettings> | TimerSetting
   initialDelay: clamp(Number(settings.initialDelay ?? DEFAULT_SETTINGS.initialDelay), 0, 60),
   soundEnabled: Boolean(settings.soundEnabled ?? DEFAULT_SETTINGS.soundEnabled),
 });
-
-export const sanitizeHistory = (entries: unknown): HistoryEntry[] => {
-  if (!Array.isArray(entries)) {
-    return [];
-  }
-
-  return entries
-    .map((entry) => {
-      if (!entry || typeof entry !== 'object') {
-        return null;
-      }
-
-      const candidate = entry as Partial<HistoryEntry>;
-
-      return {
-        completedAt: String(candidate.completedAt ?? new Date().toISOString()),
-        totalSeconds: Math.max(1, Number(candidate.totalSeconds ?? 1)),
-        workSeconds: Math.max(0, Number(candidate.workSeconds ?? 0)),
-        restSeconds: Math.max(0, Number(candidate.restSeconds ?? 0)),
-        delaySeconds: Math.max(0, Number(candidate.delaySeconds ?? 0)),
-        settings: sanitizeSettings(candidate.settings ?? DEFAULT_SETTINGS),
-      };
-    })
-    .filter((entry): entry is HistoryEntry => entry !== null)
-    .slice(0, MAX_HISTORY);
-};
 
 export const getSessionTotals = (settings: TimerSettings): SessionTotals => {
   const workSeconds = settings.activeSeconds * settings.rounds;

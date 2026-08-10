@@ -4,13 +4,12 @@ import { DEFAULT_PROGRAM } from '../plan/defaultProgram';
 import type { SectionVisibility, TrainingProgram } from '../plan/types';
 import { sanitizeTrainingProgram } from '../plan/sanitizeProgram';
 import { DEFAULT_SETTINGS } from '../timer/constants';
-import { readStoredBoolean, sanitizeHistory, sanitizeSettings } from '../timer/math';
-import type { HistoryEntry, TimerSettings, TimerToolMode } from '../timer/types';
+import { readStoredBoolean, sanitizeSettings } from '../timer/math';
+import type { TimerSettings, TimerToolMode } from '../timer/types';
 import {
   APP_VIEW_KEY,
   PLAN_SECTION_VISIBILITY_KEY,
   STATS_PANEL_OPEN_KEY,
-  TIMER_HISTORY_KEY,
   TIMER_LOCALE_KEY,
   TIMER_SETTINGS_KEY,
   TIMER_TOOL_KEY,
@@ -60,11 +59,6 @@ export const persistedState = {
     fallback: () => sanitizeSettings(DEFAULT_SETTINGS),
     parse: (stored: string) => sanitizeSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(stored) }),
   } satisfies PersistedStateSpec<TimerSettings>,
-  timerHistory: {
-    key: TIMER_HISTORY_KEY,
-    fallback: () => [] as HistoryEntry[],
-    parse: (stored: string) => sanitizeHistory(JSON.parse(stored)),
-  } satisfies PersistedStateSpec<HistoryEntry[]>,
   timerTool: {
     key: TIMER_TOOL_KEY,
     fallback: () => 'hiit' as TimerToolMode,

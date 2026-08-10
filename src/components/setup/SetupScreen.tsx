@@ -1,6 +1,6 @@
 import type { Messages } from '../../i18n';
 import { formatStopwatchTime } from '../../timer/math';
-import type { HistoryEntry, SessionMode, SessionTotals, TimerSettings, TimerToolMode } from '../../timer/types';
+import type { SessionMode, SessionTotals, TimerSettings, TimerToolMode } from '../../timer/types';
 import { RunControls } from '../run/RunControls';
 import { TimerCard } from '../run/TimerCard';
 import { PauseIcon, PlayIcon, RestartIcon, StopwatchIcon, TimerStackIcon } from '../shared/icons';
@@ -13,11 +13,6 @@ type SetupScreenProps = {
   settings: TimerSettings;
   statsOpen: boolean;
   sessionTotals: SessionTotals;
-  latestHistory: HistoryEntry | null;
-  recentHistory: HistoryEntry[];
-  maxHistorySeconds: number;
-  dateFormatter: Intl.DateTimeFormat;
-  shortDateFormatter: Intl.DateTimeFormat;
   stopwatchMode: SessionMode;
   stopwatchElapsedMs: number;
   onSettingChange: <K extends keyof TimerSettings>(key: K, next: TimerSettings[K]) => void;
@@ -35,11 +30,6 @@ export function SetupScreen({
   settings,
   statsOpen,
   sessionTotals,
-  latestHistory,
-  recentHistory,
-  maxHistorySeconds,
-  dateFormatter,
-  shortDateFormatter,
   stopwatchMode,
   stopwatchElapsedMs,
   onSettingChange,
@@ -159,11 +149,6 @@ export function SetupScreen({
               messages={messages}
               isOpen={statsOpen}
               sessionTotals={sessionTotals}
-              latestHistory={latestHistory}
-              recentHistory={recentHistory}
-              maxHistorySeconds={maxHistorySeconds}
-              dateFormatter={dateFormatter}
-              shortDateFormatter={shortDateFormatter}
               onToggleOpen={onToggleStats}
             />
           </div>

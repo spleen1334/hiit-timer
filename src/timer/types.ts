@@ -12,15 +12,6 @@ export type TimerSettings = {
   soundEnabled: boolean;
 };
 
-export type HistoryEntry = {
-  completedAt: string;
-  totalSeconds: number;
-  workSeconds: number;
-  restSeconds: number;
-  delaySeconds: number;
-  settings: TimerSettings;
-};
-
 export type SessionTotals = {
   workSeconds: number;
   restSeconds: number;

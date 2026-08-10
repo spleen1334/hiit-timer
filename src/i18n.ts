@@ -33,9 +33,6 @@ export type Messages = {
   installAppLabel: string;
   installAppTitle: string;
   installAppBody: string;
-  clearHistoryLabel: string;
-  clearHistoryConfirm: string;
-  clearHistoryTitle: string;
   planTimerDataLabel: string;
   planTimerDataHint: string;
   exportPlanTimerDataLabel: string;
@@ -60,9 +57,6 @@ export type Messages = {
   googleDriveExportSuccess: string;
   googleDriveExportError: string;
   deleteDataLabel: string;
-  clearTimerHistoryLabel: string;
-  clearTimerHistoryTitle: string;
-  clearTimerHistoryConfirm: string;
   clearBodyDataLabel: string;
   clearBodyDataTitle: string;
   clearBodyDataConfirm: string;
@@ -96,12 +90,7 @@ export type Messages = {
   totalWorkLabel: string;
   totalRestLabel: string;
   totalDelayLabel: string;
-  historyTitle: string;
-  latestSuccessLabel: string;
-  recentRunsLabel: string;
-  noHistoryLabel: string;
   completedLabel: string;
-  settingsUsedLabel: string;
   planTitle: string;
   planSubtitle: string;
   bodyTabLabel: string;
@@ -204,16 +193,13 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsSubtitle: 'Language, sound, and app data tools.',
     backLabel: 'Back',
     editLabel: 'Edit',
-    statsLabel: 'Session & history',
+    statsLabel: 'Session',
     installAppLabel: 'Install app',
     installAppTitle: 'Install Pulse Trainer',
     installAppBody:
       'If the install prompt does not appear, use your browser menu and choose Install app or Add to Home Screen. On iPhone Safari, use Share and then Add to Home Screen.',
-    clearHistoryLabel: 'Clear history',
-    clearHistoryConfirm: 'Clear all successful workout history?',
-    clearHistoryTitle: 'Clear saved history?',
     planTimerDataLabel: 'Plan & Timer',
-    planTimerDataHint: 'Back up your training plan, timer settings, and workout history as JSON.',
+    planTimerDataHint: 'Back up your training plan and timer settings as JSON.',
     exportPlanTimerDataLabel: 'Export Plan & Timer JSON',
     importPlanTimerDataLabel: 'Import Plan & Timer JSON',
     planTimerDataExportSuccess: 'Plan & Timer JSON exported.',
@@ -236,9 +222,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     googleDriveExportSuccess: 'Exported to Google Drive.',
     googleDriveExportError: 'Google Drive export failed. Try again later.',
     deleteDataLabel: 'Delete Data',
-    clearTimerHistoryLabel: 'Clear Timer History',
-    clearTimerHistoryTitle: 'Clear timer history?',
-    clearTimerHistoryConfirm: 'This deletes saved timer workout history only. Timer settings will be kept.',
     clearBodyDataLabel: 'Clear Body Data History',
     clearBodyDataTitle: 'Clear body data?',
     clearBodyDataConfirm: 'This deletes body metrics history and saved height from this device.',
@@ -272,12 +255,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalWorkLabel: 'Work total',
     totalRestLabel: 'Rest total',
     totalDelayLabel: 'Delay',
-    historyTitle: 'History',
-    latestSuccessLabel: 'Latest success',
-    recentRunsLabel: 'Recent successful runs',
-    noHistoryLabel: 'No successful sessions yet.',
     completedLabel: 'Completed',
-    settingsUsedLabel: 'Settings used',
     planTitle: 'Training Program',
     planSubtitle: 'Build supersets by dragging one exercise card onto another.',
     bodyTabLabel: 'Body',
@@ -369,16 +347,13 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsSubtitle: 'Језик, звук и алати за податке апликације.',
     backLabel: 'Назад',
     editLabel: 'Уреди',
-    statsLabel: 'Сесија и историја',
+    statsLabel: 'Сесија',
     installAppLabel: 'Инсталирај апликацију',
     installAppTitle: 'Инсталирај Pulse Trainer',
     installAppBody:
       'Ако се прозор за инсталацију не појави, отвори мени прегледача и изабери Install app или Add to Home Screen. На iPhone Safari-ју користи Share па Add to Home Screen.',
-    clearHistoryLabel: 'Обриши историју',
-    clearHistoryConfirm: 'Обрисати целу историју успешних тренинга?',
-    clearHistoryTitle: 'Обрисати сачувану историју?',
     planTimerDataLabel: 'План и тајмер',
-    planTimerDataHint: 'Сачувај план тренинга, подешавања тајмера и историју тренинга као JSON.',
+    planTimerDataHint: 'Сачувај план тренинга и подешавања тајмера као JSON.',
     exportPlanTimerDataLabel: 'Извези JSON плана и тајмера',
     importPlanTimerDataLabel: 'Увези JSON плана и тајмера',
     planTimerDataExportSuccess: 'JSON плана и тајмера је извезен.',
@@ -401,9 +376,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     googleDriveExportSuccess: 'Извезено на Google Drive.',
     googleDriveExportError: 'Google Drive извоз није успео. Покушај поново касније.',
     deleteDataLabel: 'Брисање података',
-    clearTimerHistoryLabel: 'Обриши историју тајмера',
-    clearTimerHistoryTitle: 'Обрисати историју тајмера?',
-    clearTimerHistoryConfirm: 'Ово брише само сачувану историју тренинга тајмера. Подешавања тајмера остају.',
     clearBodyDataLabel: 'Обриши историју тела',
     clearBodyDataTitle: 'Обрисати податке о телу?',
     clearBodyDataConfirm: 'Ово брише историју телесних мерења и сачувану висину са овог уређаја.',
@@ -437,12 +409,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalWorkLabel: 'Укупан рад',
     totalRestLabel: 'Укупан одмор',
     totalDelayLabel: 'Припрема',
-    historyTitle: 'Историја',
-    latestSuccessLabel: 'Последњи успешан тренинг',
-    recentRunsLabel: 'Последњи успешни тренинзи',
-    noHistoryLabel: 'Још нема успешно завршених сесија.',
     completedLabel: 'Завршено',
-    settingsUsedLabel: 'Коришћена подешавања',
     planTitle: 'План тренинга',
     planSubtitle: 'Направи суперсет превлачењем једне вежбе на другу.',
     bodyTabLabel: 'Тело',

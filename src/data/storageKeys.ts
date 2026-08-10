@@ -1,6 +1,5 @@
 export const TIMER_SETTINGS_KEY = 'pulse-hiit-settings';
 export const TIMER_LOCALE_KEY = 'pulse-hiit-locale';
-export const TIMER_HISTORY_KEY = 'pulse-hiit-history';
 export const TIMER_TOOL_KEY = 'pulse-trainer-timer-tool';
 export const STATS_PANEL_OPEN_KEY = 'pulse-hiit-stats-panel-open';
 export const APP_VIEW_KEY = 'pulse-trainer-app-view';
@@ -12,7 +11,6 @@ export const GOOGLE_DRIVE_FOLDER_ID_KEY = 'pulse-trainer-google-drive-folder-id'
 
 export const APP_LOCAL_STORAGE_KEYS = [
   TIMER_SETTINGS_KEY,
-  TIMER_HISTORY_KEY,
   TIMER_TOOL_KEY,
   TIMER_LOCALE_KEY,
   STATS_PANEL_OPEN_KEY,
