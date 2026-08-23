@@ -15,7 +15,7 @@
 }
 
 .splash-screen.is-hiding {
-  animation: splash-fade-out 240ms ease forwards;
+  animation: splash-fade-out 168ms ease forwards;
 }
 
 .splash-screen::before,
@@ -38,7 +38,7 @@
   background: conic-gradient(from 180deg, rgba(56, 189, 248, 0) 0 16%, rgba(56, 189, 248, 0.1) 19%, rgba(251, 113, 133, 0) 24% 44%, rgba(251, 113, 133, 0.12) 48%, rgba(251, 113, 133, 0) 52% 100%);
   filter: blur(18px);
   opacity: 0.42;
-  animation: splash-halo-rotate 14s linear infinite;
+  animation: splash-halo-rotate 9.8s linear infinite;
 }
 
 .splash-grid {
@@ -65,7 +65,7 @@
   width: 9rem;
   height: 9rem;
   background: rgba(251, 113, 133, 0.2);
-  animation: splash-drift 8s ease-in-out infinite;
+  animation: splash-drift 5.6s ease-in-out infinite;
 }
 
 .splash-glow-b {
@@ -73,7 +73,7 @@
   width: 10rem;
   height: 10rem;
   background: rgba(34, 211, 238, 0.16);
-  animation: splash-drift 10s ease-in-out infinite reverse;
+  animation: splash-drift 7s ease-in-out infinite reverse;
 }
 
 .splash-glow-c {
@@ -81,7 +81,7 @@
   width: 7rem;
   height: 7rem;
   background: rgba(245, 158, 11, 0.16);
-  animation: splash-drift 9s ease-in-out infinite;
+  animation: splash-drift 6.3s ease-in-out infinite;
 }
 
 .splash-stage {
@@ -99,7 +99,7 @@
   height: 8.5rem;
   display: grid;
   place-items: center;
-  animation: splash-shell-breathe 2.8s ease-in-out infinite;
+  animation: splash-shell-breathe 1.96s ease-in-out infinite;
 }
 
 .splash-logo-frame {
@@ -127,12 +127,12 @@
 
 .splash-logo-frame::before {
   border: 1px solid rgba(125, 211, 252, 0.18);
-  animation: splash-ring-spin 12s linear infinite;
+  animation: splash-ring-spin 8.4s linear infinite;
 }
 
 .splash-logo-frame::after {
   border: 1px dashed rgba(255, 255, 255, 0.13);
-  animation: splash-ring-spin-reverse 16s linear infinite;
+  animation: splash-ring-spin-reverse 11.2s linear infinite;
 }
 
 .splash-logo {
@@ -144,7 +144,7 @@
   filter:
     drop-shadow(0 0 18px rgba(59, 130, 246, 0.25))
     drop-shadow(0 0 26px rgba(251, 113, 133, 0.2));
-  animation: splash-logo-float 2.8s ease-in-out infinite;
+  animation: splash-logo-float 1.96s ease-in-out infinite;
   transform-origin: center;
 }
 
@@ -155,7 +155,7 @@
   background: linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.16) 48%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.16) 52%, transparent 60%);
   mix-blend-mode: screen;
   opacity: 0.7;
-  animation: splash-scan 2.2s ease-in-out infinite;
+  animation: splash-scan 1.54s ease-in-out infinite;
 }
 
 .splash-orbit {
@@ -188,7 +188,7 @@
 .splash-orbit-a {
   width: 10rem;
   height: 10rem;
-  animation: splash-orbit-spin 10s linear infinite;
+  animation: splash-orbit-spin 7s linear infinite;
 }
 
 .splash-orbit-a span {
@@ -199,7 +199,7 @@
 .splash-orbit-b {
   width: 12.2rem;
   height: 12.2rem;
-  animation: splash-orbit-spin 14s linear infinite reverse;
+  animation: splash-orbit-spin 9.8s linear infinite reverse;
 }
 
 .splash-orbit-b span {
@@ -210,7 +210,7 @@
 .splash-orbit-c {
   width: 8.3rem;
   height: 8.3rem;
-  animation: splash-orbit-spin 8s linear infinite;
+  animation: splash-orbit-spin 5.6s linear infinite;
 }
 
 .splash-orbit-c span {
@@ -235,7 +235,7 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
-  animation: splash-particle 3s ease-in-out infinite;
+  animation: splash-particle 2.1s ease-in-out infinite;
 }
 
 .splash-particles span:nth-child(1) { top: 22%; left: 24%; animation-delay: 0s; }
