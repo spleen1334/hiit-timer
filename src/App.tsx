@@ -83,8 +83,8 @@ function App() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const holdDuration = reduceMotion ? 800 : 2000;
-    const fadeDuration = reduceMotion ? 84 : 168;
+    const holdDuration = reduceMotion ? 600 : 600;
+    const fadeDuration = reduceMotion ? 84 : 200;
 
     const hideTimer = window.setTimeout(() => setSplashPhase('hiding'), holdDuration);
     const cleanupTimer = window.setTimeout(() => setSplashPhase('hidden'), holdDuration + fadeDuration);

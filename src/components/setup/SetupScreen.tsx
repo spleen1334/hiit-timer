@@ -3,7 +3,7 @@ import { formatStopwatchTime } from '../../timer/math';
 import type { SessionMode, SessionTotals, TimerSettings, TimerToolMode } from '../../timer/types';
 import { RunControls } from '../run/RunControls';
 import { TimerCard } from '../run/TimerCard';
-import { PauseIcon, PlayIcon, RestartIcon, StopwatchIcon, TimerStackIcon } from '../shared/icons';
+import { PlayIcon, RestartIcon, StopwatchIcon, TimerStackIcon } from '../shared/icons';
 import { StatsPanel } from './StatsPanel';
 import { Stepper } from './Stepper';
 
@@ -48,38 +48,11 @@ export function SetupScreen({
     <section className={`panel setup-panel ${isHiitMode ? '' : `setup-panel-stopwatch ${isStopwatchActive ? 'setup-panel-stopwatch-active' : ''}`}`}>
       {isHiitMode ? (
         <>
-          <div className="headline setup-headline">
-            <div className="setup-header-main">
-              <div className="setup-header-copy">
+          <div className="headline mode-headline">
+              <div className="mode-header-copy">
                 <p className="screen-hero-kicker">{messages.timerTabLabel}</p>
                 <h1>{messages.timerHeaderTitle}</h1>
-                <p>{messages.timerHeaderSubtitle}</p>
               </div>
-
-              <div className="setup-header-mark" aria-hidden="true">
-                <span className="setup-header-ring setup-header-ring-a" />
-                <span className="setup-header-ring setup-header-ring-b" />
-                <span className="setup-header-ring setup-header-ring-c" />
-                <span className="setup-header-icon">
-                  <TimerStackIcon />
-                </span>
-              </div>
-            </div>
-
-            <div className="setup-header-badges" aria-hidden="true">
-              <span className="setup-header-chip">
-                <PlayIcon />
-                <span>{messages.activeLabel}</span>
-              </span>
-              <span className="setup-header-chip">
-                <PauseIcon />
-                <span>{messages.restLabel}</span>
-              </span>
-              <span className="setup-header-chip">
-                <TimerStackIcon />
-                <span>{messages.roundsLabel}</span>
-              </span>
-            </div>
           </div>
 
           <div className="timer-tool-switch" role="tablist" aria-label={messages.timerTabLabel}>
@@ -159,25 +132,14 @@ export function SetupScreen({
         </>
       ) : (
         <>
-          <div className="headline setup-headline setup-headline-stopwatch">
-            <div className="setup-header-main">
-              <div className="setup-header-copy">
+          <div className="headline mode-headline">
+              <div className="mode-header-copy">
                 <p className="screen-hero-kicker">{messages.timerTabLabel}</p>
                 <h1>{messages.stopwatchHeaderTitle}</h1>
-                <p>{messages.stopwatchHeaderSubtitle}</p>
               </div>
+          </div>
 
-              <div className="setup-header-mark" aria-hidden="true">
-                <span className="setup-header-ring setup-header-ring-a" />
-                <span className="setup-header-ring setup-header-ring-b" />
-                <span className="setup-header-ring setup-header-ring-c" />
-                <span className="setup-header-icon">
-                  <StopwatchIcon />
-                </span>
-              </div>
-            </div>
-
-            <div className="timer-tool-switch" role="tablist" aria-label={messages.timerTabLabel}>
+          <div className="timer-tool-switch" role="tablist" aria-label={messages.timerTabLabel}>
               <button
                 type="button"
                 className={`timer-tool-tab ${isHiitMode ? 'is-active' : ''}`}
@@ -199,7 +161,6 @@ export function SetupScreen({
                 <StopwatchIcon />
                 <span>{messages.stopwatchLabel}</span>
               </button>
-            </div>
           </div>
 
           <TimerCard

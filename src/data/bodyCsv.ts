@@ -1,9 +1,10 @@
 import { validateBodyMetricEntries, type BodyMetricEntry } from '../body/bodyMetrics';
 import { readLocalStorageItem, removeLocalStorageItem } from './localStorage';
-import { readBodyData, writeBodyData } from './bodyData';
+import { normalizeBodyAge, readBodyData, writeBodyData } from './bodyData';
 import { BODY_HEIGHT_KEY, BODY_METRICS_KEY } from './storageKeys';
 
-const HEADER = 'date,weightKg,bodyFatPercent,heightCm';
+const LEGACY_HEADER = 'date,weightKg,bodyFatPercent,heightCm';
+const HEADER = `${LEGACY_HEADER},ageYears`;
 const csvEscape = (value: string) => /[,"\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 
 const parseCsv = (input: string): string[][] => {
@@ -24,9 +25,9 @@ const parseCsv = (input: string): string[][] => {
 };
 
 export async function buildBodyCsvExport() {
-  const snapshot = (await readBodyData()) ?? { entries: [], height: '' };
-  const rows = snapshot.entries.map((entry) => [entry.date, entry.weightKg, entry.bodyFatPercent, snapshot.height].map(csvEscape).join(','));
-  if (rows.length === 0 && snapshot.height) rows.push(`,,,${csvEscape(snapshot.height)}`);
+  const snapshot = (await readBodyData()) ?? { entries: [], height: '', age: '' };
+  const rows = snapshot.entries.map((entry) => [entry.date, entry.weightKg, entry.bodyFatPercent, snapshot.height, snapshot.age].map(csvEscape).join(','));
+  if (rows.length === 0 && (snapshot.height || snapshot.age)) rows.push(['', '', '', snapshot.height, snapshot.age].map(csvEscape).join(','));
   return [HEADER, ...rows].join('\n');
 }
 
@@ -37,18 +38,28 @@ export async function downloadBodyCsvExport() {
 
 export async function importBodyCsv(raw: string) {
   const rows = parseCsv(raw);
-  if (rows.length === 0 || rows[0].length !== 4 || rows[0].join(',') !== HEADER) throw new Error('Invalid body CSV.');
-  const dataRows = rows.slice(1); const heights = new Set<string>(); const entries: BodyMetricEntry[] = [];
+  if (rows.length === 0 || (rows[0].join(',') !== LEGACY_HEADER && rows[0].join(',') !== HEADER)) throw new Error('Invalid body CSV.');
+  const hasAgeColumn = rows[0].join(',') === HEADER;
+  const dataRows = rows.slice(1); const heights = new Set<string>(); const ages = new Set<string>(); const entries: BodyMetricEntry[] = [];
   dataRows.forEach((cells, index) => {
-    if (cells.length !== 4) throw new Error('Invalid body CSV.');
-    const [date, weightKg, bodyFatPercent, heightCm] = cells;
-    if (!date && !weightKg && !bodyFatPercent) { if (!heightCm || index !== 0 || dataRows.length !== 1) throw new Error('Invalid body CSV metadata row.'); heights.add(heightCm); return; }
+    if (cells.length !== (hasAgeColumn ? 5 : 4)) throw new Error('Invalid body CSV.');
+    const [date, weightKg, bodyFatPercent, heightCm, ageYears] = cells;
+    const normalizedAge = hasAgeColumn ? normalizeBodyAge(ageYears) : '';
+    if (hasAgeColumn && ageYears && !normalizedAge) throw new Error('Invalid body CSV age.');
+    if (!date && !weightKg && !bodyFatPercent) {
+      if ((!heightCm && !normalizedAge) || index !== 0 || dataRows.length !== 1) throw new Error('Invalid body CSV metadata row.');
+      if (heightCm) heights.add(heightCm);
+      if (normalizedAge) ages.add(normalizedAge);
+      return;
+    }
     if (!date || !weightKg || bodyFatPercent === undefined) throw new Error('Invalid body CSV row.');
     if (heightCm) heights.add(heightCm);
+    if (normalizedAge) ages.add(normalizedAge);
     entries.push({ id: `body-csv-${index}-${Date.now()}`, date, weightKg, bodyFatPercent, ...(heightCm ? { heightCm } : {}) });
   });
   if (heights.size > 1) throw new Error('Conflicting body heights.');
+  if (ages.size > 1) throw new Error('Conflicting body ages.');
   const valid = validateBodyMetricEntries(entries);
-  await writeBodyData({ entries: valid, height: [...heights][0] ?? '' });
+  await writeBodyData({ entries: valid, height: [...heights][0] ?? '', age: [...ages][0] ?? '' });
   removeLocalStorageItem(BODY_METRICS_KEY); removeLocalStorageItem(BODY_HEIGHT_KEY);
 }

@@ -5,13 +5,11 @@ export type Messages = {
   loadingSplashLabel: string;
   loadingSplashHint: string;
   timerHeaderTitle: string;
-  timerHeaderSubtitle: string;
   timerTabLabel: string;
   planTabLabel: string;
   hiitTimerLabel: string;
   stopwatchLabel: string;
   stopwatchHeaderTitle: string;
-  stopwatchHeaderSubtitle: string;
   startStopwatch: string;
   resetLabel: string;
   portraitModeLabel: string;
@@ -92,10 +90,8 @@ export type Messages = {
   totalDelayLabel: string;
   completedLabel: string;
   planTitle: string;
-  planSubtitle: string;
   bodyTabLabel: string;
   bodyTitleLabel: string;
-  bodySubtitleLabel: string;
   workoutSectionLabel: string;
   warmupSectionLabel: string;
   cardioSectionLabel: string;
@@ -103,9 +99,12 @@ export type Messages = {
   notesSectionLabel: string;
   bodyMetricsSectionLabel: string;
   bodyMetricsCurrentLabel: string;
+  bodyMetricsStatsLabel: string;
   bodyMetricsRecentLabel: string;
   bodyMetricsLoadMoreLabel: string;
   bodyMetricsChartLabel: string;
+  bodyMetricsGraphLabel: string;
+  bodyMetricsAddLabel: string;
   bodyMetricsChartHintLabel: string;
   bodyMetricsMonthNavigationLabel: string;
   bodyMetricsPreviousMonthLabel: string;
@@ -117,6 +116,7 @@ export type Messages = {
   bodyMetricsBodyFatLabel: string;
   bodyMetricsBodyFatToggleLabel: string;
   bodyMetricsHeightLabel: string;
+  bodyMetricsAgeLabel: string;
   bodyMetricsHeightHint: string;
   bodyMetricsBmiLabel: string;
   bodyMetricsSaveLabel: string;
@@ -169,13 +169,11 @@ export const MESSAGES: Record<Locale, Messages> = {
     loadingSplashLabel: 'Preparing your session',
     loadingSplashHint: 'Loading intervals and saved workout flow…',
     timerHeaderTitle: 'Interval timer',
-    timerHeaderSubtitle: 'Fast work and rest sessions tuned for mobile setup.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
     hiitTimerLabel: 'HIIT Timer',
     stopwatchLabel: 'Stopwatch',
     stopwatchHeaderTitle: 'Stopwatch',
-    stopwatchHeaderSubtitle: 'Track elapsed time with a clean pause and reset.',
     startStopwatch: 'Start stopwatch',
     resetLabel: 'Reset',
     portraitModeLabel: 'Use portrait mode',
@@ -206,7 +204,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     planTimerDataSuccess: 'Plan & Timer data imported. Reloading…',
     planTimerDataError: 'That file is not valid Plan & Timer data.',
     bodyDataLabel: 'Body',
-    bodyDataHint: 'Back up your body measurements and saved height as a CSV file.',
+    bodyDataHint: 'Back up your body measurements, saved height, and age as a CSV file.',
     exportBodyDataLabel: 'Export Body CSV',
     importBodyDataLabel: 'Import Body CSV',
     bodyDataExportSuccess: 'Body CSV exported.',
@@ -224,7 +222,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     deleteDataLabel: 'Delete Data',
     clearBodyDataLabel: 'Clear Body Data History',
     clearBodyDataTitle: 'Clear body data?',
-    clearBodyDataConfirm: 'This deletes body metrics history and saved height from this device.',
+    clearBodyDataConfirm: 'This deletes body metrics history, saved height, and age from this device.',
     typeYesInstruction: 'Type YES to confirm.',
     deleteLabel: 'Delete',
     exportPlanLabel: 'Export plan',
@@ -257,10 +255,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalDelayLabel: 'Delay',
     completedLabel: 'Completed',
     planTitle: 'Training Program',
-    planSubtitle: 'Build supersets by dragging one exercise card onto another.',
     bodyTabLabel: 'Body',
     bodyTitleLabel: 'Body',
-    bodySubtitleLabel: 'Weight, fat, history.',
     workoutSectionLabel: 'Workout',
     warmupSectionLabel: 'Warmup',
     cardioSectionLabel: 'Cardio',
@@ -268,9 +264,12 @@ export const MESSAGES: Record<Locale, Messages> = {
     notesSectionLabel: 'Notes',
     bodyMetricsSectionLabel: 'Body weight',
     bodyMetricsCurrentLabel: 'Latest',
+    bodyMetricsStatsLabel: 'Body Stats',
     bodyMetricsRecentLabel: 'Recent entries',
     bodyMetricsLoadMoreLabel: 'Load more',
     bodyMetricsChartLabel: 'Filter',
+    bodyMetricsGraphLabel: 'Body measurements graph',
+    bodyMetricsAddLabel: 'Add measurement',
     bodyMetricsChartHintLabel: 'Tap a dot',
     bodyMetricsMonthNavigationLabel: 'Anchor month',
     bodyMetricsPreviousMonthLabel: 'Previous',
@@ -282,6 +281,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsBodyFatLabel: 'Body fat %',
     bodyMetricsBodyFatToggleLabel: 'Body fat',
     bodyMetricsHeightLabel: 'Height (cm)',
+    bodyMetricsAgeLabel: 'Age',
     bodyMetricsHeightHint: 'Used for BMI.',
     bodyMetricsBmiLabel: 'BMI',
     bodyMetricsSaveLabel: 'Save',
@@ -323,13 +323,11 @@ export const MESSAGES: Record<Locale, Messages> = {
     loadingSplashLabel: 'Припрема сесије',
     loadingSplashHint: 'Учитавање интервала и сачуваног тока тренинга…',
     timerHeaderTitle: 'Интервални тајмер',
-    timerHeaderSubtitle: 'Брзе рад/одмор сесије прилагођене за мобилно подешавање.',
     timerTabLabel: 'Timer',
     planTabLabel: 'Plan',
     hiitTimerLabel: 'HIIT tajmer',
     stopwatchLabel: 'Štoperica',
     stopwatchHeaderTitle: 'Štoperica',
-    stopwatchHeaderSubtitle: 'Prati proteklo vreme uz pauzu i reset.',
     startStopwatch: 'Pokreni štopericu',
     resetLabel: 'Resetuj',
     portraitModeLabel: 'Користи усправни приказ',
@@ -360,7 +358,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     planTimerDataSuccess: 'Подаци плана и тајмера су увезени. Поновно учитавање…',
     planTimerDataError: 'Тај фајл није важећи извоз плана и тајмера.',
     bodyDataLabel: 'Тело',
-    bodyDataHint: 'Сачувај мерења тела и сачувану висину као CSV фајл.',
+    bodyDataHint: 'Сачувај мерења тела, сачувану висину и старост као CSV фајл.',
     exportBodyDataLabel: 'Извези CSV тела',
     importBodyDataLabel: 'Увези CSV тела',
     bodyDataExportSuccess: 'CSV тела је извезен.',
@@ -378,7 +376,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     deleteDataLabel: 'Брисање података',
     clearBodyDataLabel: 'Обриши историју тела',
     clearBodyDataTitle: 'Обрисати податке о телу?',
-    clearBodyDataConfirm: 'Ово брише историју телесних мерења и сачувану висину са овог уређаја.',
+    clearBodyDataConfirm: 'Ово брише историју телесних мерења, сачувану висину и старост са овог уређаја.',
     typeYesInstruction: 'Упиши YES за потврду.',
     deleteLabel: 'Обриши',
     exportPlanLabel: 'Извези план',
@@ -411,10 +409,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalDelayLabel: 'Припрема',
     completedLabel: 'Завршено',
     planTitle: 'План тренинга',
-    planSubtitle: 'Направи суперсет превлачењем једне вежбе на другу.',
     bodyTabLabel: 'Тело',
     bodyTitleLabel: 'Тело',
-    bodySubtitleLabel: 'Тежина, масти, историја.',
     workoutSectionLabel: 'Главни тренинг',
     warmupSectionLabel: 'Загревање',
     cardioSectionLabel: 'Кардио',
@@ -422,9 +418,12 @@ export const MESSAGES: Record<Locale, Messages> = {
     notesSectionLabel: 'Белешке',
     bodyMetricsSectionLabel: 'Телесна тежина',
     bodyMetricsCurrentLabel: 'Последњи унос',
+    bodyMetricsStatsLabel: 'Статистика тела',
     bodyMetricsRecentLabel: 'Недавни уноси',
     bodyMetricsLoadMoreLabel: 'Учитај још',
     bodyMetricsChartLabel: 'Филтер',
+    bodyMetricsGraphLabel: 'График телесних мерења',
+    bodyMetricsAddLabel: 'Додај мерење',
     bodyMetricsChartHintLabel: 'Додирни тачку',
     bodyMetricsMonthNavigationLabel: 'Месец сидро',
     bodyMetricsPreviousMonthLabel: 'Претходни',
@@ -436,6 +435,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     bodyMetricsBodyFatLabel: 'Проценат масти',
     bodyMetricsBodyFatToggleLabel: 'Масти',
     bodyMetricsHeightLabel: 'Висина (см)',
+    bodyMetricsAgeLabel: 'Године',
     bodyMetricsHeightHint: 'За BMI.',
     bodyMetricsBmiLabel: 'BMI',
     bodyMetricsSaveLabel: 'Сачувај',

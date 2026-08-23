@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { Messages } from '../../i18n';
 import { useBodyData } from '../../hooks/useBodyData';
@@ -10,8 +10,7 @@ import {
   type BodyMetricDraft,
   type BodyMetricEntry,
 } from '../../body/bodyMetrics';
-import { BodyIcon, CogIcon, TimerStackIcon } from '../shared/icons';
-import { BodyMetricsIcon } from '../plan/PlanIcons';
+import { CogIcon } from '../shared/icons';
 
 type BodyScreenProps = {
   messages: Messages;
@@ -48,7 +47,7 @@ const RECENT_INITIAL_LIMIT = 10;
 const RECENT_PAGE_SIZE = 10;
 const CHART_POINT_LIMIT = 120;
 const CHART_WIDTH = 320;
-const CHART_HEIGHT = 164;
+const CHART_HEIGHT = 220;
 const CHART_PADDING_X = 18;
 const CHART_PADDING_Y = 16;
 
@@ -200,10 +199,9 @@ const sampleChartEntries = (entries: ChartEntry[]) => {
 };
 
 export function BodyScreen({ messages, locale }: BodyScreenProps) {
-  const { entries, height: bodyHeight, ready, error: bodyDataError, setEntries, setHeight: setBodyHeight } = useBodyData();
-  const [isEditingHeight, setIsEditingHeight] = useState(() => !bodyHeight.trim());
-  const [heightDraft, setHeightDraft] = useState(() => bodyHeight.trim());
+  const { entries, height: bodyHeight, age: bodyAge, ready, error: bodyDataError, setEntries, setProfile } = useBodyData();
   const [draft, setDraft] = useState<BodyMetricDraft>(() => createBodyMetricDraft());
+  const [profileDraft, setProfileDraft] = useState({ height: '', age: '' });
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [recentOpen, setRecentOpen] = useState(false);
   const [recentLimit, setRecentLimit] = useState(RECENT_INITIAL_LIMIT);
@@ -214,6 +212,11 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   const [showBodyFat, setShowBodyFat] = useState(false);
   const [selectedChartEntryId, setSelectedChartEntryId] = useState<string | null>(null);
   const [hoverChartEntryId, setHoverChartEntryId] = useState<string | null>(null);
+  const [isMeasurementSheetOpen, setIsMeasurementSheetOpen] = useState(false);
+  const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
+  const measurementSheetRef = useRef<HTMLElement | null>(null);
+  const measurementTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const profileDraftInitializedRef = useRef(false);
 
 
   const numberFormatter = useMemo(
@@ -230,6 +233,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
   );
   const primaryButtonLabel = editingEntryId ? messages.bodyMetricsUpdateLabel : messages.bodyMetricsSaveLabel;
   const canSave = isEntryReady(draft);
+  const isAnySheetOpen = isMeasurementSheetOpen || isProfileSheetOpen;
 
   const formatPercent = (value: string) => {
     const parsed = parseBodyMetricNumber(value);
@@ -256,11 +260,94 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     setEditingEntryId(null);
   };
 
+  const discardMeasurementDraft = () => {
+    resetDraft();
+    setIsMeasurementSheetOpen(false);
+  };
+
+  const dismissMeasurementSheet = () => {
+    setIsMeasurementSheetOpen(false);
+  };
+
+  const dismissProfileSheet = () => {
+    setIsProfileSheetOpen(false);
+  };
+
   useEffect(() => {
-    if (!isEditingHeight) {
-      setHeightDraft(bodyHeight.trim());
+    if (isAnySheetOpen) {
+      window.requestAnimationFrame(() => {
+        const firstControl = measurementSheetRef.current?.querySelector<HTMLElement>(
+          'input:not([disabled]), button:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        (firstControl ?? measurementSheetRef.current)?.focus();
+      });
+      return;
     }
-  }, [bodyHeight, isEditingHeight]);
+
+    if (measurementTriggerRef.current?.isConnected) {
+      measurementTriggerRef.current.focus();
+    }
+  }, [isAnySheetOpen]);
+
+  useEffect(() => {
+    if (!isAnySheetOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsMeasurementSheetOpen(false);
+        setIsProfileSheetOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab' || !measurementSheetRef.current) {
+        return;
+      }
+
+      const focusable = Array.from(
+        measurementSheetRef.current.querySelectorAll<HTMLElement>(
+          'input:not([disabled]), button:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        measurementSheetRef.current.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const handleFocusIn = (event: FocusEvent) => {
+      if (measurementSheetRef.current?.contains(event.target as Node)) {
+        return;
+      }
+
+      const firstControl = measurementSheetRef.current?.querySelector<HTMLElement>(
+        'input:not([disabled]), button:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      (firstControl ?? measurementSheetRef.current)?.focus();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('focusin', handleFocusIn);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, [isAnySheetOpen]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setIsChartPopulationActive(true));
@@ -272,31 +359,27 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
     setRecentLimit(RECENT_INITIAL_LIMIT);
   }, [anchorMonth, range]);
 
-  const beginHeightEdit = () => {
-    setHeightDraft(selectedHeight);
-    setIsEditingHeight(true);
-  };
-
-  const cancelHeightEdit = () => {
-    setHeightDraft(selectedHeight);
-    setIsEditingHeight(false);
-  };
-
-  const saveHeight = async () => {
-    const nextHeight = heightDraft.trim();
-
-    if (!nextHeight) {
-      return;
+  const openProfileSheet = (trigger: HTMLButtonElement) => {
+    measurementTriggerRef.current = trigger;
+    if (!profileDraftInitializedRef.current) {
+      setProfileDraft({ height: selectedHeight, age: bodyAge.trim() });
+      profileDraftInitializedRef.current = true;
     }
-
-    await setBodyHeight(nextHeight);
-    setIsEditingHeight(false);
+    setIsProfileSheetOpen(true);
   };
 
-  const canSaveHeight = (() => {
-    const parsed = parseBodyMetricNumber(heightDraft);
-    return Number.isFinite(parsed) && parsed > 0;
-  })();
+  const discardProfileDraft = () => {
+    setProfileDraft({ height: selectedHeight, age: bodyAge.trim() });
+    profileDraftInitializedRef.current = false;
+    setIsProfileSheetOpen(false);
+  };
+
+  const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await setProfile({ height: profileDraft.height.trim(), age: profileDraft.age.trim() });
+    profileDraftInitializedRef.current = false;
+    setIsProfileSheetOpen(false);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -316,17 +399,19 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
       const remaining = current.filter((entry) => entry.id !== editingEntryId && entry.date !== nextEntry.date);
       return sortBodyMetricEntries([nextEntry, ...remaining]);
     });
-    resetDraft();
+    discardMeasurementDraft();
     setChartPopulationKey((current) => current + 1);
   };
 
-  const beginEdit = (entry: BodyMetricEntry) => {
+  const beginEdit = (entry: BodyMetricEntry, trigger: HTMLButtonElement) => {
+    measurementTriggerRef.current = trigger;
     setEditingEntryId(entry.id);
     setDraft({
       date: entry.date,
       weightKg: entry.weightKg,
       bodyFatPercent: entry.bodyFatPercent,
     });
+    setIsMeasurementSheetOpen(true);
   };
 
   const removeEntry = async (entryId: string) => {
@@ -491,7 +576,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
           viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
           className={`body-metrics-chart ${isChartPopulationActive ? 'is-populating' : ''}`}
           role="img"
-          aria-label={messages.bodyMetricsChartLabel}
+          aria-label={messages.bodyMetricsGraphLabel}
         >
           <defs>
             <linearGradient id="body-metrics-weight-stroke" x1="0" x2="1" y1="0" y2="0">
@@ -623,34 +708,21 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
         ) : null}
       </div>
 
-      {chartEntries.length > 0 ? (
-        <div className="body-metrics-chart-legend">
-          <div className="body-metrics-chart-pill">
-            <span className="body-metrics-chart-swatch is-weight" aria-hidden="true" />
-            <span>{messages.weightLabel}</span>
-            <strong>{latestChartEntry?.weight != null ? `${numberFormatter.format(latestChartEntry.weight)} kg` : '—'}</strong>
-          </div>
+      <div className="body-metrics-chart-legend">
+        <div className="body-metrics-chart-pill">
+          <span className="body-metrics-chart-swatch is-weight" aria-hidden="true" />
+          <span>{messages.weightLabel}</span>
+          <strong>{latestChartEntry?.weight != null ? `${numberFormatter.format(latestChartEntry.weight)} kg` : '—'}</strong>
+        </div>
+        {showBodyFat ? (
           <div className="body-metrics-chart-pill">
             <span className="body-metrics-chart-swatch is-body-fat" aria-hidden="true" />
             <span>{messages.bodyMetricsBodyFatLabel}</span>
             <strong>{latestChartEntry?.bodyFat != null ? `${numberFormatter.format(latestChartEntry.bodyFat)}%` : '—'}</strong>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
 
-      <button
-        type="button"
-        className={`sound-switch body-metrics-series-toggle ${showBodyFat ? 'is-on' : ''}`}
-        onClick={() => setShowBodyFat((current) => !current)}
-        aria-pressed={showBodyFat}
-        aria-label={messages.bodyMetricsBodyFatToggleLabel}
-      >
-        <span className="sound-switch-track">
-          <span className="sound-switch-thumb" />
-        </span>
-        <span className="sound-switch-text">{messages.bodyMetricsBodyFatToggleLabel}</span>
-        <span className="body-metrics-series-state">{showBodyFat ? messages.onLabel : messages.offLabel}</span>
-      </button>
     </>
   );
 
@@ -658,154 +730,69 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
 
   return (
     <section className="panel body-panel view-stage">
-      <div className="headline body-headline">
-        <div className="body-header-main">
-          <div className="body-header-copy">
+      <div className="headline mode-headline">
+          <div className="mode-header-copy">
             <p className="screen-hero-kicker">{messages.bodyTabLabel}</p>
             <h1>{messages.bodyTitleLabel}</h1>
-            <p>{messages.bodySubtitleLabel}</p>
           </div>
-
-          <div className="body-header-mark" aria-hidden="true">
-            <span className="body-header-ring body-header-ring-a" />
-            <span className="body-header-ring body-header-ring-b" />
-            <span className="body-header-ring body-header-ring-c" />
-            <span className="body-header-icon-shell">
-              <BodyIcon />
-            </span>
-          </div>
-        </div>
-
-        <div className="body-header-badges" aria-hidden="true">
-          <span className="body-header-chip">
-            <BodyIcon />
-            <span>{messages.weightLabel}</span>
-          </span>
-          <span className="body-header-chip">
-            <BodyMetricsIcon />
-            <span>{messages.bodyMetricsBmiLabel}</span>
-          </span>
-          <span className="body-header-chip">
-            <TimerStackIcon />
-            <span>{messages.bodyMetricsRecentLabel}</span>
-          </span>
-        </div>
       </div>
 
       <div className="body-metrics-stack">
-        <section className="body-metrics-card body-metrics-current-card">
-          <p className="body-metrics-kicker">
-            {messages.bodyMetricsCurrentLabel} · {buildRangeLabel(messages, range)} · {anchorMonthLabel}
-          </p>
-          {latestEntry ? (
-            <div className="body-metrics-summary">
-              <strong className="body-metrics-summary-date">{formatDateForDisplay(dateFormatter, latestEntry.date)}</strong>
-              <div className="body-metrics-summary-list">
-                <div className="body-metrics-summary-row">
-                  <span>{messages.weightLabel}</span>
-                  <strong>{`${numberFormatter.format(parseBodyMetricNumber(latestEntry.weightKg))} kg`}</strong>
-                </div>
-                <div className="body-metrics-summary-row">
-                  <span>{messages.bodyMetricsBodyFatLabel}</span>
-                  <strong>{latestEntry.bodyFatPercent ? formatPercent(latestEntry.bodyFatPercent) : '—'}</strong>
-                </div>
-                <div className="body-metrics-summary-row">
-                  <span>{messages.bodyMetricsBmiLabel}</span>
-                  <strong>{formatBmi(latestEntry.weightKg)}</strong>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="body-metrics-empty">{messages.bodyMetricsEmptyLabel}</p>
-          )}
-        </section>
-
-        <section className="body-metrics-card body-metrics-height-card">
-          {isEditingHeight ? (
-            <div className="body-metrics-height-editor">
-              <label className="editor-label body-metrics-field">
-                <span>{messages.bodyMetricsHeightLabel}</span>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  min="1"
-                  step="0.1"
-                  value={heightDraft}
-                  onChange={(event) => setHeightDraft(event.target.value)}
-                  placeholder="cm"
-                />
-              </label>
-              <div className="body-metrics-height-actions">
-                <button type="button" className="body-metrics-save-button" onClick={saveHeight} disabled={!canSaveHeight}>
-                  {messages.bodyMetricsSaveLabel}
-                </button>
-                {selectedHeight ? (
-                  <button type="button" className="body-metrics-cancel-button" onClick={cancelHeightEdit}>
-                    {messages.cancelLabel}
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          ) : (
-            <div className="body-metrics-height-display">
-              <div className="body-metrics-height-chip">
-                <span>{messages.bodyMetricsHeightLabel}</span>
-                <strong>{selectedHeight ? `${numberFormatter.format(parseBodyMetricNumber(selectedHeight))} cm` : '—'}</strong>
-              </div>
-              <button type="button" className="body-metrics-height-edit-button" onClick={beginHeightEdit}>
-                {messages.editLabel}
-              </button>
-            </div>
-          )}
-        </section>
-
+        <div className="body-metrics-top">
         <section className="body-metrics-card body-metrics-chart-card">
           <div className="body-metrics-card-head">
             <div>
-              <p className="body-metrics-kicker">{messages.bodyMetricsChartLabel}</p>
-              <div className="body-metrics-chart-title-row">
-                <strong className="body-metrics-card-title">
-                  {buildRangeLabel(messages, range)} · {anchorMonthLabel}
-                </strong>
-                <span className="body-metrics-chart-count" aria-live="polite">
-                  {chartEntries.length}
-                </span>
+              <p className="body-metrics-kicker">{messages.bodyMetricsGraphLabel}</p>
+            </div>
+            <div className="body-metrics-chart-controls">
+              <div className="body-metrics-month-nav" aria-label={messages.bodyMetricsMonthNavigationLabel}>
+                  <button
+                    type="button"
+                    className="body-metrics-month-button"
+                    onClick={() => moveAnchorMonth(-1)}
+                    aria-label={messages.bodyMetricsPreviousMonthLabel}
+                    title={messages.bodyMetricsPreviousMonthLabel}
+                  >
+                    <span className="body-metrics-month-icon body-metrics-month-icon-previous" aria-hidden="true" />
+                  </button>
+                  <span className="body-metrics-month-anchor" aria-live="polite">{anchorMonthLabel}</span>
+                  <button
+                    type="button"
+                    className="body-metrics-month-button"
+                    onClick={() => moveAnchorMonth(1)}
+                    disabled={!canGoNextMonth}
+                    aria-label={messages.bodyMetricsNextMonthLabel}
+                    title={messages.bodyMetricsNextMonthLabel}
+                  >
+                    <span className="body-metrics-month-icon body-metrics-month-icon-next" aria-hidden="true" />
+                  </button>
               </div>
-            </div>
-            <div className="body-metrics-month-nav" aria-label={messages.bodyMetricsMonthNavigationLabel}>
+              <div className="body-metrics-range-grid">
+                  {RANGE_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`body-metrics-range-button ${range === option.id ? 'is-active' : ''}`}
+                      onClick={() => selectRange(option.id)}
+                      aria-pressed={range === option.id}
+                    >
+                      {messages[option.labelKey]}
+                    </button>
+                  ))}
+              </div>
               <button
                 type="button"
-                className="body-metrics-month-button"
-                onClick={() => moveAnchorMonth(-1)}
-                aria-label={messages.bodyMetricsPreviousMonthLabel}
-                title={messages.bodyMetricsPreviousMonthLabel}
+                className={`sound-switch body-metrics-series-toggle ${showBodyFat ? 'is-on' : ''}`}
+                onClick={() => setShowBodyFat((current) => !current)}
+                aria-pressed={showBodyFat}
+                aria-label={messages.bodyMetricsBodyFatToggleLabel}
               >
-                <span className="body-metrics-month-icon body-metrics-month-icon-previous" aria-hidden="true" />
+                <span className="sound-switch-track">
+                  <span className="sound-switch-thumb" />
+                </span>
+                <span className="body-metrics-series-toggle-label">{messages.bodyMetricsBodyFatToggleLabel}</span>
+                <span className="body-metrics-series-state">{showBodyFat ? messages.onLabel : messages.offLabel}</span>
               </button>
-              <span className="body-metrics-month-anchor" aria-live="polite">{anchorMonthLabel}</span>
-              <button
-                type="button"
-                className="body-metrics-month-button"
-                onClick={() => moveAnchorMonth(1)}
-                disabled={!canGoNextMonth}
-                aria-label={messages.bodyMetricsNextMonthLabel}
-                title={messages.bodyMetricsNextMonthLabel}
-              >
-                <span className="body-metrics-month-icon body-metrics-month-icon-next" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="body-metrics-range-grid">
-              {RANGE_OPTIONS.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  className={`body-metrics-range-button ${range === option.id ? 'is-active' : ''}`}
-                  onClick={() => selectRange(option.id)}
-                  aria-pressed={range === option.id}
-                >
-                  {messages[option.labelKey]}
-                </button>
-              ))}
             </div>
           </div>
 
@@ -813,61 +800,55 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
         </section>
 
         <section className="body-metrics-card body-metrics-form-card">
-          <p className="body-metrics-kicker">{primaryButtonLabel}</p>
-          <form className="body-metrics-form" onSubmit={(event) => void handleSubmit(event)}>
-            <label className="editor-label body-metrics-field">
-              <span>{messages.bodyMetricsDateLabel}</span>
-              <input
-                type="date"
-                value={draft.date}
-                onChange={(event) => setDraft((current) => ({ ...current, date: event.target.value }))}
-                required
-              />
-              <p className="body-metrics-field-hint">{messages.bodyMetricsDateHint}</p>
-            </label>
-
-            <label className="editor-label body-metrics-field">
-              <span>{messages.weightLabel}</span>
-              <input
-                type="number"
-                inputMode="decimal"
-                min="0.1"
-                step="0.1"
-                value={draft.weightKg}
-                onChange={(event) => setDraft((current) => ({ ...current, weightKg: event.target.value }))}
-                placeholder="0.0"
-                required
-              />
-            </label>
-
-            <label className="editor-label body-metrics-field">
-              <span>{messages.bodyMetricsBodyFatLabel}</span>
-              <input
-                type="number"
-                inputMode="decimal"
-                min="0"
-                max="100"
-                step="0.1"
-                value={draft.bodyFatPercent}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, bodyFatPercent: event.target.value }))
-                }
-                placeholder="%"
-              />
-            </label>
-
-            <div className="body-metrics-actions">
-              <button type="submit" className="body-metrics-save-button" disabled={!canSave}>
-                {primaryButtonLabel}
-              </button>
-              {editingEntryId ? (
-                <button type="button" className="body-metrics-cancel-button" onClick={resetDraft}>
-                  {messages.cancelLabel}
-                </button>
-              ) : null}
-            </div>
-          </form>
+          <button
+            ref={measurementTriggerRef}
+            type="button"
+            className="body-metrics-add-button"
+            onClick={(event) => {
+              measurementTriggerRef.current = event.currentTarget;
+              setIsMeasurementSheetOpen(true);
+            }}
+          >
+            <span aria-hidden="true">+</span>
+            <span>{messages.bodyMetricsAddLabel}</span>
+          </button>
         </section>
+
+        </div>
+
+        <button
+          type="button"
+          className="body-metrics-card body-metrics-current-card body-metrics-stats-card"
+          onClick={(event) => openProfileSheet(event.currentTarget)}
+          aria-label={messages.bodyMetricsStatsLabel}
+        >
+          <div className="body-metrics-stats-head">
+            <p className="body-metrics-kicker">{messages.bodyMetricsStatsLabel}</p>
+            <span className="body-metrics-stats-edit">{messages.editLabel}</span>
+          </div>
+          <div className="body-metrics-summary-list body-metrics-stats-list">
+            <div className="body-metrics-summary-row">
+              <span>{messages.weightLabel}</span>
+              <strong>{latestEntry?.weightKg ? `${numberFormatter.format(parseBodyMetricNumber(latestEntry.weightKg))} kg` : '—'}</strong>
+            </div>
+            <div className="body-metrics-summary-row">
+              <span>{messages.bodyMetricsBodyFatLabel}</span>
+              <strong>{latestEntry?.bodyFatPercent ? formatPercent(latestEntry.bodyFatPercent) : '—'}</strong>
+            </div>
+            <div className="body-metrics-summary-row">
+              <span>{messages.bodyMetricsBmiLabel}</span>
+              <strong>{formatBmi(latestEntry?.weightKg ?? '')}</strong>
+            </div>
+            <div className="body-metrics-summary-row">
+              <span>{messages.bodyMetricsHeightLabel}</span>
+              <strong>{selectedHeight ? `${numberFormatter.format(parseBodyMetricNumber(selectedHeight))} cm` : '—'}</strong>
+            </div>
+            <div className="body-metrics-summary-row">
+              <span>{messages.bodyMetricsAgeLabel}</span>
+              <strong>{bodyAge.trim() || '—'}</strong>
+            </div>
+          </div>
+        </button>
 
         <section className="body-metrics-card body-metrics-recent-card">
           <button
@@ -903,7 +884,7 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
                         </div>
 
                         <div className="body-metrics-entry-actions">
-                          <button type="button" className="body-metrics-edit-button" onClick={() => beginEdit(entry)}>
+                          <button type="button" className="body-metrics-edit-button" onClick={(event) => beginEdit(entry, event.currentTarget)}>
                             <CogIcon />
                             <span>{messages.editLabel}</span>
                           </button>
@@ -939,6 +920,140 @@ export function BodyScreen({ messages, locale }: BodyScreenProps) {
         </section>
 
       </div>
+
+      {isMeasurementSheetOpen ? (
+        <div className="body-metrics-sheet-overlay" role="presentation">
+          <section
+            className="body-metrics-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="body-metrics-sheet-title"
+            ref={measurementSheetRef}
+            tabIndex={-1}
+          >
+            <div className="body-metrics-sheet-handle" aria-hidden="true" />
+            <div className="body-metrics-sheet-head">
+              <div>
+                <p className="body-metrics-kicker">{editingEntryId ? messages.bodyMetricsUpdateLabel : messages.bodyMetricsSaveLabel}</p>
+                <h2 id="body-metrics-sheet-title">{editingEntryId ? messages.bodyMetricsUpdateLabel : messages.bodyMetricsAddLabel}</h2>
+              </div>
+              <button type="button" className="body-metrics-sheet-close" onClick={dismissMeasurementSheet} aria-label={messages.cancelLabel}>
+                ×
+              </button>
+            </div>
+            <form className="body-metrics-form" onSubmit={(event) => void handleSubmit(event)}>
+              <label className="editor-label body-metrics-field">
+                <span>{messages.bodyMetricsDateLabel}</span>
+                <input
+                  type="date"
+                  value={draft.date}
+                  onChange={(event) => setDraft((current) => ({ ...current, date: event.target.value }))}
+                  required
+                />
+                <p className="body-metrics-field-hint">{messages.bodyMetricsDateHint}</p>
+              </label>
+
+              <label className="editor-label body-metrics-field">
+                <span>{messages.weightLabel}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min="0.1"
+                  step="0.1"
+                  value={draft.weightKg}
+                  onChange={(event) => setDraft((current) => ({ ...current, weightKg: event.target.value }))}
+                  placeholder="0.0"
+                  required
+                />
+              </label>
+
+              <label className="editor-label body-metrics-field">
+                <span>{messages.bodyMetricsBodyFatLabel}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={draft.bodyFatPercent}
+                  onChange={(event) => setDraft((current) => ({ ...current, bodyFatPercent: event.target.value }))}
+                  placeholder="%"
+                />
+              </label>
+
+              <div className="body-metrics-actions">
+                <button type="submit" className="body-metrics-save-button" disabled={!canSave}>
+                  {primaryButtonLabel}
+                </button>
+                <button type="button" className="body-metrics-cancel-button" onClick={discardMeasurementDraft}>
+                  {messages.cancelLabel}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {isProfileSheetOpen ? (
+        <div className="body-metrics-sheet-overlay" role="presentation">
+          <section
+            className="body-metrics-sheet body-metrics-profile-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="body-metrics-profile-sheet-title"
+            ref={measurementSheetRef}
+            tabIndex={-1}
+          >
+            <div className="body-metrics-sheet-handle" aria-hidden="true" />
+            <div className="body-metrics-sheet-head">
+              <div>
+                <p className="body-metrics-kicker">{messages.editLabel}</p>
+                <h2 id="body-metrics-profile-sheet-title">{messages.bodyMetricsStatsLabel}</h2>
+              </div>
+              <button type="button" className="body-metrics-sheet-close" onClick={dismissProfileSheet} aria-label={messages.cancelLabel}>
+                ×
+              </button>
+            </div>
+            <form className="body-metrics-form" onSubmit={(event) => void saveProfile(event)}>
+              <label className="editor-label body-metrics-field">
+                <span>{messages.bodyMetricsHeightLabel}</span>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  min="1"
+                  step="0.1"
+                  value={profileDraft.height}
+                  onChange={(event) => setProfileDraft((current) => ({ ...current, height: event.target.value }))}
+                  placeholder="cm"
+                />
+              </label>
+
+              <label className="editor-label body-metrics-field">
+                <span>{messages.bodyMetricsAgeLabel}</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  max="120"
+                  step="1"
+                  value={profileDraft.age}
+                  onChange={(event) => setProfileDraft((current) => ({ ...current, age: event.target.value }))}
+                  placeholder="—"
+                />
+              </label>
+
+              <div className="body-metrics-actions">
+                <button type="submit" className="body-metrics-save-button">
+                  {messages.bodyMetricsSaveLabel}
+                </button>
+                <button type="button" className="body-metrics-cancel-button" onClick={discardProfileDraft}>
+                  {messages.cancelLabel}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      ) : null}
     </section>
   );
 }

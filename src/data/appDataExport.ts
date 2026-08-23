@@ -1,10 +1,10 @@
 import { readLocalStorageItem, removeLocalStorageItem, writeLocalStorageItem } from './localStorage';
 import { APP_LOCAL_STORAGE_KEYS, BODY_HEIGHT_KEY, BODY_METRICS_KEY, type AppLocalStorageKey, isAppLocalStorageKey } from './storageKeys';
-import { loadBodyData, writeBodyData, type BodyDataSnapshot } from './bodyData';
+import { loadBodyData, validateBodyAge, writeBodyData, type BodyDataSnapshot } from './bodyData';
 import { validateBodyMetricEntries } from '../body/bodyMetrics';
 
 type AppDataExport = {
-  version: 2;
+  version: 3;
   exportedAt: string;
   localStorage: Partial<Record<AppLocalStorageKey, string>>;
   body: BodyDataSnapshot;
@@ -28,7 +28,7 @@ export async function buildAppDataExport(date = new Date()): Promise<AppDataExpo
   }
 
   const body = await loadBodyData();
-  return { version: 2, exportedAt: date.toISOString(), localStorage: localStorageData, body: body ?? { entries: [], height: '' } };
+  return { version: 3, exportedAt: date.toISOString(), localStorage: localStorageData, body: body ?? { entries: [], height: '', age: '' } };
 }
 
 export async function serializeCurrentAppDataExport() {
@@ -67,17 +67,22 @@ export async function importAppData(rawJson: string) {
 
   const record = parsed as { version?: unknown; body?: unknown };
   let body: BodyDataSnapshot | undefined;
-  if (record.version === 2) {
+  if (record.version === 3) {
+    if (!record.body || typeof record.body !== 'object') throw new Error('Invalid app data export.');
+    const candidate = record.body as Partial<BodyDataSnapshot>;
+    if (!Array.isArray(candidate.entries) || typeof candidate.height !== 'string' || (candidate.age !== undefined && typeof candidate.age !== 'string')) throw new Error('Invalid app data export.');
+    body = { entries: validateBodyMetricEntries(candidate.entries), height: candidate.height, age: validateBodyAge(candidate.age ?? '') };
+  } else if (record.version === 2) {
     if (!record.body || typeof record.body !== 'object') throw new Error('Invalid app data export.');
     const candidate = record.body as Partial<BodyDataSnapshot>;
     if (!Array.isArray(candidate.entries) || typeof candidate.height !== 'string') throw new Error('Invalid app data export.');
-    body = { entries: validateBodyMetricEntries(candidate.entries), height: candidate.height };
+    body = { entries: validateBodyMetricEntries(candidate.entries), height: candidate.height, age: '' };
   } else if (record.version !== 1 && record.version !== undefined) throw new Error('Invalid app data export.');
   if (!body) {
     const metrics = (localStorageData as Record<string, string>)[BODY_METRICS_KEY];
     const height = (localStorageData as Record<string, string>)[BODY_HEIGHT_KEY];
     const entries = metrics ? JSON.parse(metrics) : [];
-    body = { entries: validateBodyMetricEntries(entries), height: height ?? '' };
+    body = { entries: validateBodyMetricEntries(entries), height: height ?? '', age: '' };
   }
   for (const key of APP_LOCAL_STORAGE_KEYS) {
     if (key === BODY_METRICS_KEY || key === BODY_HEIGHT_KEY) continue;

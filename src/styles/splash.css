@@ -15,7 +15,7 @@
 }
 
 .splash-screen.is-hiding {
-  animation: splash-fade-out 168ms ease forwards;
+  animation: splash-fade-out 200ms ease forwards;
 }
 
 .splash-screen::before,
