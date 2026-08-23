@@ -1,13 +1,14 @@
 import type { TrainingProgram } from './types';
 import { sanitizeTrainingProgram } from './sanitizeProgram';
 
-export const TRAINING_PROGRAM_EXPORT_VERSION = 1;
+export const TRAINING_PROGRAM_EXPORT_VERSION = 2;
 export const TRAINING_PROGRAM_EXPORT_FILENAME = 'pulse-trainer-plan.json';
 
 type TrainingProgramExportPayload = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   trainingProgram: TrainingProgram;
 };
+type TrainingProgramSchemaVersion = 1 | 2;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -45,8 +46,8 @@ const looksLikeTrainingProgram = (value: unknown) => {
     typeof value.warmup === 'string' &&
     Array.isArray(value.workout) &&
     value.workout.every(isWorkoutExercise) &&
-    Array.isArray(value.cardio) &&
-    value.cardio.every(isCardioExercise) &&
+    ((typeof value.cardio === 'string') ||
+      (Array.isArray(value.cardio) && value.cardio.every(isCardioExercise))) &&
     typeof value.cooldown === 'string' &&
     typeof value.notes === 'string'
   );
@@ -60,8 +61,16 @@ export const buildTrainingProgramExportPayload = (trainingProgram: TrainingProgr
 export const serializeTrainingProgramExport = (trainingProgram: TrainingProgram) =>
   JSON.stringify(buildTrainingProgramExportPayload(trainingProgram), null, 2);
 
-const readTrainingProgramCandidate = (value: unknown) => {
+const readTrainingProgramCandidate = (value: unknown, schemaVersion?: TrainingProgramSchemaVersion) => {
   if (!looksLikeTrainingProgram(value)) {
+    throw new Error('Unsupported training plan JSON.');
+  }
+
+  if (schemaVersion === 1 && !Array.isArray((value as Record<string, unknown>).cardio)) {
+    throw new Error('Unsupported training plan JSON.');
+  }
+
+  if (schemaVersion === 2 && typeof (value as Record<string, unknown>).cardio !== 'string') {
     throw new Error('Unsupported training plan JSON.');
   }
 
@@ -76,14 +85,23 @@ const readTrainingProgramCandidate = (value: unknown) => {
   };
 };
 
+const readSchemaVersion = (value: Record<string, unknown>): TrainingProgramSchemaVersion | undefined => {
+  if (!('schemaVersion' in value)) return undefined;
+  if (value.schemaVersion !== 1 && value.schemaVersion !== 2) {
+    throw new Error('Unsupported training plan JSON.');
+  }
+
+  return value.schemaVersion;
+};
+
 export const parseTrainingProgramImport = (rawJson: string): TrainingProgram => {
   const parsed = JSON.parse(rawJson) as unknown;
 
   if (isRecord(parsed) && 'trainingProgram' in parsed && parsed.trainingProgram != null) {
-    return readTrainingProgramCandidate(parsed.trainingProgram);
+    return readTrainingProgramCandidate(parsed.trainingProgram, readSchemaVersion(parsed));
   }
 
-  return readTrainingProgramCandidate(parsed);
+  return readTrainingProgramCandidate(parsed, isRecord(parsed) ? readSchemaVersion(parsed) : undefined);
 };
 
 export const downloadTrainingProgramExport = (trainingProgram: TrainingProgram) => {

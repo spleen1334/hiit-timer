@@ -30,7 +30,7 @@ export type CardioExercise = {
 export type TrainingProgram = {
   warmup: string;
   workout: WorkoutExercise[];
-  cardio: CardioExercise[];
+  cardio: string;
   cooldown: string;
   notes: string;
 };

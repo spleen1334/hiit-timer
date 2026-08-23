@@ -79,13 +79,27 @@ const sanitizeWorkoutExercise = (input: Partial<WorkoutExercise>, index: number)
 };
 
 const sanitizeCardioExercise = (input: Partial<CardioExercise>, index: number): CardioExercise => {
-  const fallback = DEFAULT_PROGRAM.cardio[index] ?? DEFAULT_PROGRAM.cardio[0];
+  const fallbackLine = DEFAULT_PROGRAM.cardio.split('\n')[index] ?? DEFAULT_PROGRAM.cardio.split('\n')[0];
+  const [fallbackExercise, fallbackTime] = fallbackLine.split(' — ');
+
   return {
     id: asString(input.id, `cardio-${index + 1}`),
-    exercise: asString(input.exercise, fallback.exercise),
-    time: asString(input.time, fallback.time),
+    exercise: asString(input.exercise, fallbackExercise),
+    time: asString(input.time, fallbackTime),
   };
 };
+
+const migrateCardioArray = (value: unknown[]) => value
+  .map((item, index) => {
+    if (item && typeof item === 'object' && !Array.isArray(item)) {
+      const entry = sanitizeCardioExercise(item as Partial<CardioExercise>, index);
+      return `${entry.exercise} — ${entry.time}`;
+    }
+
+    return asString(item, '');
+  })
+  .filter((item) => item.length > 0)
+  .join('\n');
 
 export const sanitizeTrainingProgram = (value: unknown): TrainingProgram => {
   if (!value || typeof value !== 'object') {
@@ -101,8 +115,8 @@ export const sanitizeTrainingProgram = (value: unknown): TrainingProgram => {
     ? candidate.workout.map((item, index) => sanitizeWorkoutExercise(item ?? {}, index))
     : DEFAULT_PROGRAM.workout;
   const cardio = Array.isArray(candidate.cardio)
-    ? candidate.cardio.map((item, index) => sanitizeCardioExercise(item ?? {}, index))
-    : DEFAULT_PROGRAM.cardio;
+    ? migrateCardioArray(candidate.cardio)
+    : asTextSection(candidate.cardio, DEFAULT_PROGRAM.cardio);
   const cooldown = Array.isArray(candidate.cooldown)
     ? candidate.cooldown.map((item) => asString(item, '')).filter((item) => item.length > 0).join('\n')
     : asTextSection(candidate.cooldown, DEFAULT_PROGRAM.cooldown);

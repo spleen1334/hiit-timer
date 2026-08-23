@@ -27,6 +27,7 @@ export type Messages = {
   settingsSubtitle: string;
   backLabel: string;
   editLabel: string;
+  doneLabel: string;
   statsLabel: string;
   installAppLabel: string;
   installAppTitle: string;
@@ -90,6 +91,7 @@ export type Messages = {
   totalDelayLabel: string;
   completedLabel: string;
   planTitle: string;
+  planEmptyTextLabel: string;
   bodyTabLabel: string;
   bodyTitleLabel: string;
   workoutSectionLabel: string;
@@ -130,8 +132,6 @@ export type Messages = {
   notesInputLabel: string;
   warmupInputLabel: string;
   cooldownInputLabel: string;
-  cardioExerciseLabel: string;
-  cardioTimeLabel: string;
   setsLabel: string;
   repsLabel: string;
   weightLabel: string;
@@ -149,8 +149,6 @@ export type Messages = {
   expandLabel: string;
   addWorkoutLabel: string;
   removeWorkoutLabel: string;
-  addCardioLabel: string;
-  removeCardioLabel: string;
   roundCounter: (current: number, total: number) => string;
 };
 
@@ -191,6 +189,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsSubtitle: 'Language, sound, and app data tools.',
     backLabel: 'Back',
     editLabel: 'Edit',
+    doneLabel: 'Done',
     statsLabel: 'Session',
     installAppLabel: 'Install app',
     installAppTitle: 'Install Pulse Trainer',
@@ -255,6 +254,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalDelayLabel: 'Delay',
     completedLabel: 'Completed',
     planTitle: 'Training Program',
+    planEmptyTextLabel: 'Nothing added yet. Tap Edit to add details.',
     bodyTabLabel: 'Body',
     bodyTitleLabel: 'Body',
     workoutSectionLabel: 'Workout',
@@ -295,8 +295,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     notesInputLabel: 'Session notes',
     warmupInputLabel: 'Warmup details',
     cooldownInputLabel: 'Cooldown details',
-    cardioExerciseLabel: 'Exercise',
-    cardioTimeLabel: 'Time',
     setsLabel: 'Sets',
     repsLabel: 'Reps',
     weightLabel: 'Weight',
@@ -314,8 +312,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     expandLabel: 'Show',
     addWorkoutLabel: 'Add workout',
     removeWorkoutLabel: 'Remove workout',
-    addCardioLabel: 'Add cardio',
-    removeCardioLabel: 'Remove cardio',
     roundCounter: (current, total) => `Round ${current} / ${total}`,
   },
   sr: {
@@ -345,6 +341,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     settingsSubtitle: 'Језик, звук и алати за податке апликације.',
     backLabel: 'Назад',
     editLabel: 'Уреди',
+    doneLabel: 'Готово',
     statsLabel: 'Сесија',
     installAppLabel: 'Инсталирај апликацију',
     installAppTitle: 'Инсталирај Pulse Trainer',
@@ -409,6 +406,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     totalDelayLabel: 'Припрема',
     completedLabel: 'Завршено',
     planTitle: 'План тренинга',
+    planEmptyTextLabel: 'Још нема садржаја. Изаберите Уреди да додате детаље.',
     bodyTabLabel: 'Тело',
     bodyTitleLabel: 'Тело',
     workoutSectionLabel: 'Главни тренинг',
@@ -449,8 +447,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     notesInputLabel: 'Белешке за сесију',
     warmupInputLabel: 'Детаљи загревања',
     cooldownInputLabel: 'Детаљи хлађења',
-    cardioExerciseLabel: 'Вежба',
-    cardioTimeLabel: 'Време',
     setsLabel: 'Серије',
     repsLabel: 'Понављања',
     weightLabel: 'Тежина',
@@ -468,8 +464,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     expandLabel: 'Прикажи',
     addWorkoutLabel: 'Додај вежбу',
     removeWorkoutLabel: 'Уклони вежбу',
-    addCardioLabel: 'Додај кардио',
-    removeCardioLabel: 'Уклони кардио',
     roundCounter: (current, total) => `Рунда ${current} / ${total}`,
   },
 };

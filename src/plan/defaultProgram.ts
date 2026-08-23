@@ -105,10 +105,7 @@ export const DEFAULT_PROGRAM: TrainingProgram = {
       bodyPart: 'core',
     },
   ],
-  cardio: [
-    { id: 'cardio-1', exercise: 'Incline treadmill walk', time: '12 min' },
-    { id: 'cardio-2', exercise: 'Bike easy spin', time: '8 min' },
-  ],
+  cardio: 'Incline treadmill walk — 12 min\nBike easy spin — 8 min',
   cooldown:
     '- 5 min easy walk + nasal breathing\n- Light static stretch for chest, lats, quads, hamstrings',
   notes:

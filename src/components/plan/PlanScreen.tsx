@@ -2,20 +2,16 @@ import { useState } from 'react';
 import { persistedState } from '../../data/persistedState';
 import type { Messages } from '../../i18n';
 import { usePersistedState } from '../../hooks/usePersistentState';
-import type { CardioExercise, SectionVisibility, TrainingProgram } from '../../plan/types';
+import type { SectionVisibility, TrainingProgram } from '../../plan/types';
 import {
   CardioIcon,
   CooldownIcon,
-  ExerciseFieldIcon,
   NotesIcon,
-  TimeFieldIcon,
-  GearIcon,
   WarmupIcon,
   WorkoutIcon,
 } from './PlanIcons';
 import { PlanSection } from './PlanSection';
 import { WorkoutList } from './WorkoutList';
-import { PlanEditTransition } from './PlanEditTransition';
 
 type PlanScreenProps = {
   messages: Messages;
@@ -23,52 +19,62 @@ type PlanScreenProps = {
   onProgramChange: (next: TrainingProgram) => void;
 };
 
+type PlanTextSectionProps = {
+  label: string;
+  value: string;
+  emptyLabel: string;
+  editLabel: string;
+  doneLabel: string;
+  isEditing: boolean;
+  onToggleEdit: () => void;
+  onChange: (value: string) => void;
+};
+
+function PlanTextSection({
+  label,
+  value,
+  emptyLabel,
+  editLabel,
+  doneLabel,
+  isEditing,
+  onToggleEdit,
+  onChange,
+}: PlanTextSectionProps) {
+  if (isEditing) {
+    return (
+      <div className="plan-text-editor">
+        <label className="plan-text-editor-field">
+          <span>{label}</span>
+          <textarea autoFocus rows={4} value={value} onChange={(event) => onChange(event.target.value)} />
+        </label>
+        <button type="button" className="plan-text-done-button" onClick={onToggleEdit}>
+          {doneLabel}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="plan-text-summary">
+      <button type="button" className="plan-text-summary-button" onClick={onToggleEdit}>
+        <span className="plan-text-summary-label">{label}</span>
+        <span className={`plan-text-summary-value ${value.trim() ? '' : 'is-empty'}`.trim()}>
+          {value.trim() || emptyLabel}
+        </span>
+      </button>
+      <button type="button" className="plan-text-edit-button" onClick={onToggleEdit}>
+        {editLabel}
+      </button>
+    </div>
+  );
+}
+
 export function PlanScreen({ messages, program, onProgramChange }: PlanScreenProps) {
-  const [editingCardioById, setEditingCardioById] = useState<Record<string, boolean>>({});
   const [sections, setSections] = usePersistedState<SectionVisibility>(persistedState.planSectionVisibility);
-
-  const updateCardio = (id: string, patch: Partial<CardioExercise>) => {
-    onProgramChange({
-      ...program,
-      cardio: program.cardio.map((entry) =>
-        entry.id === id ? { ...entry, ...patch } : entry,
-      ),
-    });
-  };
-
-  const addCardio = () => {
-    const nextIndex = program.cardio.length + 1;
-    onProgramChange({
-      ...program,
-      cardio: [
-        ...program.cardio,
-        {
-          id: `cardio-${Date.now()}`,
-          exercise: `Cardio ${nextIndex}`,
-          time: '10 min',
-        },
-      ],
-    });
-  };
-
-  const removeCardio = (id: string) => {
-    onProgramChange({
-      ...program,
-      cardio: program.cardio.filter((entry) => entry.id !== id),
-    });
-    setEditingCardioById((current) => {
-      const next = { ...current };
-      delete next[id];
-      return next;
-    });
-  };
+  const [editingTextSection, setEditingTextSection] = useState<keyof Pick<TrainingProgram, 'warmup' | 'cardio' | 'cooldown' | 'notes'> | null>(null);
 
   const toggleSection = (section: keyof SectionVisibility) => {
     setSections((current) => ({ ...current, [section]: !current[section] }));
-  };
-
-  const toggleCardioEdit = (id: string) => {
-    setEditingCardioById((current) => ({ ...current, [id]: !current[id] }));
   };
 
   return (
@@ -90,14 +96,16 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
         expandLabel={messages.expandLabel}
         collapseLabel={messages.collapseLabel}
       >
-        <label className="notes-wrap">
-          <span>{messages.warmupInputLabel}</span>
-          <textarea
-            value={program.warmup}
-            onChange={(event) => onProgramChange({ ...program, warmup: event.target.value })}
-            rows={4}
-          />
-        </label>
+        <PlanTextSection
+          label={messages.warmupInputLabel}
+          value={program.warmup}
+          emptyLabel={messages.planEmptyTextLabel}
+          editLabel={messages.editLabel}
+          doneLabel={messages.doneLabel}
+          isEditing={editingTextSection === 'warmup'}
+          onToggleEdit={() => setEditingTextSection((current) => (current === 'warmup' ? null : 'warmup'))}
+          onChange={(value) => onProgramChange({ ...program, warmup: value })}
+        />
       </PlanSection>
 
       <PlanSection
@@ -127,64 +135,16 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
         expandLabel={messages.expandLabel}
         collapseLabel={messages.collapseLabel}
       >
-        <div className="cardio-list">
-          {program.cardio.map((entry, index) => (
-            <div key={entry.id} className={`cardio-item ${index % 2 === 0 ? 'row-even' : 'row-odd'}`}>
-              <div className="cardio-summary">
-                <div className="cardio-summary-copy">
-                  <strong>{entry.exercise}</strong>
-                  <span>{entry.time}</span>
-                </div>
-                <button
-                  type="button"
-                  className="edit-toggle"
-                  aria-label={messages.editLabel}
-                  onClick={() => toggleCardioEdit(entry.id)}
-                >
-                  <GearIcon />
-                  <span>{messages.editLabel}</span>
-                </button>
-              </div>
-
-              <PlanEditTransition isOpen={Boolean(editingCardioById[entry.id])}>
-                <div className="cardio-editor">
-                  <label className="cardio-field">
-                    <span>
-                      <ExerciseFieldIcon />
-                      {messages.cardioExerciseLabel}
-                    </span>
-                    <input
-                      type="text"
-                      value={entry.exercise}
-                      onChange={(event) => updateCardio(entry.id, { exercise: event.target.value })}
-                    />
-                  </label>
-                  <label className="cardio-field">
-                    <span>
-                      <TimeFieldIcon />
-                      {messages.cardioTimeLabel}
-                    </span>
-                    <input
-                      type="text"
-                      value={entry.time}
-                      onChange={(event) => updateCardio(entry.id, { time: event.target.value })}
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    className="workout-remove-button"
-                    onClick={() => removeCardio(entry.id)}
-                  >
-                    {messages.removeCardioLabel}
-                  </button>
-                </div>
-              </PlanEditTransition>
-            </div>
-          ))}
-        </div>
-        <button type="button" className="add-workout-button add-cardio-button" onClick={addCardio}>
-          {messages.addCardioLabel}
-        </button>
+        <PlanTextSection
+          label={messages.cardioSectionLabel}
+          value={program.cardio}
+          emptyLabel={messages.planEmptyTextLabel}
+          editLabel={messages.editLabel}
+          doneLabel={messages.doneLabel}
+          isEditing={editingTextSection === 'cardio'}
+          onToggleEdit={() => setEditingTextSection((current) => (current === 'cardio' ? null : 'cardio'))}
+          onChange={(value) => onProgramChange({ ...program, cardio: value })}
+        />
       </PlanSection>
 
       <PlanSection
@@ -197,14 +157,16 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
         expandLabel={messages.expandLabel}
         collapseLabel={messages.collapseLabel}
       >
-        <label className="notes-wrap">
-          <span>{messages.cooldownInputLabel}</span>
-          <textarea
-            value={program.cooldown}
-            onChange={(event) => onProgramChange({ ...program, cooldown: event.target.value })}
-            rows={4}
-          />
-        </label>
+        <PlanTextSection
+          label={messages.cooldownInputLabel}
+          value={program.cooldown}
+          emptyLabel={messages.planEmptyTextLabel}
+          editLabel={messages.editLabel}
+          doneLabel={messages.doneLabel}
+          isEditing={editingTextSection === 'cooldown'}
+          onToggleEdit={() => setEditingTextSection((current) => (current === 'cooldown' ? null : 'cooldown'))}
+          onChange={(value) => onProgramChange({ ...program, cooldown: value })}
+        />
       </PlanSection>
 
       <PlanSection
@@ -217,14 +179,16 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
         expandLabel={messages.expandLabel}
         collapseLabel={messages.collapseLabel}
       >
-        <label className="notes-wrap">
-          <span>{messages.notesInputLabel}</span>
-          <textarea
-            value={program.notes}
-            onChange={(event) => onProgramChange({ ...program, notes: event.target.value })}
-            rows={4}
-          />
-        </label>
+        <PlanTextSection
+          label={messages.notesInputLabel}
+          value={program.notes}
+          emptyLabel={messages.planEmptyTextLabel}
+          editLabel={messages.editLabel}
+          doneLabel={messages.doneLabel}
+          isEditing={editingTextSection === 'notes'}
+          onToggleEdit={() => setEditingTextSection((current) => (current === 'notes' ? null : 'notes'))}
+          onChange={(value) => onProgramChange({ ...program, notes: value })}
+        />
       </PlanSection>
     </section>
   );

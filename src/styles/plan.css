@@ -1705,3 +1705,203 @@
   resize: vertical;
   min-height: 5.8rem;
 }
+
+/* Plan reading pass: clearer section rhythm and quieter exercise metadata. */
+.plan-panel {
+  gap: 0.52rem;
+}
+
+.plan-section-card {
+  padding: 0.5rem;
+  border-radius: 1.12rem;
+}
+
+.plan-section-head {
+  min-height: 2.7rem;
+  gap: 0.48rem;
+  padding-inline: 0.2rem;
+}
+
+.plan-section-head h2 {
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+}
+
+.plan-section-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.plan-section-chevron {
+  width: 0.62rem;
+  height: 0.62rem;
+  margin-right: 0.2rem;
+}
+
+.plan-section-inner {
+  padding-top: 0.5rem;
+}
+
+.workout-list,
+.cardio-list {
+  gap: 0.46rem;
+}
+
+.workout-card {
+  padding: 0.56rem 0.5rem;
+  border-radius: 0.9rem;
+}
+
+.workout-summary {
+  gap: 0.44rem;
+  align-items: flex-start;
+}
+
+.workout-summary-copy {
+  padding-top: 0.08rem;
+}
+
+.workout-summary h3 {
+  font-size: 0.84rem;
+  line-height: 1.2;
+}
+
+.workout-summary p {
+  margin-top: 0.24rem;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.67rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.workout-summary p strong {
+  color: rgba(248, 250, 252, 0.84);
+  font-weight: 800;
+}
+
+.edit-toggle {
+  min-height: 2.55rem;
+  padding-inline: 0.58rem;
+  font-size: 0.68rem;
+}
+
+.cardio-item {
+  min-height: 3rem;
+  padding: 0.52rem 0.58rem;
+  border-radius: 0.88rem;
+}
+
+.cardio-summary-copy strong {
+  font-size: 0.82rem;
+}
+
+.cardio-summary-copy span {
+  margin-top: 0.08rem;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.7rem;
+}
+
+.notes-wrap {
+  gap: 0.34rem;
+}
+
+.notes-wrap > span {
+  color: rgba(226, 232, 240, 0.64);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.plan-text-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+.plan-text-summary-button {
+  min-width: 0;
+  min-height: 3.25rem;
+  display: grid;
+  align-content: center;
+  gap: 0.22rem;
+  padding: 0.42rem 0.5rem;
+  border: 0;
+  border-radius: 0.78rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.plan-text-summary-button:active {
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.plan-text-summary-label,
+.plan-text-editor-field > span {
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.plan-text-summary-value {
+  min-width: 0;
+  color: rgba(248, 250, 252, 0.9);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.plan-text-summary-value.is-empty {
+  color: rgba(226, 232, 240, 0.58);
+  font-style: italic;
+}
+
+.plan-text-edit-button,
+.plan-text-done-button {
+  min-width: 4.2rem;
+  min-height: 2.75rem;
+  align-self: center;
+  padding: 0.38rem 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.78rem;
+  background: rgba(15, 23, 42, 0.5);
+  color: rgba(226, 232, 240, 0.92);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.plan-text-editor {
+  display: grid;
+  gap: 0.46rem;
+}
+
+.plan-text-editor-field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.plan-text-editor-field textarea {
+  width: 100%;
+  min-height: 6rem;
+  box-sizing: border-box;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 0.78rem;
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+  font: inherit;
+  line-height: 1.4;
+  padding: 0.62rem 0.68rem;
+  resize: vertical;
+}
+
+.plan-text-done-button {
+  width: 100%;
+}
