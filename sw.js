@@ -40,6 +40,11 @@ self.addEventListener('fetch', (event) => {
 
   const requestUrl = new URL(request.url);
 
+  // Never cache Vite's development modules or its hot-reload runtime.
+  if (/^\/(?:@vite\/|@react-refresh|@id\/|@fs\/|src\/|node_modules\/)/.test(requestUrl.pathname)) {
+    return;
+  }
+
   if (requestUrl.origin !== self.location.origin) {
     return;
   }
