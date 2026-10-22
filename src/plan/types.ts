@@ -21,6 +21,18 @@ export type WorkoutExercise = {
   supersetId?: string;
 };
 
+export type ParsedWorkoutExercise = {
+  title: string;
+  description: string;
+  sets: string;
+  reps: string;
+  weight: number | 'unknown';
+  rest: number;
+  group?: string;
+  order: number;
+  rawBlock?: string;
+};
+
 export type CardioExercise = {
   id: string;
   exercise: string;
@@ -29,7 +41,7 @@ export type CardioExercise = {
 
 export type TrainingProgram = {
   warmup: string;
-  workout: WorkoutExercise[];
+  workout: string;
   cardio: string;
   cooldown: string;
   notes: string;

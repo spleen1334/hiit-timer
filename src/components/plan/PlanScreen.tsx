@@ -120,8 +120,8 @@ export function PlanScreen({ messages, program, onProgramChange }: PlanScreenPro
       >
         <WorkoutList
           messages={messages}
-          exercises={program.workout}
-          onExercisesChange={(nextWorkout) => onProgramChange({ ...program, workout: nextWorkout })}
+          text={program.workout}
+          onTextChange={(nextWorkout) => onProgramChange({ ...program, workout: nextWorkout })}
         />
       </PlanSection>
 

@@ -4,7 +4,7 @@ Mobile-first workout app built with React, TypeScript, and Vite.
 
 Pulse Trainer has three modes:
 - `Timer`: HIIT timer with audio/vibration feedback, history, and PWA install support.
-- `Plan`: editable training program with warmup/workout/cardio/cooldown/notes, drag-and-drop ordering, and superset grouping.
+- `Plan`: editable training program with warmup/workout/cardio/cooldown/notes, a single text workout document, explicit ordering, and connected exercise groups.
 - `Body`: body-weight tracking with dated entries, body-fat data, BMI display, graph filters, and local history.
 
 Global Settings are available from the top app bar when no timer session is running.
@@ -29,17 +29,40 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
   - `Cardio`
   - `Cooldown`
   - `Notes`
-- Workout cards:
-  - Compact summary + explicit `Edit` control
-  - Add/remove workouts
-  - Drag reorder
-  - Drop on another card to create/extend supersets
-  - Superset link icon to break superset
-  - Reorder items within the same superset
-- Cardio entries:
-  - Compact summary + explicit `Edit` control
-  - Add/remove cardio entries
+- Workout is authored in one textarea with Save/Cancel and line-specific validation.
+- Read-only cards show the exercise, description, sets, reps, kg/body weight, and rest.
+- Move up/down updates the text and sequential `order` values. Connected groups move together; members can be reordered within them.
+- Warmup, cardio, cooldown, and notes use simple text editors.
 - Program and section visibility persist in `localStorage`
+
+### Workout text format
+
+```markdown
+## Pull-ups
+order: 1
+description: Controlled full range.
+sets: 3
+reps: 8-10
+weight: 0
+rest: 90
+group: sets1
+
+## Push-ups
+order: 2
+sets: 3
+reps: 12
+weight: 0
+rest: 90
+group: sets1
+```
+
+Use `# Day 1`, `# Day 2`, or custom day headings such as `# Upper body` to separate days in the same document. Each day gets a tab; swipe the exercise area horizontally to switch days. Exercise order restarts at 1 per day, and groups are scoped to their day. Old workouts without day headings remain a single day. Empty named days are allowed.
+
+`description` and `group` are optional. Indent continuation lines for multiline descriptions. `sets` accepts a positive integer or ascending range; `reps` accepts counts, ranges, or hold durations. Weight is a nonnegative number in kg; `0` means body weight. Rest is a nonnegative integer in seconds. Matching group labels connect exercises and keep them adjacent. Omit `group` for standalone exercises.
+
+Exercises sort by positive integer `order`; ties keep text order. Saving and visual moves rewrite order numbers sequentially. Group members follow the first member, even if their entered order numbers were separated.
+
+Existing exercise arrays and plan backups migrate automatically. Unsupported legacy weight values remain in the description with `weight: unknown` (shown as Not specified), so no load is invented. Old set counts that cannot be represented remain in the description. The latest plan export uses schema version 3, while imports accept versions 1 and 2 as well.
 
 ### Body mode
 - Track one body measurement per day; saving the same date replaces that day
@@ -53,6 +76,7 @@ The UI is intentionally phone-oriented and should remain a centered mobile app e
 ### Settings
 - Opened from the global top app bar, outside Timer, Plan, and Body content
 - Hidden while a timer session is running
+- Copy a workout syntax template and examples for AI (with manual-copy fallback)
 - Language and sound controls
 - PWA install action
 - Application Data import/export for app-owned `localStorage` data

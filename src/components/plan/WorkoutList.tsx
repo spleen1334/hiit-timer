@@ -1,442 +1,110 @@
-import { Fragment, useMemo, useRef, useState } from 'react';
-import type { DragEvent } from 'react';
+import { useRef, useState } from 'react';
 import type { Messages } from '../../i18n';
-import type { WorkoutExercise } from '../../plan/types';
-import { LinkIcon } from './PlanIcons';
+import { moveWorkout, normalizeWorkoutText, parseWorkoutText } from '../../plan/workoutText';
+import { WORKOUT_EXAMPLE } from '../../plan/workoutTemplate';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 
-type WorkoutListProps = {
-  messages: Messages;
-  exercises: WorkoutExercise[];
-  onExercisesChange: (next: WorkoutExercise[]) => void;
-};
+type Props = { messages: Messages; text: string; onTextChange: (text: string) => void };
 
-type DragPayload = {
-  draggedId: string;
-  draggedSupersetId?: string;
-  sourceIds: string[];
-};
+export function WorkoutList({ messages, text, onTextChange }: Props) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const [showErrors, setShowErrors] = useState(false);
+  const [status, setStatus] = useState('');
+  const [selectedDay, setSelectedDay] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const parsed = parseWorkoutText(text);
+  const dayIndex = Math.min(selectedDay, parsed.days.length - 1);
+  const currentDay = parsed.days[dayIndex];
+  const hasDayTabs = parsed.days.length > 1 || Boolean(currentDay.title);
+  const dayOffset = parsed.days.slice(0, dayIndex).reduce((sum, day) => sum + day.exercises.length, 0);
+  const draftParsed = parseWorkoutText(draft ?? text);
+  const editing = draft !== null;
+  const errors = editing ? draftParsed.errors : parsed.errors;
+  const move = (index: number, direction: -1 | 1, withinGroup = false) => {
+    onTextChange(moveWorkout(text, index, direction, withinGroup));
+    setStatus(messages.workoutMovedLabel);
+  };
+  const edit = () => { setDraft(text); setShowErrors(false); setStatus(''); };
+  const save = () => {
+    if (draftParsed.errors.length) { setShowErrors(true); return; }
+    onTextChange(normalizeWorkoutText(draft ?? text));
+    setDraft(null);
+    setStatus(messages.workoutSavedLabel);
+  };
+  const errorList = errors.length > 0 && (showErrors || !editing) ? (
+    <div className="workout-text-errors" id="workout-errors" role="alert">
+      <strong>{messages.workoutErrorsLabel}</strong>
+      <ul>{errors.map((error, index) => <li key={index}>{messages.workoutLineLabel} {error.line}: {error.message}</li>)}</ul>
+    </div>
+  ) : null;
 
-type RenderEntry =
-  | { key: string; leadId: string; type: 'single'; exercise: WorkoutExercise }
-  | { key: string; leadId: string; type: 'superset'; supersetId: string; members: WorkoutExercise[] };
-
-export function WorkoutList({ messages, exercises, onExercisesChange }: WorkoutListProps) {
-  const [editingById, setEditingById] = useState<Record<string, boolean>>({});
-  const [activeDropZone, setActiveDropZone] = useState<string | null>(null);
-  const dragRef = useRef<DragPayload | null>(null);
-
-  const groupsBySuperset = useMemo(() => {
-    const groups = new Map<string, WorkoutExercise[]>();
-
-    for (const exercise of exercises) {
-      if (!exercise.supersetId) {
-        continue;
-      }
-
-      const current = groups.get(exercise.supersetId) ?? [];
-      current.push(exercise);
-      groups.set(exercise.supersetId, current);
-    }
-
-    return groups;
-  }, [exercises]);
-
-  const indexByExerciseId = useMemo(
-    () => new Map(exercises.map((exercise, index) => [exercise.id, index])),
-    [exercises],
+  if (editing) return (
+    <div className="workout-document">
+      <p className="workout-document-hint" id="workout-text-hint">{messages.workoutTextHint}</p>
+      <details className="workout-format"><summary>{messages.workoutSyntaxLabel}</summary><pre>{WORKOUT_EXAMPLE}</pre></details>
+      <label className="plan-text-editor-field">
+        <span>{messages.workoutTextLabel}</span>
+        <textarea autoFocus className="workout-textarea" rows={20} spellCheck={false} autoCapitalize="off"
+          aria-describedby={`workout-text-hint${showErrors && errors.length ? ' workout-errors' : ''}`}
+          aria-invalid={showErrors && errors.length > 0}
+          value={draft ?? ''} onChange={(event) => setDraft(event.target.value)} />
+      </label>
+      {errorList}
+      <button type="button" className="plan-text-done-button" onClick={save}>{messages.workoutSaveLabel}</button>
+      <button type="button" className="plan-text-done-button" onClick={() => { setDraft(null); setShowErrors(false); }}>{messages.cancelLabel}</button>
+    </div>
   );
 
-  const renderedEntries = useMemo(() => {
-    const seen = new Set<string>();
-    const items: RenderEntry[] = [];
-
-    for (const exercise of exercises) {
-      if (!exercise.supersetId) {
-        items.push({ key: exercise.id, leadId: exercise.id, type: 'single', exercise });
-        continue;
-      }
-
-      const members = groupsBySuperset.get(exercise.supersetId) ?? [];
-      if (members.length < 2) {
-        items.push({ key: exercise.id, leadId: exercise.id, type: 'single', exercise });
-        continue;
-      }
-
-      if (seen.has(exercise.supersetId)) {
-        continue;
-      }
-
-      seen.add(exercise.supersetId);
-      items.push({
-        key: exercise.supersetId,
-        leadId: members[0].id,
-        type: 'superset',
-        supersetId: exercise.supersetId,
-        members,
-      });
-    }
-
-    return items;
-  }, [exercises, groupsBySuperset]);
-
-  const reorderByIds = (movingIds: string[], beforeExerciseId: string | null) => {
-    if (beforeExerciseId && movingIds.includes(beforeExerciseId)) {
-      return;
-    }
-
-    const remaining = exercises.filter((exercise) => !movingIds.includes(exercise.id));
-    const moving = exercises.filter((exercise) => movingIds.includes(exercise.id));
-
-    const insertIndex = beforeExerciseId
-      ? remaining.findIndex((exercise) => exercise.id === beforeExerciseId)
-      : remaining.length;
-    const safeIndex = insertIndex >= 0 ? insertIndex : remaining.length;
-
-    const next = [
-      ...remaining.slice(0, safeIndex),
-      ...moving,
-      ...remaining.slice(safeIndex),
-    ];
-
-    onExercisesChange(next);
-  };
-
-  const reorderDraggedBlock = (beforeExerciseId: string | null) => {
-    const payload = dragRef.current;
-    if (!payload) {
-      return;
-    }
-
-    reorderByIds(payload.sourceIds, beforeExerciseId);
-  };
-
-  const reorderWithinSuperset = (supersetId: string, draggedId: string, beforeId: string | null) => {
-    const memberIds = exercises
-      .filter((exercise) => exercise.supersetId === supersetId)
-      .map((exercise) => exercise.id);
-
-    if (!memberIds.includes(draggedId)) {
-      return;
-    }
-
-    if (beforeId === draggedId) {
-      return;
-    }
-
-    const reorderedIds = memberIds.filter((id) => id !== draggedId);
-    const insertIndex = beforeId ? reorderedIds.indexOf(beforeId) : reorderedIds.length;
-    const safeIndex = insertIndex >= 0 ? insertIndex : reorderedIds.length;
-    reorderedIds.splice(safeIndex, 0, draggedId);
-
-    const idToExercise = new Map(exercises.map((exercise) => [exercise.id, exercise]));
-    const reorderedMembers = reorderedIds
-      .map((id) => idToExercise.get(id))
-      .filter((exercise): exercise is WorkoutExercise => Boolean(exercise));
-
-    const next: WorkoutExercise[] = [];
-    let inserted = false;
-
-    for (const exercise of exercises) {
-      if (exercise.supersetId !== supersetId) {
-        next.push(exercise);
-        continue;
-      }
-
-      if (!inserted) {
-        next.push(...reorderedMembers);
-        inserted = true;
-      }
-    }
-
-    onExercisesChange(next);
-  };
-
-  const combineAsSuperset = (targetId: string) => {
-    const payload = dragRef.current;
-    if (!payload || payload.sourceIds.includes(targetId)) {
-      return;
-    }
-
-    const target = exercises.find((exercise) => exercise.id === targetId);
-    const sourceLead = exercises.find((exercise) => exercise.id === payload.draggedId);
-
-    if (!target || !sourceLead) {
-      return;
-    }
-
-    const supersetId = sourceLead.supersetId ?? target.supersetId ?? `ss-${Date.now()}`;
-    const withSuperset = exercises.map((exercise) =>
-      payload.sourceIds.includes(exercise.id) || exercise.id === targetId
-        ? { ...exercise, supersetId }
-        : exercise,
-    );
-
-    const remaining = withSuperset.filter((exercise) => !payload.sourceIds.includes(exercise.id));
-    const moving = withSuperset.filter((exercise) => payload.sourceIds.includes(exercise.id));
-    const targetIndex = remaining.findIndex((exercise) => exercise.id === targetId);
-    const safeIndex = targetIndex >= 0 ? targetIndex : remaining.length;
-
-    onExercisesChange([
-      ...remaining.slice(0, safeIndex),
-      ...moving,
-      ...remaining.slice(safeIndex),
-    ]);
-  };
-
-  const clearSuperset = (exerciseId: string) => {
-    const target = exercises.find((exercise) => exercise.id === exerciseId);
-    if (!target?.supersetId) {
-      return;
-    }
-
-    const sameGroup = exercises.filter((exercise) => exercise.supersetId === target.supersetId);
-    if (sameGroup.length <= 2) {
-      onExercisesChange(
-        exercises.map((exercise) =>
-          exercise.supersetId === target.supersetId ? { ...exercise, supersetId: undefined } : exercise,
-        ),
-      );
-      return;
-    }
-
-    onExercisesChange(
-      exercises.map((exercise) =>
-        exercise.id === exerciseId ? { ...exercise, supersetId: undefined } : exercise,
-      ),
-    );
-  };
-
-  const onExerciseChange = (exerciseId: string, patch: Partial<WorkoutExercise>) => {
-    onExercisesChange(
-      exercises.map((exercise) =>
-        exercise.id === exerciseId ? { ...exercise, ...patch } : exercise,
-      ),
-    );
-  };
-
-  const toggleEdit = (exerciseId: string) => {
-    setEditingById((current) => ({
-      ...current,
-      [exerciseId]: !current[exerciseId],
-    }));
-  };
-
-  const beginDrag = (exerciseId: string, event: DragEvent<HTMLElement>) => {
-    const source = exercises.find((exercise) => exercise.id === exerciseId);
-    if (!source) {
-      return;
-    }
-
-    const sourceIds = source.supersetId
-      ? exercises
-          .filter((exercise) => exercise.supersetId === source.supersetId)
-          .map((exercise) => exercise.id)
-      : [exerciseId];
-
-    dragRef.current = {
-      draggedId: exerciseId,
-      draggedSupersetId: source.supersetId,
-      sourceIds,
-    };
-    event.dataTransfer.effectAllowed = 'move';
-    setActiveDropZone(null);
-  };
-
-  const endDrag = () => {
-    dragRef.current = null;
-    setActiveDropZone(null);
-  };
-
-  const addWorkout = () => {
-    const nextIndex = exercises.length + 1;
-    onExercisesChange([
-      ...exercises,
-      {
-        id: `ex-${Date.now()}`,
-        title: `Workout ${nextIndex}`,
-        description: 'Edit details',
-        sets: '3',
-        reps: '10',
-        weight: 'BW',
-        rest: '60 sec',
-        bodyPart: 'full-body',
-      },
-    ]);
-  };
-
-  const removeWorkout = (exerciseId: string) => {
-    const target = exercises.find((exercise) => exercise.id === exerciseId);
-    if (!target) {
-      return;
-    }
-
-    const filtered = exercises.filter((exercise) => exercise.id !== exerciseId);
-    if (!target.supersetId) {
-      onExercisesChange(filtered);
-      return;
-    }
-
-    const remainingInSuperset = filtered.filter((exercise) => exercise.supersetId === target.supersetId);
-    if (remainingInSuperset.length <= 1) {
-      onExercisesChange(
-        filtered.map((exercise) =>
-          exercise.supersetId === target.supersetId ? { ...exercise, supersetId: undefined } : exercise,
-        ),
-      );
-      return;
-    }
-
-    onExercisesChange(filtered);
-  };
-
+  const entries: Array<{ indices: number[]; group?: string }> = [];
+  currentDay.exercises.forEach((exercise, localIndex) => {
+    const index = dayOffset + localIndex;
+    const last = entries[entries.length - 1];
+    if (exercise.group && last?.group === exercise.group) last.indices.push(index);
+    else entries.push({ indices: [index], group: exercise.group });
+  });
   return (
-    <div className="workout-list">
-      {groupsBySuperset.size > 0 ? <p className="superset-hint">{messages.supersetHintLabel}</p> : null}
+    <div className="workout-document">
+      <button type="button" className="plan-text-done-button" onClick={edit}>{messages.workoutEditLabel}</button>
+      {hasDayTabs ? <div className="workout-day-tabs" role="tablist" aria-label={messages.workoutDaysLabel}>
+        {parsed.days.map((day, index) => <button key={index} type="button" role="tab"
+          id={`workout-day-tab-${index}`} aria-controls="workout-day-panel" aria-selected={index === dayIndex}
+          tabIndex={index === dayIndex ? 0 : -1}
+          onClick={() => setSelectedDay(index)}
+          onKeyDown={(event) => {
+            const next = event.key === 'ArrowRight' ? (index + 1) % parsed.days.length
+              : event.key === 'ArrowLeft' ? (index - 1 + parsed.days.length) % parsed.days.length
+              : event.key === 'Home' ? 0 : event.key === 'End' ? parsed.days.length - 1 : null;
+            if (next !== null) { event.preventDefault(); setSelectedDay(next); document.getElementById(`workout-day-tab-${next}`)?.focus(); }
+          }}>{day.title || messages.workoutDayLabel + ' ' + (index + 1)}</button>)}
+      </div> : null}
+      {errorList}
+      <div id="workout-day-panel" className="workout-day-panel" role={hasDayTabs ? 'tabpanel' : undefined}
+        aria-labelledby={hasDayTabs ? `workout-day-tab-${dayIndex}` : undefined}
+        onTouchStart={(event) => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }}
+        onTouchEnd={(event) => {
+          const start = touchStart.current; touchStart.current = null;
+          const end = event.changedTouches[0];
+          if (!start || !end) return;
+          const dx = end.clientX - start.x; const dy = end.clientY - start.y;
+          if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) setSelectedDay(Math.max(0, Math.min(parsed.days.length - 1, dayIndex + (dx < 0 ? 1 : -1))));
+        }}>
+      {!currentDay.exercises.length && !errors.length ? <p className="workout-document-hint">{messages.planEmptyTextLabel}</p> : null}
+      {!errors.length && entries.map((entry, entryIndex) => (
+        <section className={entry.group ? 'workout-connected' : 'workout-single'} key={entryIndex} aria-label={entry.group ? messages.makeSupersetLabel : undefined}>
+          {entry.group ? <div className="workout-group-heading"><span>{messages.makeSupersetLabel}</span><div className="workout-move-controls">
+            <button type="button" disabled={entryIndex === 0} onClick={() => move(entry.indices[0], -1)} aria-label={messages.workoutMoveGroupUpLabel} title={messages.workoutMoveGroupUpLabel}>↑</button>
+            <button type="button" disabled={entryIndex === entries.length - 1} onClick={() => move(entry.indices[0], 1)} aria-label={messages.workoutMoveGroupDownLabel} title={messages.workoutMoveGroupDownLabel}>↓</button>
+          </div></div> : null}
+          {entry.indices.map((index, memberIndex) => <WorkoutExerciseCard key={index}
+            exercise={parsed.exercises[index]} messages={messages}
+            canMoveUp={entry.group ? memberIndex > 0 : entryIndex > 0}
+            canMoveDown={entry.group ? memberIndex < entry.indices.length - 1 : entryIndex < entries.length - 1}
+            onMove={(direction) => move(index, direction, Boolean(entry.group))} />)}
 
-      {renderedEntries.map((entry) => (
-        <Fragment key={entry.key}>
-          <div
-            className={`reorder-drop-zone ${activeDropZone === entry.leadId ? 'is-active' : ''}`}
-            onDragOver={(event) => {
-              event.preventDefault();
-              setActiveDropZone(entry.leadId);
-            }}
-            onDragLeave={() => setActiveDropZone((current) => (current === entry.leadId ? null : current))}
-            onDrop={(event) => {
-              event.preventDefault();
-              reorderDraggedBlock(entry.leadId);
-              endDrag();
-            }}
-          />
-
-          {entry.type === 'single' ? (
-            <WorkoutExerciseCard
-              exercise={entry.exercise}
-              messages={messages}
-              isEditing={Boolean(editingById[entry.exercise.id])}
-              tone={(indexByExerciseId.get(entry.exercise.id) ?? 0) % 2 === 0 ? 'row-even' : 'row-odd'}
-              onExerciseChange={onExerciseChange}
-              onToggleEdit={toggleEdit}
-              onDropOn={(targetId) => {
-                const payload = dragRef.current;
-                if (
-                  payload?.draggedSupersetId &&
-                  payload.draggedSupersetId === entry.exercise.supersetId
-                ) {
-                  reorderWithinSuperset(payload.draggedSupersetId, payload.draggedId, targetId);
-                } else {
-                  combineAsSuperset(targetId);
-                }
-                endDrag();
-              }}
-              onDragStartCard={beginDrag}
-              onDragEndCard={endDrag}
-              onRemoveWorkout={removeWorkout}
-            />
-          ) : (
-            <section className="superset-stack" aria-label="Superset group">
-              <div className="superset-left-line" aria-hidden="true" />
-              {entry.members.map((member) => (
-                <Fragment key={member.id}>
-                  <div
-                    className={`superset-reorder-drop ${activeDropZone === `group:${entry.supersetId}:${member.id}` ? 'is-active' : ''}`}
-                    onDragOver={(event) => {
-                      event.preventDefault();
-                      setActiveDropZone(`group:${entry.supersetId}:${member.id}`);
-                    }}
-                    onDragLeave={() =>
-                      setActiveDropZone((current) =>
-                        current === `group:${entry.supersetId}:${member.id}` ? null : current,
-                      )
-                    }
-                    onDrop={(event) => {
-                      event.preventDefault();
-                      const payload = dragRef.current;
-                      if (payload?.draggedSupersetId === entry.supersetId) {
-                        reorderWithinSuperset(entry.supersetId, payload.draggedId, member.id);
-                      }
-                      endDrag();
-                    }}
-                  />
-
-                  <div className="superset-member">
-                    <button
-                      type="button"
-                      className="superset-link-icon"
-                      aria-label={messages.removeSupersetLabel}
-                      onClick={() => clearSuperset(member.id)}
-                    >
-                      <LinkIcon />
-                    </button>
-                    <WorkoutExerciseCard
-                      exercise={member}
-                      messages={messages}
-                      isEditing={Boolean(editingById[member.id])}
-                      tone={(indexByExerciseId.get(member.id) ?? 0) % 2 === 0 ? 'row-even' : 'row-odd'}
-                      onExerciseChange={onExerciseChange}
-                      onToggleEdit={toggleEdit}
-                      onDropOn={(targetId) => {
-                        const payload = dragRef.current;
-                        if (
-                          payload?.draggedSupersetId &&
-                          payload.draggedSupersetId === entry.supersetId
-                        ) {
-                          reorderWithinSuperset(entry.supersetId, payload.draggedId, targetId);
-                        } else {
-                          combineAsSuperset(targetId);
-                        }
-                        endDrag();
-                      }}
-                      onDragStartCard={beginDrag}
-                      onDragEndCard={endDrag}
-                      onRemoveWorkout={removeWorkout}
-                    />
-                  </div>
-                </Fragment>
-              ))}
-              <div
-                className={`superset-reorder-drop ${activeDropZone === `group:${entry.supersetId}:end` ? 'is-active' : ''}`}
-                onDragOver={(event) => {
-                  event.preventDefault();
-                  setActiveDropZone(`group:${entry.supersetId}:end`);
-                }}
-                onDragLeave={() =>
-                  setActiveDropZone((current) =>
-                    current === `group:${entry.supersetId}:end` ? null : current,
-                  )
-                }
-                onDrop={(event) => {
-                  event.preventDefault();
-                  const payload = dragRef.current;
-                  if (payload?.draggedSupersetId === entry.supersetId) {
-                    reorderWithinSuperset(entry.supersetId, payload.draggedId, null);
-                  }
-                  endDrag();
-                }}
-              />
-            </section>
-          )}
-        </Fragment>
+        </section>
       ))}
-
-      <div
-        className={`reorder-drop-zone reorder-drop-zone-end ${activeDropZone === 'end' ? 'is-active' : ''}`}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setActiveDropZone('end');
-        }}
-        onDragLeave={() => setActiveDropZone((current) => (current === 'end' ? null : current))}
-        onDrop={(event) => {
-          event.preventDefault();
-          reorderDraggedBlock(null);
-          endDrag();
-        }}
-      />
-
-      <button type="button" className="add-workout-button" onClick={addWorkout}>
-        {messages.addWorkoutLabel}
-      </button>
+      </div>
+      <span className="workout-document-status" role="status">{status}</span>
     </div>
   );
 }

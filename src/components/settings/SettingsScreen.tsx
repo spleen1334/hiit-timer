@@ -3,6 +3,7 @@ import { downloadBodyCsvExport, importBodyCsv } from '../../data/bodyCsv';
 import { downloadPlanTimerDataExport, importPlanTimerData } from '../../data/planTimerData';
 import { exportAppDataToGoogleDrive, isGoogleDriveConfigured, preloadGoogleDriveAuth } from '../../integrations/googleDrive';
 import type { Messages } from '../../i18n';
+import { WORKOUT_AI_TEMPLATE } from '../../plan/workoutTemplate';
 import { BackIcon, CogIcon } from '../shared/icons';
 
 const MAX_IMPORT_FILE_SIZE_BYTES = 1_000_000;
@@ -34,9 +35,12 @@ export function SettingsScreen({
 }: SettingsScreenProps) {
   const planTimerFileInputRef = useRef<HTMLInputElement>(null);
   const bodyFileInputRef = useRef<HTMLInputElement>(null);
+  const workoutTemplateFallbackRef = useRef<HTMLTextAreaElement>(null);
   const [planTimerStatus, setPlanTimerStatus] = useState<'idle' | 'busy' | 'exported' | 'imported' | 'error'>('idle');
   const [bodyStatus, setBodyStatus] = useState<'idle' | 'busy' | 'exported' | 'imported' | 'error'>('idle');
   const [driveStatus, setDriveStatus] = useState<'idle' | 'exporting' | 'success' | 'error'>('idle');
+  const [workoutTemplateStatus, setWorkoutTemplateStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+  const [showWorkoutTemplateFallback, setShowWorkoutTemplateFallback] = useState(false);
   const googleDriveConfigured = isGoogleDriveConfigured();
 
   useEffect(() => {
@@ -76,6 +80,26 @@ export function SettingsScreen({
       setDriveStatus('success');
     } catch {
       setDriveStatus('error');
+    }
+  };
+
+  const handleWorkoutTemplateCopy = async () => {
+    setWorkoutTemplateStatus('idle');
+    setShowWorkoutTemplateFallback(false);
+
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API unavailable');
+      }
+      await navigator.clipboard.writeText(WORKOUT_AI_TEMPLATE);
+      setWorkoutTemplateStatus('copied');
+    } catch {
+      setWorkoutTemplateStatus('error');
+      setShowWorkoutTemplateFallback(true);
+      window.setTimeout(() => {
+        workoutTemplateFallbackRef.current?.focus();
+        workoutTemplateFallbackRef.current?.select();
+      }, 0);
     }
   };
 
@@ -205,6 +229,29 @@ export function SettingsScreen({
             </button>
           </section>
         ) : null}
+
+        <section className="settings-card settings-card-workout-template">
+          <p className="settings-card-label">{messages.workoutTemplateLabel}</p>
+          <p className="settings-card-hint">{messages.workoutTemplateHint}</p>
+          <div className="settings-button-stack">
+            <button type="button" className="settings-button settings-button-primary" onClick={() => void handleWorkoutTemplateCopy()}>
+              {workoutTemplateStatus === 'copied' ? messages.workoutTemplateCopiedLabel : messages.workoutTemplateCopyLabel}
+            </button>
+          </div>
+          {workoutTemplateStatus === 'error' ? <p className="settings-error" role="status">{messages.workoutTemplateCopyErrorLabel}</p> : null}
+          {showWorkoutTemplateFallback ? (
+            <textarea
+              ref={workoutTemplateFallbackRef}
+              className="settings-template-fallback"
+              aria-label={messages.workoutTemplateLabel}
+              value={WORKOUT_AI_TEMPLATE}
+              readOnly
+              rows={12}
+              style={{ width: '100%', boxSizing: 'border-box', marginTop: '0.8rem', padding: '0.75rem', borderRadius: '0.8rem', font: 'inherit', fontSize: '0.8rem', lineHeight: 1.45 }}
+              onFocus={(event) => event.currentTarget.select()}
+            />
+          ) : null}
+        </section>
 
         <section className="settings-card settings-card-plan-timer">
           <p className="settings-card-label">{messages.planTimerDataLabel}</p>

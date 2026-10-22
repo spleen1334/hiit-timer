@@ -1,110 +1,89 @@
 import type { TrainingProgram } from './types';
 
+const workout = `## Zgib (siroki/uski rotirano)
+order: 1
+description: Bodyweight pull-up variation with rotating grip focus.
+sets: 4
+reps: 5
+weight: 0
+rest: 90
+
+## Leg press
+order: 2
+description: Increased load, strength focus. Legacy weight: 80-90 kg
+sets: 4
+reps: 8
+weight: unknown
+rest: 120
+
+## Veslanje (sprava, neutralni hvat)
+order: 3
+description: Machine row with neutral grip. Legacy weight: 45-55 kg
+sets: 4
+reps: 10
+weight: unknown
+rest: 90
+
+## Chest press (sprava ili sklekovi)
+order: 4
+description: Upper body balance movement. Legacy weight: Moderate
+sets: 3
+reps: 10
+weight: unknown
+rest: 75
+
+## Letenje (bucice)
+order: 5
+description: Controlled fly movement. Legacy weight: 2-3 kg
+sets: 3
+reps: 15
+weight: unknown
+rest: 60
+
+## Leg curl (kick)
+order: 6
+description: Hamstring isolation.
+sets: 3-4
+reps: 10
+weight: 40
+rest: 75
+
+## Ekstenzija noge
+order: 7
+description: Leg extension machine.
+sets: 3
+reps: 12
+weight: 45
+rest: 75
+
+## Biceps hammer (neutralni hvat)
+order: 8
+description: Neutral grip dumbbell curl. Legacy weight: 5-6 kg
+sets: 3
+reps: 10-12
+weight: unknown
+rest: 60
+
+## Triceps pushdown (sajla/uze)
+order: 9
+description: Cable rope pushdown. Legacy weight: 10-15 kg
+sets: 3
+reps: 10-12
+weight: unknown
+rest: 60
+
+## Plank (na podlakticama)
+order: 10
+description: Forearm plank hold.
+sets: 3
+reps: 45 sec
+weight: 0
+rest: 45`;
+
 export const DEFAULT_PROGRAM: TrainingProgram = {
   warmup:
     '- 5 min dynamic mobility (hips, shoulders, thoracic spine)\n- 2 light ramp-up sets for first two strength movements',
-  workout: [
-    {
-      id: 'ex-1',
-      title: 'Zgib (siroki/uski rotirano)',
-      description: 'Bodyweight pull-up variation with rotating grip focus.',
-      sets: '4',
-      reps: '5',
-      weight: 'Bodyweight',
-      rest: '90',
-      bodyPart: 'back',
-    },
-    {
-      id: 'ex-2',
-      title: 'Leg press',
-      description: 'Increased load, strength focus.',
-      sets: '4',
-      reps: '8',
-      weight: '80-90 kg',
-      rest: '120',
-      bodyPart: 'legs',
-    },
-    {
-      id: 'ex-3',
-      title: 'Veslanje (sprava, neutralni hvat)',
-      description: 'Machine row with neutral grip.',
-      sets: '4',
-      reps: '10',
-      weight: '45-55 kg',
-      rest: '90',
-      bodyPart: 'back',
-    },
-    {
-      id: 'ex-4',
-      title: 'Chest press (sprava ili sklekovi)',
-      description: 'Upper body balance movement.',
-      sets: '3',
-      reps: '10',
-      weight: 'Moderate',
-      rest: '75',
-      bodyPart: 'chest',
-    },
-    {
-      id: 'ex-5',
-      title: 'Letenje (bucice)',
-      description: 'Controlled fly movement.',
-      sets: '3',
-      reps: '15',
-      weight: '2-3 kg',
-      rest: '60',
-      bodyPart: 'shoulders',
-    },
-    {
-      id: 'ex-6',
-      title: 'Leg curl (kick)',
-      description: 'Hamstring isolation.',
-      sets: '3-4',
-      reps: '10',
-      weight: '40 kg',
-      rest: '75',
-      bodyPart: 'legs',
-    },
-    {
-      id: 'ex-7',
-      title: 'Ekstenzija noge',
-      description: 'Leg extension machine.',
-      sets: '3',
-      reps: '12',
-      weight: '45 kg',
-      rest: '75',
-      bodyPart: 'legs',
-    },
-    {
-      id: 'ex-8',
-      title: 'Biceps hammer (neutralni hvat)',
-      description: 'Neutral grip dumbbell curl.',
-      sets: '3',
-      reps: '10-12',
-      weight: '5-6 kg',
-      rest: '60',
-      bodyPart: 'biceps',
-    },
-    {
-      id: 'ex-9',
-      title: 'Triceps pushdown (sajla/uze)',
-      description: 'Cable rope pushdown.',
-      sets: '3',
-      reps: '10-12',
-      weight: '10-15 kg',
-      rest: '60',
-      bodyPart: 'triceps',
-    },
-    {
-      id: 'ex-10',
-      title: 'Plank (na podlakticama)',
-      description: 'Forearm plank hold.',
-      sets: '3',
-      reps: '45 sec',
-      weight: 'Bodyweight',
-      rest: '45',
-      bodyPart: 'core',
-    },
-  ],
+  workout,
   cardio: 'Incline treadmill walk — 12 min\nBike easy spin — 8 min',
   cooldown:
     '- 5 min easy walk + nasal breathing\n- Light static stretch for chest, lats, quads, hamstrings',

@@ -149,6 +149,28 @@ export type Messages = {
   expandLabel: string;
   addWorkoutLabel: string;
   removeWorkoutLabel: string;
+  workoutDaysLabel: string;
+  workoutDayLabel: string;
+  workoutTextLabel: string;
+  workoutTextHint: string;
+  workoutSyntaxLabel: string;
+  workoutSaveLabel: string;
+  workoutEditLabel: string;
+  workoutMoveUpLabel: string;
+  workoutMoveDownLabel: string;
+  workoutMoveGroupUpLabel: string;
+  workoutMoveGroupDownLabel: string;
+  workoutBodyWeightLabel: string;
+  workoutUnknownWeightLabel: string;
+  workoutErrorsLabel: string;
+  workoutLineLabel: string;
+  workoutSavedLabel: string;
+  workoutMovedLabel: string;
+  workoutTemplateLabel: string;
+  workoutTemplateHint: string;
+  workoutTemplateCopyLabel: string;
+  workoutTemplateCopiedLabel: string;
+  workoutTemplateCopyErrorLabel: string;
   roundCounter: (current: number, total: number) => string;
 };
 
@@ -163,6 +185,29 @@ export const isLocale = (value: string): value is Locale => LOCALE_OPTIONS.some(
 
 export const MESSAGES: Record<Locale, Messages> = {
   en: {
+    workoutDaysLabel: 'Workout days',
+    workoutDayLabel: 'Day',
+    workoutTextLabel: 'Workout text',
+    workoutTextHint: 'Start a day with # Day 1 (or any name). One exercise per ## heading. Order controls the sequence. Weight is kg (0 = body weight); rest is seconds.',
+    workoutSyntaxLabel: 'Format example',
+    workoutSaveLabel: 'Save workout',
+    workoutEditLabel: 'Edit workout text',
+    workoutMoveUpLabel: 'Move up',
+    workoutMoveDownLabel: 'Move down',
+    workoutMoveGroupUpLabel: 'Move group up',
+    workoutMoveGroupDownLabel: 'Move group down',
+    workoutBodyWeightLabel: 'Body weight',
+    workoutUnknownWeightLabel: 'Not specified',
+    workoutErrorsLabel: 'Fix these lines before saving:',
+    workoutLineLabel: 'Line',
+    workoutSavedLabel: 'Workout saved',
+    workoutMovedLabel: 'Exercise order updated',
+    workoutTemplateLabel: 'Workout template for AI',
+    workoutTemplateHint: 'Copy the format and examples into AI when building your workout.',
+    workoutTemplateCopyLabel: 'Copy workout template for AI',
+    workoutTemplateCopiedLabel: 'Template copied',
+    workoutTemplateCopyErrorLabel: 'Select and copy the template below.',
+
     appName: 'Pulse Trainer',
     loadingSplashLabel: 'Preparing your session',
     loadingSplashHint: 'Loading intervals and saved workout flow…',
@@ -315,6 +360,29 @@ export const MESSAGES: Record<Locale, Messages> = {
     roundCounter: (current, total) => `Round ${current} / ${total}`,
   },
   sr: {
+    workoutDaysLabel: 'Дани тренинга',
+    workoutDayLabel: 'Дан',
+    workoutTextLabel: 'Текст тренинга',
+    workoutTextHint: 'Започните дан са # Day 1 (или другим називом). Једна вежба по ## наслову. Order одређује редослед. Weight је у kg (0 = тежина тела); rest је у секундама.',
+    workoutSyntaxLabel: 'Пример формата',
+    workoutSaveLabel: 'Сачувај тренинг',
+    workoutEditLabel: 'Уреди текст тренинга',
+    workoutMoveUpLabel: 'Помери горе',
+    workoutMoveDownLabel: 'Помери доле',
+    workoutMoveGroupUpLabel: 'Помери групу горе',
+    workoutMoveGroupDownLabel: 'Помери групу доле',
+    workoutBodyWeightLabel: 'Тежина тела',
+    workoutUnknownWeightLabel: 'Није наведено',
+    workoutErrorsLabel: 'Исправите ове редове пре чувања:',
+    workoutLineLabel: 'Ред',
+    workoutSavedLabel: 'Тренинг је сачуван',
+    workoutMovedLabel: 'Редослед вежби је ажуриран',
+    workoutTemplateLabel: 'Шаблон тренинга за AI',
+    workoutTemplateHint: 'Копирајте формат и примере у AI када правите тренинг.',
+    workoutTemplateCopyLabel: 'Копирај шаблон тренинга за AI',
+    workoutTemplateCopiedLabel: 'Шаблон је копиран',
+    workoutTemplateCopyErrorLabel: 'Означите и копирајте шаблон испод.',
+
     appName: 'Pulse Trainer',
     loadingSplashLabel: 'Припрема сесије',
     loadingSplashHint: 'Учитавање интервала и сачуваног тока тренинга…',
